@@ -51,8 +51,7 @@ imputex <- function(xmu_formula,
     stop('indicator must be a column name in data')
   }
 
-  # save for user call in summary
-  mcall <- match.call()
+ 
 
   # split dataset in fully observed & missing/censored data
   Wdat <- W(data, indicator)
@@ -121,8 +120,23 @@ imputex <- function(xmu_formula,
   # complete data with imputations
   Wdat$cens[censor] = imputemat$imputedx
   fulldata = rbind(Wdat$obs,Wdat$cens)
+  
+  mcall = match.call()
+  
+  # Try global assignment (with cautions!)
+  result <<- list(imputations = imputemat,
+                 fulldata = fulldata,
+                 mcall = mcall,
+                 number_of_imputations = nrow(Wdat$cens),
+                 censoring_type = censtype,
+                 number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens))
+  
+  #  Create a class for this kind of result (Caution with global assignment!)
+   class(result) <<- "impute_class"
 
-  return(list(imputations = imputemat, fulldata = fulldata)) # edit output format!
+  return(result) # edit output format!
+  
+  
 }
 
 d2 <- imputex(data= data,
@@ -134,7 +148,7 @@ d2 <- imputex(data= data,
              indicator = "indicator",
              censtype = 'right')
 
-# Mit ellipsis geändert
+# Mit ellipsis ge?ndert
 d3 <- imputex(data= data,
              xmu_formula= x1~y+x2,
              xsigma_formula = ~1,
