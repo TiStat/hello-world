@@ -1,4 +1,4 @@
-(1) multiple columns to impute; make an imputation hirarchy
+(1) multiple columns to impute (probably via changing the datasplit function W); make an imputation hirarchy
 
 (2) y fit + variability of imputations
 
