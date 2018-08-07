@@ -125,21 +125,4 @@ imputex <- function(xmu_formula,
   return(list(imputations = imputemat, fulldata = fulldata)) # edit output format!
 }
 
-d2 <- imputex(data= data,
-             xmu_formula= x1~y+x2,
-             xsigma_formula = ~1,
-             xnu_formula = ~1,
-             xtau_formula = ~1,
-             xfamily = NO(mu.link = 'identity'),
-             indicator = "indicator",
-             censtype = 'right')
 
-# Mit ellipsis geändert
-d3 <- imputex(data= data,
-             xmu_formula= x1~y+x2,
-             xsigma_formula = ~1,
-             xnu_formula = ~1,
-             xtau_formula = ~1,
-             xfamily = NO(mu.link = 'identity'),
-             indicator = "indicator",
-             censtype = 'right',method = CG())
