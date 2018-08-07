@@ -17,6 +17,9 @@ are drawn should be plotted horizontally.
 CAREFULL, when implementing censtype = 'interval', quantiles become ambigous!
 (4.1) Since y is an explanatory variable for x, why not invert the axis of that plot? such that y is plotted against x 
 
+(4.2)NOTE! ever since the bootmodels are used to draw imputations based on the current parameter set,
+The distribution of the later averaged imputation is not as easily computed. the true distribution of the average does contain even more uncertainty!!!!
+
 (5) testthat devtools, unittests.
 (5.1) family_fun is func a valid! string?
 
