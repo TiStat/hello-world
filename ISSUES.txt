@@ -7,4 +7,13 @@
 (3) check validity of imputations; their little variability is weird.
     also plot legend.
 
-(4) dataSimulation plot: find out the quantiles of the conditional distribution and plot them in a boxplot like fashion
+(4) samplecensored option to evaluate the (censored) conditional quantiles of the distribution from which each x is drawn.
+write it such, that at each observation for which it is imputed, the density is evaluated for each entry of the quantiles provided
+by a vector. 
+this option is called by the to be written function, that visualizes x vs y with imputed data. 
+the quantile values that (4) creates shall than be visualized as horizontal |-------| Intervals e.g. 
+(0.05, 0.95) as alternative a boxplot with the respective "theoretical quantiles" of the distribution from which the imputation 
+are drawn should be plotted horizontally.
+(4.1) Since y is an explanatory variable for x, why not invert the axis of that plot? such that y is plotted against x 
+
+(5) testthat devtools, unittests.
