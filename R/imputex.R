@@ -12,9 +12,6 @@ W <- function(data, indicator){ # function name als handlungsanweisung formulier
   return(list(obs = df_obs, cens = df_cens))
 }
 
-
-
-# Algorithm --------------------------------------------------------------------
 #' Title
 #'
 #' @Description
@@ -43,8 +40,8 @@ imputex <- function(xmu_formula,
                     censtype,
                     ...)
 {
-  if(!is.data.frame(data)){ #| is.empty(d)
-    stop('data must be data.frame')
+  if(!(is.data.frame(data) && !nrow(data) == 0)){
+    stop('data must be non empty data.frame')
   }
 
   if(!((is.character(indicator)) & (indicator %in% names(data)))){
@@ -97,23 +94,23 @@ imputex <- function(xmu_formula,
     bootformula <- as.formula(paste(names(boot)[i], '~',
                                     as.character(as.vector(xmu_formula)[3]),
                                     sep = ''))
-    bootmodel[[i]] <- gamlss(
-      formula = bootformula,
-      sigma_formula = xsigma_formula,
-      nu_formula = xnu_formula,
-      xtau_formula = xtau_formula,
-      family = xfamily,
-      data = boot,...)
+    bootmodel[[i]] <- gamlss(formula = bootformula,
+                             sigma_formula = xsigma_formula,
+                             nu_formula = xnu_formula,
+                             xtau_formula = xtau_formula,
+                             family = xfamily,
+                             data = boot,
+                             ...
+    )
 
     # Simulate data from the corresponding fitted distribution.
 
     imputecandidate <- names(boot)[i]
-    imputemat[[imputecandidate]] = samplecensored(
-      object = bootmodel[[i]],
-      censtype,
-      predictdata = Wdat$cens,
-      censor,
-      fitdata = boot
+    imputemat[[imputecandidate]] = samplecensored(object = bootmodel[[i]],
+                                                  censtype,
+                                                  predictdata = Wdat$cens,
+                                                  censor,
+                                                  fitdata = boot
     )
   }
   imputemat$imputedx <- apply(imputemat, MARGIN = 1, mean)
@@ -122,7 +119,14 @@ imputex <- function(xmu_formula,
   Wdat$cens[censor] = imputemat$imputedx
   fulldata = rbind(Wdat$obs,Wdat$cens)
 
-  return(list(imputations = imputemat, fulldata = fulldata)) # edit output format!
-}
+  # variability of imputed vectors
+  imputevariance = apply(imputemat[,-ncol(imputemat)], MARGIN = 1, FUN = var)
 
+  return(list(
+    imputations = imputemat, # contains imputed vector. ggf seperat
+    fulldata = fulldata,
+    imputevariance = imputevariance,
+    imputeN = nrow(imputemat)
+  )) # edit output format!
+}
 
