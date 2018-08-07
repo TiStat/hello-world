@@ -13,13 +13,14 @@ by a vector.
 this option is called by the to be written function, that visualizes x vs y with imputed data. 
 the quantile values that (4) creates shall than be visualized as horizontal |-------| Intervals e.g. 
 (0.05, 0.95) as alternative a boxplot with the respective "theoretical quantiles" of the distribution from which the imputation 
-are drawn should be plotted horizontally.
+are drawn should be plotted horizontally. 
+CAREFULL, when implementing censtype = 'interval', quantiles become ambigous!
 (4.1) Since y is an explanatory variable for x, why not invert the axis of that plot? such that y is plotted against x 
 
 (5) testthat devtools, unittests.
 (5.1) family_fun is func a valid! string?
 
-(6) samplecensored, censtype = 'interval' branch
+(6) samplecensored, censtype = 'interval' branch SEE (4)!!! ambiguity with quantiles!
 
 (7) 'censtype' in abuse of notation is also missing
 
