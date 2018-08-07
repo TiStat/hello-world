@@ -1,4 +1,3 @@
-
 #' Title
 #'
 #' @param ymu_formula
@@ -49,3 +48,6 @@ fitfull = function(ymu_formula,
                 ydata = imputation$fulldata )
 }
 
+
+# this is a funny function
+mean(c(1,2,3))
