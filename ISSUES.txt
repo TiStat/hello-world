@@ -1,0 +1,9 @@
+(1) multiple columns to impute; make an imputation hirarchy
+
+(2) y fit + variability of imputations
+
+(2.1) yfit adjusted gamlss covariate plot with confidence bands
+
+(3) check validity of imputations; their little variability is weird.
+
+(4) dataSimulation plot: find out the quantiles of the conditional distribution and plot them in a boxplot like fashion
