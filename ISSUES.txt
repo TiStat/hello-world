@@ -21,3 +21,5 @@ are drawn should be plotted horizontally.
 
 (6) samplecensored, censtype = 'interval' branch
 
+(7) 'censtype' in abuse of notation is also missing
+
