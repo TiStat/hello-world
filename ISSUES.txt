@@ -17,5 +17,7 @@ are drawn should be plotted horizontally.
 (4.1) Since y is an explanatory variable for x, why not invert the axis of that plot? such that y is plotted against x 
 
 (5) testthat devtools, unittests.
+(5.1) family_fun is func a valid! string?
 
 (6) samplecensored, censtype = 'interval' branch
+
