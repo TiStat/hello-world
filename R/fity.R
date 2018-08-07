@@ -49,7 +49,4 @@ fitfull = function(ymu_formula,
 }
 
 
-# this is a funny function
-mean(c(1,2,3))
 
-sd(c(1,2,3))
