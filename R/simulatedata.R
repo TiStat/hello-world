@@ -84,8 +84,18 @@ run <- function(censtype,
                color = 'red') +
     geom_point(data = data$truedata[data$truedata[indicator] == 1, ],
                aes(y = y, x = x), color = 'green')
+
   print(p)
-  return(list(data = data, imputex =  d2))
+
+  # fity = fitfull(ymu_formula = y~x1, # hard coded!
+  #                ysigma_formula = y~x2,
+  #                yfamily= NO(link= 'identity'),
+  #                xmu_formula = x1~y,
+  #                xfamily = NO(link = 'identity'),
+  #                data = d2$fulldata,
+  #                indicator = 'inticator',
+  #                censtype = 'right')
+  return(list(data = data, imputex =  d2)) #, fit = fity ))
 }
 
 r = run(
