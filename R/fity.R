@@ -1,4 +1,4 @@
-#' Title
+#' @title [Add title here]
 #'
 #' @param ymu_formula
 #' @param ysigma_formula
@@ -47,6 +47,5 @@ fitfull = function(ymu_formula,
                 family = yfamily,
                 ydata = imputation$fulldata )
 }
-
 
 

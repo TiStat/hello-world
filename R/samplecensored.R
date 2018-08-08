@@ -1,4 +1,4 @@
-#' Title Evaluate gamlss family functions from gamlss object
+#' @title  Evaluate gamlss family functions from gamlss object
 #' @description Function that, given a "gamlss" object, evaluates the
 #'   distribution under predicted parameters of the provided dataframe
 #'   "predictdata".
@@ -50,7 +50,7 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
   return(do.call(f_fun, param))
   }
 
-# Beispiel für die error message
+# Beispiel f?r die error message
 # family_fun(gamlssF, func = 'q',predictdata = predict.df, x = 0)
 # family_fun(gamlssF, func = 'q',predictdata = predict.df, p = 0.5)
 
@@ -64,12 +64,10 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 #' @param fitdata dataframe. The orignal Dataset upon which gamlss was fitted
 #' @param censor character. Name of the to be predicted (damaged) column in predictdata.
 #' is only required if censtype is NOT 'missing'.
-#' @param quantiles vector. Containing the values, at which the quantiles of the
-#' estimated conditional distribution of the imputed x (from which the
-#' imputations are drawn also), shall be evaluated. Default is FALSE.
-#' @return vector. the
 
-samplecensored = function(object, censtype, fitdata, predictdata, censor){  # predictdata is W$obs/W$mis, an denen die fitted values predicted werden, um anschließend p auszuwerten
+#' @return
+samplecensored = function(object, censtype, predictdata, fitdata, censor){  # predictdata is W$obs/W$mis, an denen die fitted values predicted werden, um anschlie?end p auszuwerten
+
   if(censtype == 'missing'){
     return(family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)))
 
