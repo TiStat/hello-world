@@ -44,7 +44,7 @@ imputex <- function(xmu_formula,
     stop('data must be non empty data.frame')
   }
 
-  if(!((is.character(indicator)) & (indicator %in% names(data)))){
+  if(!(is.character(indicator) && indicator %in% names(data))){
     stop('indicator must be a column name in data')
   }
 
