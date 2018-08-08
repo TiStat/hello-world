@@ -56,6 +56,7 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 # family_fun(gamlssF, func = 'q',predictdata = predict.df, p = 0.5)
 
 
+#' @title Inverse sampling - GAMLSS
 #' @description Inverse sampling of censored variables, to impute only valid observations
 #' conditional on the respective fit
 #' @param object gamlss. Fitted model whose parameters are predicted for predictdata.
