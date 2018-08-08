@@ -17,7 +17,7 @@
 #'
 #' @return Depending on the choice of func, the respective vector of
 #'   (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned
-family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
+family_fun <- function(object, func, predictdata, fitdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
 
   # find the correct family function to evaluate
   fam_name = object$family[1]
@@ -47,7 +47,7 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
     stop("One of x,q,p,n,... arguments doesn't match with the distributional function
          (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
   }
-  return(do.call(f_fun, param))
+  return(draw = do.call(f_fun, param))
   }
 
 # Beispiel für die error message
@@ -59,32 +59,55 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 #' conditional on the respective fit
 #' @param object gamlss. Fitted model whose parameters are predicted for predictdata.
 #' @param censtype chr. specifies the type of censoring, for which is imputed
-#' @param predictdata dataframe. predictdata of the censored observations, for which
-#'   imputations are drawn
+#' @param predictdata dataframe. predictdata of the missing/censored observations, for which
+#' imputations are drawn
 #' @param fitdata dataframe. The orignal Dataset upon which gamlss was fitted
 #' @param censor character. Name of the to be predicted (damaged) column in predictdata.
 #' is only required if censtype is NOT 'missing'.
-#' @return
-samplecensored = function(object, censtype, predictdata, fitdata, censor){  # predictdata is W$obs/W$mis, an denen die fitted values predicted werden, um anschließend p auszuwerten
+#' @param quantiles vector. Containing the values, at which the quantiles of the
+#' estimated conditional distribution of the imputed x (from which the
+#' imputations are drawn also), shall be evaluated. Default is FALSE.
+#' @return vector. the
+
+samplecensored = function(object, censtype, fitdata, predictdata, censor){  # predictdata is W$obs/W$mis, an denen die fitted values predicted werden, um anschließend p auszuwerten
   if(censtype == 'missing'){
-    return(family_fun(object, func = 'r', predictdata = predictdata, n = nrow(predictdata), fitdata = fitdata))
+    return(family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)))
 
   }else if(censtype == 'right'){
-    pindex = family_fun(object, func='p', predictdata = predictdata, q= predictdata[[censor]],  fitdata = fitdata)
+    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
     psample = runif(n = nrow(predictdata), min = pindex, max = 1)
-    return(family_fun(object, func =  'q', predictdata = predictdata, p = psample,  fitdata = fitdata))
+    return(family_fun(object, func =  'q', fitdata, predictdata, p = psample))
 
   }else if (censtype == 'left'){
-    pindex = family_fun(object, func = 'p', predictdata = predictdata , q=predictdata[[censor]],  fitdata = fitdata)
+    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
     psample = runif(n = nrow(predictdata), min = 0, max = pindex)
-    return(family_fun(object, func = 'q',predictdata = predictdata, p = psample,  fitdata = fitdata))
+    return(family_fun(object, func = 'q', fitdata, predictdata, p = psample))
 
   # }else if (censtype == 'interval'){ input format noch unklar
-
   }else{
-    stop('invalid method')
+    stop('invalid censtype')
   }
 }
+
+#' Title
+#'
+#' @param quantiles vector. With desired quantiles
+#' @param object gamlss object
+#' @param fitdata
+#' @param predictdata
+#'
+#' @return
+impquantiles <- function(quantiles, object, fitdata, predictdata) {
+  # rowwise repeat the vector by the length of imputations to use family_fun
+  dquantiles = data.frame(matrix(
+    quantiles,
+    byrow = T,
+    nrow = nrow(predictdata),
+    ncol = length(quantiles)
+  ))
+  return(family_fun(object, func = 'p', predictdata, fitdata, q = dquantiles))
+}
+
 
 
 
