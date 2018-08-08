@@ -2,8 +2,6 @@
 # library('ggplot2')
 library(gamlss)
 
-
-#' @title Imputing censored covariates with distributional regression - GAMLSS
 #'
 #' @Description The MICE Algorithm (Multiple Imputation by Chained Equations) is a method to 
 #' impute missing data. This function uses this algorithm for imputing censored data, using inverse
@@ -33,11 +31,11 @@ imputex <- function(xmu_formula,
                     censtype,
                     ...)
 {
-  if(!is.data.frame(data)){ #| is.empty(d)
-    stop('data must be data.frame')
+  if(!(is.data.frame(data) && !nrow(data) == 0)){
+    stop('data must be non empty data.frame')
   }
 
-  if(!((is.character(indicator)) & (indicator %in% names(data)))){
+  if(!(is.character(indicator) && indicator %in% names(data))){
     stop('indicator must be a column name in data')
   }
 
@@ -71,10 +69,12 @@ imputex <- function(xmu_formula,
   # note that these are independent draws from the same distribution. Reframe to m vectors:
   draws <- family_fun(object = obsmodel,
                       func = "r",
+                      fitdata = Wdat$obs,
                       predictdata = Wdat$obs,
-                      n = nrow(Wdat$obs)*nrow(Wdat$cens),
-                      fitdata = Wdat$obs)
-  # Reframe draws
+                      n = nrow(Wdat$obs)*nrow(Wdat$cens))
+
+
+
   draws <- data.frame(matrix(draws,
                              nrow = nrow(Wdat$obs),
                              ncol = nrow(Wdat$cens)))
@@ -97,31 +97,34 @@ imputex <- function(xmu_formula,
     bootformula <- as.formula(paste(names(boot)[i], '~',
                                     as.character(as.vector(xmu_formula)[3]),
                                     sep = ''))
-    
-    bootmodel[[i]] <- gamlss(
-      formula = bootformula,
-      sigma_formula = xsigma_formula,
-      nu_formula = xnu_formula,
-      xtau_formula = xtau_formula,
-      family = xfamily,
-      data = boot,...)
+
+    bootmodel[[i]] <- gamlss(formula = bootformula,
+                             sigma_formula = xsigma_formula,
+                             nu_formula = xnu_formula,
+                             xtau_formula = xtau_formula,
+                             family = xfamily,
+                             data = boot,
+                             ...)
 
     # Simulate data from the corresponding fitted distribution.
     imputecandidate <- names(boot)[i]
-    imputemat[[imputecandidate]] = samplecensored(
-      object = bootmodel[[i]],
-      censtype,
-      predictdata = Wdat$cens,
-      censor,
-      fitdata = boot
-    )
+    imputemat[[imputecandidate]] = samplecensored(object = bootmodel[[i]],
+                                                  censtype,
+                                                  fitdata = boot,
+                                                  predictdata = Wdat$cens,
+                                                  censor)
   }
   imputemat$imputedx <- apply(imputemat, MARGIN = 1, mean)
 
   # complete data with imputations
+
+
   Wdat$cens[censor] <- imputemat$imputedx
   fulldata <- rbind(Wdat$obs,Wdat$cens)
   
+  # variability of imputed vectors
+  imputevariance = apply(imputemat[,-ncol(imputemat)], MARGIN = 1, FUN = var)
+
   mcall <- match.call()
   
   result <- list(imputations = imputemat,
@@ -129,10 +132,12 @@ imputex <- function(xmu_formula,
                  mcall = mcall,
                  number_of_imputations = nrow(Wdat$cens),
                  censoring_type = censtype,
-                 number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens))
+                 number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens),
+                 imputevariance = imputevariance)
   
   #  Create a class for this kind of result 
    class(result) <- "imputed"
    
-  return(result) # edit output format!
+  return(result) 
 }
+

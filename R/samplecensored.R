@@ -55,37 +55,55 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 # family_fun(gamlssF, func = 'q',predictdata = predict.df, p = 0.5)
 
 
-
 #' @description Inverse sampling of censored variables, to impute only valid observations
 #' conditional on the respective fit
 #' @param object gamlss. Fitted model whose parameters are predicted for predictdata.
 #' @param censtype chr. specifies the type of censoring, for which is imputed
-#' @param predictdata dataframe. predictdata of the censored observations, for which
-#'   imputations are drawn
+#' @param predictdata dataframe. predictdata of the missing/censored observations, for which
+#' imputations are drawn
 #' @param fitdata dataframe. The orignal Dataset upon which gamlss was fitted
 #' @param censor character. Name of the to be predicted (damaged) column in predictdata.
 #' is only required if censtype is NOT 'missing'.
+
 #' @return
 samplecensored = function(object, censtype, predictdata, fitdata, censor){  # predictdata is W$obs/W$mis, an denen die fitted values predicted werden, um anschlie?end p auszuwerten
+
   if(censtype == 'missing'){
-    return(family_fun(object, func = 'r', predictdata = predictdata, n = nrow(predictdata), fitdata = fitdata))
+    return(family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)))
 
   }else if(censtype == 'right'){
-    pindex = family_fun(object, func='p', predictdata = predictdata, q= predictdata[[censor]],  fitdata = fitdata)
+    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
     psample = runif(n = nrow(predictdata), min = pindex, max = 1)
-    return(family_fun(object, func =  'q', predictdata = predictdata, p = psample,  fitdata = fitdata))
+    return(family_fun(object, func =  'q', fitdata, predictdata, p = psample))
 
   }else if (censtype == 'left'){
-    pindex = family_fun(object, func = 'p', predictdata = predictdata , q=predictdata[[censor]],  fitdata = fitdata)
+    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
     psample = runif(n = nrow(predictdata), min = 0, max = pindex)
-    return(family_fun(object, func = 'q',predictdata = predictdata, p = psample,  fitdata = fitdata))
+    return(family_fun(object, func = 'q', fitdata, predictdata, p = psample))
 
   # }else if (censtype == 'interval'){ input format noch unklar
-
   }else{
-    stop('invalid method')
+    stop('invalid censtype')
   }
 }
+
+#' @param quantiles vector. With desired quantiles
+#' @param object gamlss object
+#' @param fitdata
+#' @param predictdata
+#'
+#' @return
+impquantiles <- function(quantiles, object, fitdata, predictdata) {
+  # rowwise repeat the vector by the length of imputations to use family_fun
+  dquantiles = data.frame(matrix(
+    quantiles,
+    byrow = T,
+    nrow = nrow(predictdata),
+    ncol = length(quantiles)
+  ))
+  return(family_fun(object, func = 'p', fitdata, predictdata, q = dquantiles))
+}
+
 
 
 
