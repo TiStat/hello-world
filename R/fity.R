@@ -1,4 +1,4 @@
-#' Title
+#' @title [Add title here]
 #'
 #' @param ymu_formula
 #' @param ysigma_formula

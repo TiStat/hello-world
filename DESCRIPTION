@@ -1,6 +1,6 @@
 Package: imputegamlss
 Type: Package
-Title: Impute censored covariates with distributional regression - gamlss
+Title: Imputing censored covariates with distributional regression - gamlss
 Version: 0.1.0
 Authors@R: as.person(c(
     "Tim Ruhkopf <tim.ruhkopf@outlook.de [aut, cre]",
