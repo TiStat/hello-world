@@ -69,9 +69,9 @@ imputex <- function(xmu_formula,
   # note that these are independent draws from the same distribution. Reframe to m vectors:
   draws <- family_fun(object = obsmodel,
                       func = "r",
+                      fitdata = Wdat$obs,
                       predictdata = Wdat$obs,
-                      n = nrow(Wdat$obs)*nrow(Wdat$cens),
-                      fitdata = Wdat$obs)
+                      n = nrow(Wdat$obs)*nrow(Wdat$cens))
   draws <- data.frame(matrix(draws,
                              nrow = nrow(Wdat$obs),
                              ncol = nrow(Wdat$cens)))
@@ -108,10 +108,9 @@ imputex <- function(xmu_formula,
     imputecandidate <- names(boot)[i]
     imputemat[[imputecandidate]] = samplecensored(object = bootmodel[[i]],
                                                   censtype,
+                                                  fitdata = boot,
                                                   predictdata = Wdat$cens,
-                                                  censor,
-                                                  fitdata = boot
-    )
+                                                  censor)
   }
   imputemat$imputedx <- apply(imputemat, MARGIN = 1, mean)
 
