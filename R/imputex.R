@@ -20,9 +20,9 @@ library(gamlss)
 #' @param xtau_formula
 #' @param xfamily gamlss family object.
 #' @param ... additional arguments passed in the respective gamlss fit # check if these arguments are available in gamlss
-
 #'
 #' @return
+
 imputex <- function(xmu_formula,
                     xsigma_formula = ~1,
                     xnu_formula = ~1,
@@ -132,28 +132,7 @@ imputex <- function(xmu_formula,
                  number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens))
   
   #  Create a class for this kind of result 
-   class(result) <- "impute_class"
+   class(result) <- "imputed"
    
   return(result) # edit output format!
-  
-  
 }
-
-d2 <- imputex(data= data,
-             xmu_formula= x1~y+x2,
-             xsigma_formula = ~1,
-             xnu_formula = ~1,
-             xtau_formula = ~1,
-             xfamily = NO(mu.link = 'identity'),
-             indicator = "indicator",
-             censtype = 'right')
-
-# Mit ellipsis ge?ndert
-d3 <- imputex(data= data,
-             xmu_formula= x1~y+x2,
-             xsigma_formula = ~1,
-             xnu_formula = ~1,
-             xtau_formula = ~1,
-             xfamily = NO(mu.link = 'identity'),
-             indicator = "indicator",
-             censtype = 'left',method = CG())
