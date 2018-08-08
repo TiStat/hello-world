@@ -17,7 +17,7 @@
 #'
 #' @return Depending on the choice of func, the respective vector of
 #'   (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned
-family_fun <- function(object, func, predictdata, fitdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
+family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
 
   # find the correct family function to evaluate
   fam_name = object$family[1]
@@ -47,7 +47,7 @@ family_fun <- function(object, func, predictdata, fitdata ,p = NULL, q = NULL, x
     stop("One of x,q,p,n,... arguments doesn't match with the distributional function
          (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
   }
-  return(draw = do.call(f_fun, param))
+  return(do.call(f_fun, param))
   }
 
 # Beispiel für die error message
@@ -89,8 +89,6 @@ samplecensored = function(object, censtype, fitdata, predictdata, censor){  # pr
   }
 }
 
-#' Title
-#'
 #' @param quantiles vector. With desired quantiles
 #' @param object gamlss object
 #' @param fitdata
@@ -105,7 +103,7 @@ impquantiles <- function(quantiles, object, fitdata, predictdata) {
     nrow = nrow(predictdata),
     ncol = length(quantiles)
   ))
-  return(family_fun(object, func = 'p', predictdata, fitdata, q = dquantiles))
+  return(family_fun(object, func = 'p', fitdata, predictdata, q = dquantiles))
 }
 
 
