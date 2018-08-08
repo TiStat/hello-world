@@ -7,6 +7,7 @@
 #'a dependent variable drawn
 #'@return Dataframe, containing covariates, censor indicator and the logit value
 #'pi which is modeled as surrogate for binary decision on Breastcancer
+#' @export
 simulateData = function(method,
                         n,
                         ymu.formula = NULL,

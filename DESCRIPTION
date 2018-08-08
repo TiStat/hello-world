@@ -1,12 +1,11 @@
-Package: imputegamlss
+Package: Imputegamlss
 Type: Package
 Title: Imputing censored covariates with distributional regression - gamlss
 Version: 0.1.0
 Authors@R: as.person(c(
-    "Tim Ruhkopf <tim.ruhkopf@outlook.de [aut, cre]",
-    "Petros Christanas <petroschristanas@gmail.com> [aut, cre]"
+    "Tim Ruhkopf <tim.ruhkopf@outlook.de> [aut, cre]",
+    "Petros Christanas <petroschristanas@gmail.com> [aut]"
   ))
-
 Description: Impute censored covariates with distributional regression - gamlss
     uses the "mice" algorithm with gamlss to impute missing values.
     Includs estimates of the model and diagnostics about the censored 
@@ -16,4 +15,11 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     dplyr,
-    ggvis
+    ggvis,
+    ggplot2,
+    gamlss
+Suggests:
+    dplyr,
+    ggvis,
+    ggplot2,
+    gamlss

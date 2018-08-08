@@ -17,6 +17,7 @@
 #'
 #' @return Depending on the choice of func, the respective vector of
 #'   (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned
+#' @export
 family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
 
   # find the correct family function to evaluate
@@ -64,8 +65,8 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 #' @param fitdata dataframe. The orignal Dataset upon which gamlss was fitted
 #' @param censor character. Name of the to be predicted (damaged) column in predictdata.
 #' is only required if censtype is NOT 'missing'.
-
-#' @return
+#' @return WRITE HERE WHAT TO BE RETURNED
+#' @export
 samplecensored = function(object, censtype, predictdata, fitdata, censor){  # predictdata is W$obs/W$mis, an denen die fitted values predicted werden, um anschlie?end p auszuwerten
 
   if(censtype == 'missing'){
@@ -92,7 +93,8 @@ samplecensored = function(object, censtype, predictdata, fitdata, censor){  # pr
 #' @param fitdata
 #' @param predictdata
 #'
-#' @return
+#' @return WRITE
+#' @export
 impquantiles <- function(quantiles, object, fitdata, predictdata) {
   # rowwise repeat the vector by the length of imputations to use family_fun
   dquantiles = data.frame(matrix(

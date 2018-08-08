@@ -15,7 +15,8 @@
 #' @param censtype
 #' @param ...
 #'
-#' @return
+#' @return Fitted y-model
+#' @export
 fitfull = function(ymu_formula,
                    ysigma_formula,
                    ynu_formula,
@@ -39,7 +40,7 @@ fitfull = function(ymu_formula,
                        indicator,
                        censtype,
                        ...)
-
+  
   yfit = gamlss(formual = ymu_formula,
                 sigma.formula = sigma_formula,
                 nu.formula = ynu_formula,

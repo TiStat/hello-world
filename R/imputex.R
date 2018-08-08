@@ -19,8 +19,8 @@ library(gamlss)
 #' @param xfamily gamlss family object.
 #' @param ... additional arguments passed in the respective gamlss fit # check if these arguments are available in gamlss
 #'
-#' @return
-
+#' @return WRITE HERE WHAT TO BE RETURNED
+#' @export
 imputex <- function(xmu_formula,
                     xsigma_formula = ~1,
                     xnu_formula = ~1,

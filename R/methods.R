@@ -1,5 +1,11 @@
 # Create prin method for "imputed" class
-print.impute_class <- function(x){
+#' Title
+#'
+#' @param x 
+#'
+#' @return What should be printed for "imputed" class object
+#' @export
+print.imputed <- function(x){
   
   mcall <- noquote(capture.output(x$mcall)) #call
   m <- x$number_of_imputations
@@ -15,7 +21,15 @@ print.impute_class <- function(x){
 
 
 # Create summary method for "imputed" class ------------------------------------------------
-summary.impute_class <- function(x) {
+#' Title
+#'
+#' @param x 
+#'
+#' @return
+#' @export
+#'
+#' @examples 
+summary.imputed <- function(x) {
   
   m <- x$number_of_imputations #number of imputations
   n <- x$number_of_observations
