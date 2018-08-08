@@ -2,22 +2,12 @@
 # library('ggplot2')
 library(gamlss)
 
-#'@description split dataset
-#'@param data dataframe.
-#'@param indicator character. indicating the name of the missing/ (right/left)
-#' censored observation dummy variable in data
-W <- function(data, indicator){ # function name als handlungsanweisung formulieren
-  df_obs <- data[data[indicator] == 0, ]
-  df_cens <- data[data[indicator] == 1, ]
-  return(list(obs = df_obs, cens = df_cens))
-}
 
-
-
-# Algorithm --------------------------------------------------------------------
-#' Title
+#' @title Imputing censored covariates with distributional regression - GAMLSS
 #'
-#' @Description
+#' @Description The MICE Algorithm (Multiple Imputation by Chained Equations) is a method to 
+#' impute missing data. This function uses this algorithm for imputing censored data, using inverse
+#' sampling to utilize the additional information.
 #'
 #' @param data data.frame containing a dummy censoring indicator, 0 if not
 #'   indicator, 1 if indicator
@@ -51,11 +41,21 @@ imputex <- function(xmu_formula,
     stop('indicator must be a column name in data')
   }
 
- 
+  #'@description split dataset
+  #'@param data dataframe.
+  #'@param indicator character. indicating the name of the missing/ (right/left)
+  #' censored observation dummy variable in data
+  W <- function(data, indicator){ # function name als handlungsanweisung formulieren
+    df_obs <- data[data[indicator] == 0, ]
+    df_cens <- data[data[indicator] == 1, ]
+    return(list(obs = df_obs, cens = df_cens))
+  }
 
   # split dataset in fully observed & missing/censored data
   Wdat <- W(data, indicator)
-  censor = as.character(xmu_formula[[2]])
+  censor <- as.character(xmu_formula[[2]])
+  
+  # Algorithm --------------------------------------------------------------------
 
   # Step 1: fit gamlss with user specified xfamily and formula on observed data
   obsmodel <- gamlss(
@@ -74,6 +74,7 @@ imputex <- function(xmu_formula,
                       predictdata = Wdat$obs,
                       n = nrow(Wdat$obs)*nrow(Wdat$cens),
                       fitdata = Wdat$obs)
+  # Reframe draws
   draws <- data.frame(matrix(draws,
                              nrow = nrow(Wdat$obs),
                              ncol = nrow(Wdat$cens)))
@@ -96,6 +97,7 @@ imputex <- function(xmu_formula,
     bootformula <- as.formula(paste(names(boot)[i], '~',
                                     as.character(as.vector(xmu_formula)[3]),
                                     sep = ''))
+    
     bootmodel[[i]] <- gamlss(
       formula = bootformula,
       sigma_formula = xsigma_formula,
@@ -105,7 +107,6 @@ imputex <- function(xmu_formula,
       data = boot,...)
 
     # Simulate data from the corresponding fitted distribution.
-
     imputecandidate <- names(boot)[i]
     imputemat[[imputecandidate]] = samplecensored(
       object = bootmodel[[i]],
@@ -118,22 +119,21 @@ imputex <- function(xmu_formula,
   imputemat$imputedx <- apply(imputemat, MARGIN = 1, mean)
 
   # complete data with imputations
-  Wdat$cens[censor] = imputemat$imputedx
-  fulldata = rbind(Wdat$obs,Wdat$cens)
+  Wdat$cens[censor] <- imputemat$imputedx
+  fulldata <- rbind(Wdat$obs,Wdat$cens)
   
-  mcall = match.call()
+  mcall <- match.call()
   
-  # Try global assignment (with cautions!)
-  result <<- list(imputations = imputemat,
+  result <- list(imputations = imputemat,
                  fulldata = fulldata,
                  mcall = mcall,
                  number_of_imputations = nrow(Wdat$cens),
                  censoring_type = censtype,
                  number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens))
   
-  #  Create a class for this kind of result (Caution with global assignment!)
-   class(result) <<- "impute_class"
-
+  #  Create a class for this kind of result 
+   class(result) <- "impute_class"
+   
   return(result) # edit output format!
   
   
@@ -156,4 +156,4 @@ d3 <- imputex(data= data,
              xtau_formula = ~1,
              xfamily = NO(mu.link = 'identity'),
              indicator = "indicator",
-             censtype = 'right',method = CG())
+             censtype = 'left',method = CG())
