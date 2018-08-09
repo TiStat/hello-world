@@ -51,11 +51,6 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
   return(do.call(f_fun, param))
   }
 
-# Beispiel f?r die error message
-# family_fun(gamlssF, func = 'q',predictdata = predict.df, x = 0)
-# family_fun(gamlssF, func = 'q',predictdata = predict.df, p = 0.5)
-
-
 #' @title Inverse sampling - GAMLSS
 #' @description Inverse sampling of censored variables, to impute only valid observations
 #' conditional on the respective fit
