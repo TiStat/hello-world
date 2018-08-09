@@ -71,18 +71,11 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 samplecensored = function(object, censtype, predictdata, fitdata, censor, quantiles = c(0.05, 0.95)){
 
   if(censtype == 'missing'){
-    return(family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)))
-
-  }else if(censtype == 'right'){
-    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
-    psample = runif(n = nrow(predictdata), min = pindex, max = 1)
-
-    # (quantiles)
-    quantprob = as.data.frame(matrix(rep(quantiles, times = length(pindex)), byrow = TRUE, nrow = length(pindex)))
-    qindex = (1-pindex)*quantprob + pindex
-
+    # qindex does not require scaling!
+    qindex = as.data.frame(matrix(rep(quantiles, times = length(predictdata)),
+                                              byrow = TRUE, nrow = length(predictdata)))
     return(list(
-      draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample),
+      draw = family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)),
       quantiles = apply(
         qindex,
         MARGIN = 2,
@@ -91,15 +84,36 @@ samplecensored = function(object, censtype, predictdata, fitdata, censor, quanti
       )
     ))
 
+  }else if(censtype == 'right'){
+    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
+    psample = runif(n = nrow(predictdata), min = pindex, max = 1)
+    draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample)
+
   }else if (censtype == 'left'){
     pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
     psample = runif(n = nrow(predictdata), min = 0, max = pindex)
-    return(family_fun(object, func = 'q', fitdata, predictdata, p = psample))
+    draw = family_fun(object, func = 'q', fitdata, predictdata, p = psample)
 
-  # }else if (censtype == 'interval'){ input format noch unklar
+  # }else if (censtype == 'interval'){ input format noch unklar:
+  # ggf indicator = c('start', 'stop') bei fnc call
   }else{
     stop('invalid censtype')
   }
+
+  # quantiles
+  quantprob = as.data.frame(matrix(rep(quantiles, times = length(pindex)),
+                                   byrow = TRUE, nrow = length(pindex)))
+  qindex = (1-pindex)*quantprob + pindex
+
+  return(list(
+    draw = draw,
+    quantiles = apply(
+      qindex,
+      MARGIN = 2,
+      FUN = function(q)
+        family_fun(object, func = 'q', fitdata, predictdata, p = q)
+    )
+  ))
 }
 
 #' @param quantiles vector. With desired quantiles
