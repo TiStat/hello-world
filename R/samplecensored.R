@@ -77,7 +77,7 @@ samplecensored = function(object, censtype, predictdata, fitdata, censor, quanti
     pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
     psample = runif(n = nrow(predictdata), min = pindex, max = 1)
 
-    # (quatniles)
+    # (quantiles)
     quantprob = as.data.frame(matrix(rep(quantiles, times = length(pindex)), byrow = TRUE, nrow = length(pindex)))
     qindex = (1-pindex)*quantprob + pindex
 

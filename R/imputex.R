@@ -47,7 +47,7 @@ imputex <- function(xmu_formula,
   # split dataset in fully observed & missing/censored data
   Wdat <- W(data, indicator)
   censor <- as.character(xmu_formula[[2]])
-  
+
   # Algorithm --------------------------------------------------------------------
 
   # Step 1: fit gamlss with user specified xfamily and formula on observed data
@@ -84,6 +84,7 @@ imputex <- function(xmu_formula,
   # step 3 estimate param. on each respective set {x*boot(j), W_obs} for all j
   bootmodel <- list()
   imputemat <- data.frame(X1 = vector(length= nrow(Wdat$cens)))
+  imputeq = list()
   for (i in 1:ncol(draws)){
     # iterate only over the names of booted vectors.
 
@@ -103,36 +104,42 @@ imputex <- function(xmu_formula,
 
     # Simulate data from the corresponding fitted distribution.
     imputecandidate <- names(boot)[i]
-    imputemat[[imputecandidate]] = samplecensored(object = bootmodel[[i]],
-                                                  censtype,
-                                                  fitdata = boot,
-                                                  predictdata = Wdat$cens,
-                                                  censor)
+    impute = samplecensored(object = bootmodel[[i]],
+                            censtype,
+                            fitdata = boot,
+                            predictdata = Wdat$cens,
+                            censor)
+    imputemat[[imputecandidate]] = impute$draw
+    imputeq[[i]] = impute$quantiles
   }
+  # imputed vector
   imputemat$imputedx <- apply(imputemat, MARGIN = 1, mean)
 
   # complete data with imputations
-
-
   Wdat$cens[censor] <- imputemat$imputedx
   fulldata <- rbind(Wdat$obs,Wdat$cens)
-  
+
   # variability of imputed vectors
   imputevariance = apply(imputemat[,-ncol(imputemat)], MARGIN = 1, FUN = var)
 
+  # average imputed quantiles
+  A = array(unlist(imputeq), dim = c(nrow(imputeq[[1]]), ncol(imputeq[[1]]), length(imputeq)))
+  impquantiles = apply(A, c(1,2), mean)
+
   mcall <- match.call()
-  
+
   result <- list(imputations = imputemat,
                  fulldata = fulldata,
                  mcall = mcall,
                  number_of_imputations = nrow(Wdat$cens),
                  censoring_type = censtype,
                  number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens),
-                 imputevariance = imputevariance)
-  
-  #  Create a class for this kind of result 
+                 imputevariance = imputevariance,
+                 impquantiles = impquantiles)
+
+  #  Create a class for this kind of result
    class(result) <- "imputed"
-   
-  return(result) 
+
+  return(result)
 }
 
