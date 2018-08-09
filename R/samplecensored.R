@@ -68,7 +68,7 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 #' is only required if censtype is NOT 'missing'.
 #' @return WRITE HERE WHAT TO BE RETURNED
 #' @export
-samplecensored = function(object, censtype, predictdata, fitdata, censor, quantiles = c(0.05, 0.95)){  # predictdata is W$obs/W$mis, an denen die fitted values predicted werden, um anschlie?end p auszuwerten
+samplecensored = function(object, censtype, predictdata, fitdata, censor, quantiles = c(0.05, 0.95)){
 
   if(censtype == 'missing'){
     return(family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)))
@@ -78,11 +78,18 @@ samplecensored = function(object, censtype, predictdata, fitdata, censor, quanti
     psample = runif(n = nrow(predictdata), min = pindex, max = 1)
 
     # (quatniles)
-    quantprob = matrix(rep(quantiles, times = length(pindex)), byrow = TRUE, nrow = length(pindex))
-    qindex = (1-pindex)*quantprob + (1-pindex)
-    family_fun(object, func = 'q', fitdata, predictdata, p = qindex)
+    quantprob = as.data.frame(matrix(rep(quantiles, times = length(pindex)), byrow = TRUE, nrow = length(pindex)))
+    qindex = (1-pindex)*quantprob + pindex
 
-    return(list(draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample), quantiles = quantiles))
+    return(list(
+      draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample),
+      quantiles = apply(
+        qindex,
+        MARGIN = 2,
+        FUN = function(q)
+          family_fun(object, func = 'q', fitdata, predictdata, p = q)
+      )
+    ))
 
   }else if (censtype == 'left'){
     pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
