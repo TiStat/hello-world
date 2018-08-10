@@ -85,6 +85,7 @@ imputex <- function(xmu_formula,
   bootmodel <- list()
   imputemat <- data.frame(X1 = vector(length= nrow(Wdat$cens)))
   imputeq = list()
+  quantil = c(0.05, 0.25, 0.5, 0.75, 0.95)
   for (i in 1:ncol(draws)){
     # iterate only over the names of booted vectors.
 
@@ -108,7 +109,8 @@ imputex <- function(xmu_formula,
                             censtype,
                             fitdata = boot,
                             predictdata = Wdat$cens,
-                            censor)
+                            censor,
+                            quantil)
     imputemat[[imputecandidate]] = impute$draw
     imputeq[[i]] = impute$quantiles
   }
@@ -124,7 +126,8 @@ imputex <- function(xmu_formula,
 
   # average imputed quantiles
   A = array(unlist(imputeq), dim = c(nrow(imputeq[[1]]), ncol(imputeq[[1]]), length(imputeq)))
-  impquantiles = apply(A, c(1,2), mean)
+  impquantiles = as.data.frame(apply(A, c(1,2), mean))
+  colnames(impquantiles) = c('q5','q25','q50', 'q75', 'q95' )
 
   mcall <- match.call()
 

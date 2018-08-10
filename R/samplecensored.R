@@ -63,7 +63,7 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
 #' is only required if censtype is NOT 'missing'.
 #' @return WRITE HERE WHAT TO BE RETURNED
 #' @export
-samplecensored = function(object, censtype, predictdata, fitdata, censor, quantiles = c(0.05, 0.95)){
+samplecensored = function(object, censtype, predictdata, fitdata, censor, quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95)){
 
   if(censtype == 'missing'){
     # qindex does not require scaling!
@@ -99,36 +99,18 @@ samplecensored = function(object, censtype, predictdata, fitdata, censor, quanti
   quantprob = as.data.frame(matrix(rep(quantiles, times = length(pindex)),
                                    byrow = TRUE, nrow = length(pindex)))
   qindex = (1-pindex)*quantprob + pindex
-
+  quantiles = apply(
+    qindex,
+    MARGIN = 2,
+    FUN = function(q)
+      family_fun(object, func = 'q', fitdata, predictdata, p = q)
+  )
+  colnames(quantiles) = quantiles
   return(list(
     draw = draw,
-    quantiles = apply(
-      qindex,
-      MARGIN = 2,
-      FUN = function(q)
-        family_fun(object, func = 'q', fitdata, predictdata, p = q)
-    )
+    quantiles = quantiles
   ))
 }
-
-#' @param quantiles vector. With desired quantiles
-#' @param object gamlss object
-#' @param fitdata
-#' @param predictdata
-#'
-#' @return WRITE
-#' @export
-impquantiles <- function(quantiles, object, fitdata, predictdata) {
-  # rowwise repeat the vector by the length of imputations to use family_fun
-  dquantiles = data.frame(matrix(
-    quantiles,
-    byrow = T,
-    nrow = nrow(predictdata),
-    ncol = length(quantiles)
-  ))
-  return(family_fun(object, func = 'p', fitdata, predictdata, q = dquantiles))
-}
-
 
 
 
