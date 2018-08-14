@@ -3,14 +3,13 @@ library(testthat)
 context('evaluate family functions')
 test_that('Mismatchning arguments are stoped',{
   expect_error(family_fun(..., func = 'r', ..., p = c(...)), "One of x,q,p,n,... arguments doesn't match with the distributional function (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
+})
+
+test_that('output as expected', {
   expect_is(family_fun(..., func = 'r', n = 10), 'vector')
   expect_is(family_fun(..., func = 'p', q = c(...)), 'vector')
   expect_equal(length(family_fun(..., func = 'r', n = 10)), 10)
-})
 
-test_that('return is vector',{
-  expect_is(family_fun(...), 'vector')
-  
   # next is only valid, if func != 'r'
   expect_equal(nrow(predictdata),length(family_fun(...))) # predictdata muss hier also in der enviroment sein um getestet werden zu können
   expect_identical(family_fun(...), na.omit(family_fun(...)))
