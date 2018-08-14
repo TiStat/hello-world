@@ -1,5 +1,7 @@
 library(testthat)
 
+setwd("~/M.Sc. Applied Statistics/2. Semester/Statistical Programming with R/R-Topic/Imputegamlss/tests/testthat")
+soep<-read.table("soep.dat", header = T)
 soep$logY<-log(soep$gr.income)
 soep<-soep[soep$gr.income>0,]
 soepF<-soep[soep$gender==1,]
@@ -7,7 +9,7 @@ soepF<-soep[soep$gender==1,]
 ages<-21:80
 #Below is the data frame to predict on, not a prediction!!!
 predict.df<-data.frame(height=180, age=ages, duration=10, married=1, gender=1, german=1, abitur=1)
-
+library(gamlss)
 gamlssF<-gamlss(formula = logY~age, sigma.formula = ~age,
                 family = NO (mu.link = "log", sigma.link = "log"), data=soepF)
 
