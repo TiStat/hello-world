@@ -105,7 +105,7 @@ samplecensored = function(object, censtype, predictdata, fitdata, censor, quanti
     FUN = function(q)
       family_fun(object, func = 'q', fitdata, predictdata, p = q)
   )
-  colnames(quantiles) = quantiles
+
   return(list(
     draw = draw,
     quantiles = quantiles
