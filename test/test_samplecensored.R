@@ -1,7 +1,7 @@
 library(testthat)
 
 context('evaluate family functions')
-test_that('Mismatchning arguments are stoped',{
+test_that('Mismatching arguments are stoped',{
   expect_error(family_fun(..., func = 'r', ..., p = c(...)), "One of x,q,p,n,... arguments doesn't match with the distributional function (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
 })
 
