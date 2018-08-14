@@ -12,9 +12,12 @@ LazyData: true
 Imports:
     dplyr,
     ggplot2,
-    gamlss
+    gamlss,
+    reshape2
 Suggests:
     dplyr,
     ggplot2,
-    gamlss
+    gamlss,
+    testthat,
+    reshape2
 RoxygenNote: 6.1.0

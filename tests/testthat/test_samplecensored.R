@@ -1,18 +1,32 @@
 library(testthat)
 
+soep$logY<-log(soep$gr.income)
+soep<-soep[soep$gr.income>0,]
+soepF<-soep[soep$gender==1,]
+
+ages<-21:80
+#Below is the data frame to predict on, not a prediction!!!
+predict.df<-data.frame(height=180, age=ages, duration=10, married=1, gender=1, german=1, abitur=1)
+
+gamlssF<-gamlss(formula = logY~age, sigma.formula = ~age,
+                family = NO (mu.link = "log", sigma.link = "log"), data=soepF)
+
 context('evaluate family functions')
-test_that('Mismatching arguments are stoped',{
-  expect_error(family_fun(..., func = 'r', ..., p = c(...)), "One of x,q,p,n,... arguments doesn't match with the distributional function (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
+test_that('Test that mismatching arguments are stoped',{
+  
+  
+  
+  expect_error(family_fun(gamlssF, func = 'r',soepF, predict.df, x = 0.5))
 })
 
-test_that('output as expected', {
-  expect_is(family_fun(..., func = 'r', n = 10), 'vector')
-  expect_is(family_fun(..., func = 'p', q = c(...)), 'vector')
-  expect_equal(length(family_fun(..., func = 'r', n = 10)), 10)
+test_that('Test that output is as expected', {
+  expect_is(family_fun(gamlssF, func = 'r',soepF, predict.df, n = 10), 'numeric')
+  expect_is(family_fun(gamlssF, func = 'p',soepF, predict.df, q = c(0.5, 0.7)), 'numeric')
+  expect_equal(length(family_fun(gamlssF, func = 'r',soepF, predict.df, n = 10)), 10)
 
   # next is only valid, if func != 'r'
-  expect_equal(nrow(predictdata),length(family_fun(...))) # predictdata muss hier also in der enviroment sein um getestet werden zu können
-  expect_identical(family_fun(...), na.omit(family_fun(...)))
+  expect_equal(nrow(predict.df),length(family_fun(gamlssF, func = 'd',soepF, predict.df, x = 5))) # predictdata muss hier also in der enviroment sein um getestet werden zu können
+  expect_identical(family_fun(gamlssF, func = 'd',soepF, predict.df, x = 10), na.omit(family_fun(gamlssF, func = 'd',soepF, predict.df, x = 10))) # Diese 2 sind nicht gleich weil sie unter einem anderen Seed aufgerufen werden mit "r
 })
 
 context('evaluate inverse sampling in samplecensored')
