@@ -3,18 +3,23 @@
 library(gamlss)
 
 #' @title Imputing censored covariates - GAMLSS
-#' @description The MICE Algorithm (Multiple Imputation by Chained Equations) is a method to  impute missing data. This function uses this algorithm for imputing censored data, using inverse sampling to utilize the additional information.
-#' @param data data.frame containing a dummy censoring indicator, 0 if not indicator, 1 if indicator
-#' @param indicator character. Name of dummy column in data, which indicates the damaged observation.
-#' @param censtype character. type of the damaged observation 'missing', 'right', 'left', 'interval'
+#' @description MICE Algorithm (Multiple Imputation by Chained Equations)
+#'   adapted to impute missing & censored data. To do so, inverse sampling is
+#'   employed to ensure draws from the valid regions.
+#' @param data data.frame containing a dummy censoring indicator, 0 if not
+#'   indicator, 1 if indicator
+#' @param indicator character. Name of dummy column in data, which indicates the
+#'   damaged observation.
+#' @param censtype character. type of the damaged observation 'missing',
+#'   'right', 'left', 'interval'
 #' @param xmu_formula formula for mu
 #' @param xsigma_formula formula for sigma
 #' @param xnu_formula formula for nu
 #' @param xtau_formula formula for tau
 #' @param xfamily gamlss family object.
-#' @param ... additional arguments passed in the respective gamlss fit check if these arguments are available in gamlss
+#' @param ... additional arguments passed in all gamlss fit.
 #'
-#' @return WRITE HERE WHAT TO BE RETURNED
+#' @return 
 #' @export
 imputex <- function(xmu_formula,
                     xsigma_formula = ~1,
