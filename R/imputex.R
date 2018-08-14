@@ -32,7 +32,7 @@ imputex <- function(xmu_formula,
                     ...)
 {
   if(!(is.data.frame(data) && !nrow(data) == 0)){
-    stop('data must be non empty data.frame')
+    stop('data must be (non empty) data.frame')
   }
 
   if(!(is.character(indicator) && indicator %in% names(data))){

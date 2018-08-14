@@ -36,19 +36,20 @@ impute = imputex(...)
 context('imputex')
 test_that('return is as expected', {
   expect_is(impute$imputemat , 'data.frame')
+  expect_identical(impute$imputemat, na.omit(impute$imputemat))
   expect_equal(ncol(impute$imputemat), impute$number_of_imputations+1) # there are m + 1 columns, as final imputed vector is also attached
+  expect_is(impute$fulldata , 'data.frame')
   expect_equal(nrow(impute$fulldata), nrow(data))
   expect_equal(ncol(impute$fulldata), ncol(data))
+  expect_is(impute$impquantiles , 'data.frame')
   expect_equal(nrow(impute$impquantiles), impute$number_of_imputations)
   expect_identical(impute$impquantiles, na.omit(impute$impquantiles))
   expect_true(impute$imputevariance > 0)
 })
 
-imputations = imputemat,
-fulldata = fulldata,
-mcall = mcall,
-number_of_imputations = nrow(Wdat$cens),
-censoring_type = censtype,
-number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens),
-imputevariance = imputevariance,
-impquantiles = impquantiles
+data = simulateData(...)
+data$indicator = NULL
+test_that('stops correctly', {
+  expect_error(imputex(..., data), 'indicator must be a column name in data')
+})
+
