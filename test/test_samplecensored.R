@@ -10,6 +10,8 @@ test_that('Mismatchning arguments are stoped',{
 
 test_that('return is vector',{
   expect_is(family_fun(...), 'vector')
+  
+  # next is only valid, if func != 'r'
   expect_equal(nrow(predictdata),length(family_fun(...))) # predictdata muss hier also in der enviroment sein um getestet werden zu können
   expect_identical(family_fun(...), na.omit(family_fun(...)))
 })
