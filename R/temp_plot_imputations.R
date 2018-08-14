@@ -36,6 +36,6 @@ plotimputations <- function(object, boxes = TRUE, quantiles = FALSE) {
 }
 
 # quantiles should be highly skewed
-plotimputations(d2, boxes = FALSE, quantiles = TRUE)  # the imputed value is ommited
+#plotimputations(d2, boxes = FALSE, quantiles = TRUE)  # the imputed value is ommited
 
 
