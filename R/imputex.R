@@ -1,7 +1,3 @@
-# Dependencies -----------------------------------------------------------------
-# library('ggplot2')
-library(gamlss)
-
 #' @title Imputing censored covariates - GAMLSS
 #' @description MICE Algorithm (Multiple Imputation by Chained Equations)
 #'   adapted to impute missing & censored data. To do so, inverse sampling is
