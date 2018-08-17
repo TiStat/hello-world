@@ -1,5 +1,5 @@
 # Define some values from simulateData.R for unit test realisation --------------------------------------------
-rd <- right$defected
+rd <- simulateData(n = 100)$defected
 model <- gamlss(formula = y ~ ., data=rd)
 nl <- length(rd$x1[rd$indicator==1]) # number of censored values. This is important for the unit tests!
 predict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), indicator = 1) #data frame to predict on, not a prediction!!!
