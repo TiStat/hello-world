@@ -82,8 +82,8 @@ samplecensored = function(object,
                           intervalstart = NULL) {
   
   # quantprob i.e. an auxilliary data frame with rowwise repeated quantiles vector
-  quantprob = as.data.frame(matrix(rep(quantiles, times = length(predictdata)),
-                                   byrow = TRUE, nrow = length(predictdata)))
+  quantprob = as.data.frame(matrix(rep(quantiles, times = nrow(predictdata)),
+                                   byrow = TRUE, nrow = nrow(predictdata)))
   if(censtype == 'missing'){
     return(list(
       draw = family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)),
