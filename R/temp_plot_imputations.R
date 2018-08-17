@@ -1,8 +1,9 @@
-# (Visualize draws) ------------------------------------------------------------------------------
-require(ggplot2)
-require(reshape2)
-
-# make it a class method!
+#'@description Given an imputex object, this funciton plots the imputations and
+#'  optionally plots the approximate averaged quantiles of the valid part of the
+#'  censored conditonal distributions, from which the proposed vectors were
+#'  'drawn', before the proposals were aggregated to become the imputed vector.
+#'@param object imputex object.
+#'@example plotimputations(d, boxes = FALSE, quantiles = TRUE)
 plotimputations <- function(object, boxes = TRUE, quantiles = FALSE) {
   df = object$imputations
   if(quantiles == TRUE){
@@ -35,7 +36,6 @@ plotimputations <- function(object, boxes = TRUE, quantiles = FALSE) {
   }
 }
 
-# quantiles should be highly skewed
-#plotimputations(d2, boxes = FALSE, quantiles = TRUE)  # the imputed value is ommited
+
 
 
