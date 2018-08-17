@@ -1,4 +1,4 @@
-# Create prin method for "imputed" class
+# Create print method for "imputed" class
 #' Title
 #'
 #' @param x 
