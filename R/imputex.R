@@ -59,12 +59,14 @@ imputex <- function(xmu_formula,
     stop('indicator must be a column name in data')
   }
   
+
   if(!censtype == 'interval' && !is.null(intervalstart) ){
     stop('intervalstart is not required for estimation')
   } else if(censtype == 'interval' && is.null(intervalstart)){
     stop('intervalstart must be specified')
   }
   
+
 
   # split data set. for more ambitious projects, this function must be remastered
   # to cope with multiple imputations. In this case, a clear hirarchy of subsetting
