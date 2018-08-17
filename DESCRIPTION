@@ -13,10 +13,12 @@ Imports:
     ggplot2,
     gamlss,
     reshape2, 
-    MASS
+    MASS,
+    gridExtra
 Suggests:
     ggplot2,
     gamlss,
     testthat,
-    reshape2
+    reshape2,
+    gridExtra
 RoxygenNote: 6.1.0
