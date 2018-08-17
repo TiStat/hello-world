@@ -2,7 +2,7 @@ Package: Imputegamlss
 Type: Package
 Title: Imputing censored covariates with distributional regression - gamlss
 Version: 0.1.0
-Author: Tim Ruhkopf, Petros Chrstanas
+Author: Tim Ruhkopf, Petros Christanas
 Maintainer: Tim Ruhkopf <tim.ruhkopf@outlook.de>, Petros Christanas <petroschristanas@gmail.com> 
 Description: Impute censored/missing covariates with distributional regression (gamlss)
 License: GPL-2
