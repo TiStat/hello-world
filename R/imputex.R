@@ -1,6 +1,7 @@
 #' @title Imputing censored covariates - GAMLSS
+
 #' @description The MICE Algorithm (Multiple Imputation by Chained Equations) is
-#'   a method to  impute missing data. This function uses this algorithm for
+#'   a method to impute missing data. This function uses this algorithm for
 #'   imputing censored data, using inverse sampling to utilize the additional
 #'   information.
 #' @param data data.frame containing a dummy censoring indicator, 0 if not

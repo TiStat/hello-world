@@ -12,10 +12,12 @@ LazyData: true
 Imports:
     ggplot2,
     gamlss,
-    reshape2,
+    reshape2, 
     MASS
 Suggests:
     ggplot2,
-    gamlss, 
+    gamlss,
+    testthat,
+
     reshape2
 RoxygenNote: 6.1.0
