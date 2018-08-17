@@ -1,16 +1,9 @@
-library(testthat)
-library(gamlss)
-
 # Define some values from simulateData.R for unit test realisation --------------------------------------------
 rd <- right$defected
 model <- gamlss(formula = y ~ ., data=rd)
 nl <- length(rd$x1[rd$indicator==1]) # number of censored values. This is important for the unit tests!
 predict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), indicator = 1) #data frame to predict on, not a prediction!!!
 impute <-  imputex(xmu_formula = x1 ~ y + x2, data = rd, indicator = "indicator", censtype = "right")
-
-
-
-
 
 # Unit tests for family_fun -----------------------------------------------------------------------------------
 context('Evaluate family functions')
@@ -31,10 +24,6 @@ test_that("Test that there are no NA's for censored data",{
   expect_identical(family_fun(model, func = 'd', rd, predict.df, x = 10), na.omit(family_fun(model, func = 'd', rd, predict.df, x = 10)))
 })
 
-
-
-
-
 # Unit tests for samplecensored ----------------------------------------------------------------------------
 context('Evaluate inverse sampling in samplecensored')
 
@@ -48,10 +37,6 @@ if (nrow(predict.df) == 1) {
     expect_is(samplecensored(model ,censtype = 'right', predict.df, rd, censor = "x1")$quantiles, 'matrix')
   })
 }
-
-
-
-
 
 # Unit tests for imputex ---------------------------------------------------------------------------------
 context('Some tests for imputex')
