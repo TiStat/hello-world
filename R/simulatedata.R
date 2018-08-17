@@ -25,11 +25,11 @@
 #'   the generated covariates, and a censoring/missing 'indicator' The mere
 #'   difference between the two Dataframes is, that 'defected' has arteficially generated
 #'   censored/missing values according to the 'defect' specification.
-#'@examples defect = ~ x1 > 0.6 | 0.8 | 1/3*x1
+#' @examples defect = ~ x1 > 0.6 | 0.8 | 1/3*x1
 #' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-#'                         variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | NA, family = 'NO')
-#' right = simulateData(n = 100, param.formula = list(mu = ~exp(x1)+ x2, sigma = ~sin(x2)),
-#'                      variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | 1/3*x1, family = 'NO',
+#'                        variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | NA, family = 'NO')
+#' right = simulateData(n = 100, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), 
+#'                      variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | 1/3*x1, family = 'NO', 
 #'                      correlation = matrix(0.7, ncol = 2, nrow = 2 + diag(2)* 0.3))
 #'@export 
 simulateData = function(n,
@@ -89,11 +89,6 @@ simulateData = function(n,
   return(list(truedata = data.frame(y,rawdata, indicator), 
               defected = data.frame(y,newdata, indicator)))
 }
-missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-                       variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | NA, family = 'NO')
-right = simulateData(n = 100, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), 
-                     variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | 1/3*x1, family = 'NO', 
-                     correlation = matrix(0.7, ncol = 2, nrow = 2 + diag(2)* 0.3))
 
 
 
