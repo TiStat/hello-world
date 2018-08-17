@@ -11,12 +11,19 @@
 #'   'right', 'left', 'interval'
 #' @param xmu_formula formula 
 #' @param xsigma_formula formula 
-#' @param xnu_formula formula for 
-#' @param xtau_formula formula for 
+#' @param xnu_formula formula 
+#' @param xtau_formula formula  
 #' @param xfamily gamlss family object.
 #' @param ... additional arguments passed in all gamlss fit.
 #' 
 #' @return 
+#' @example 
+#' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1),
+#' sigma = ~sin(x2)), variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8
+#' | NA, family = 'NO') 
+#' imputex(data = missing$defected, xmu_formula= x1~y+x2,
+#' xsigma_formula = ~1, xnu_formula = ~1, xtau_formula = ~1, xfamily =
+#' NO(mu.link = 'identity'), indicator = "indicator", censtype= 'missing' )
 #' @export
 imputex <- function(xmu_formula,
                     xsigma_formula = ~1,
