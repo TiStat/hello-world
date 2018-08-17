@@ -4,12 +4,27 @@
 #'   imputing censored data, using inverse sampling to utilize the additional
 #'   information.
 #' @param data data.frame containing a dummy censoring indicator, 0 if not
-#'   indicator, 1 if indicator
+#'   censored/missing, 1 if censored/missing. Note that in case of right (left)
+#'   censoring, the censored variable contains the respective minmal (maximal)
+#'   duration of the followup which is used for conditional imputation. In case
+#'   of interval censored data, two columns are required; specifying the start
+#'   and end durations of the interval in question. This implementation assumes,
+#'   that the start duration is the observed time, in which no failure occured
+#'   before the interval is entered at which the exact point of the observed
+#'   state change is unknown. For inverse sampling, the distribution is
+#'   conditoned on the start duration and cut at the end duration to ensure the
+#'   constrained.
 #' @param indicator character. Name of dummy column in data, which indicates the
 #'   damaged observation.
+#' @param intervalstart character. Name of the column of interval starting
+#'   values. by convention, the starting duration in this column is assumed to
+#'   be the time passed without failure, before entering the interval, in which
+#'   the exact time of failure is unknown.
 #' @param censtype character. type of the damaged observation 'missing',
-#'   'right', 'left', 'interval'
-#' @param xmu_formula formula 
+#'   'right', 'left' or 'interval'
+#' @param xmu_formula formula for location parameter of xfamily. Dependent
+#'   variable specifys the variable which is partially censored/missing and is
+#'   to be imputed
 #' @param xsigma_formula formula 
 #' @param xnu_formula formula 
 #' @param xtau_formula formula  
@@ -33,6 +48,7 @@ imputex <- function(xmu_formula,
                     data,
                     indicator,
                     censtype,
+                    intervalstart = NULL,
                     ...)
 {
   if(!(is.data.frame(data) && !nrow(data) == 0)){
@@ -42,12 +58,19 @@ imputex <- function(xmu_formula,
   if(!(is.character(indicator) && indicator %in% names(data))){
     stop('indicator must be a column name in data')
   }
+  
+  if(!censtype == 'interval' && !is.null(intervalstart) ){
+    stop('intervalstart is not required for estimation')
+  } else if(censtype == 'interval' && is.null(intervalstart)){
+    stop('intervalstart must be specified')
+  }
+  
 
-  #'@description split dataset
-  #'@param data dataframe.
-  #'@param indicator character. indicating the name of the missing/ (right/left)
-  #' censored observation dummy variable in data
-  W <- function(data, indicator){ # function name als handlungsanweisung formulieren
+  # split data set. for more ambitious projects, this function must be remastered
+  # to cope with multiple imputations. In this case, a clear hirarchy of subsetting
+  # and imputing should be established. NOTE that this even further increases 
+  # the uncertainty contained in the full dataset. 
+  W <- function(data, indicator){ 
     df_obs <- data[data[indicator] == 0, ]
     df_cens <- data[data[indicator] == 1, ]
     return(list(obs = df_obs, cens = df_cens))
@@ -114,12 +137,16 @@ imputex <- function(xmu_formula,
 
     # Simulate data from the corresponding fitted distribution.
     imputecandidate <- names(boot)[i]
+
     impute = samplecensored(object = bootmodel[[i]],
                             censtype,
                             fitdata = boot,
                             predictdata = Wdat$cens,
-                            censor,
+                            censor, # censor becomes upper bound if !is.null(intervallstart)
+                            intervalstart,
                             quantil)
+
+    
     imputemat[[imputecandidate]] = impute$draw
     imputeq[[i]] = impute$quantiles
   }
