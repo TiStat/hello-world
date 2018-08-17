@@ -4,7 +4,8 @@
 \alias{samplecensored}
 \title{Inverse sampling - GAMLSS}
 \usage{
-samplecensored(object, censtype, predictdata, fitdata, censor)
+samplecensored(object, censtype, predictdata, fitdata, censor,
+  quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95))
 }
 \arguments{
 \item{object}{gamlss. Fitted model whose parameters are predicted for predictdata.}

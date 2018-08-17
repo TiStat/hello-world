@@ -9,34 +9,37 @@ imputex(xmu_formula, xsigma_formula = ~1, xnu_formula = ~1,
   indicator, censtype, ...)
 }
 \arguments{
-\item{xmu_formula}{formula for mu}
+\item{xmu_formula}{formula}
 
-\item{xsigma_formula}{formula for sigma}
+\item{xsigma_formula}{formula}
 
-\item{xnu_formula}{formula for nu}
+\item{xnu_formula}{formula}
 
-\item{xtau_formula}{formula for tau}
+\item{xtau_formula}{formula}
 
 \item{xfamily}{gamlss family object.}
 
-\item{data}{data.frame containing a dummy censoring indicator, 0 if not indicator, 1 if indicator}
+\item{data}{data.frame containing a dummy censoring indicator, 0 if not
+indicator, 1 if indicator}
 
-\item{indicator}{character. Name of dummy column in data, which indicates the damaged observation.}
+\item{indicator}{character. Name of dummy column in data, which indicates the
+damaged observation.}
 
-\item{censtype}{character. type of the damaged observation 'missing', 'right', 'left', 'interval'}
+\item{censtype}{character. type of the damaged observation 'missing',
+'right', 'left', 'interval'}
 
-\item{...}{additional arguments passed in the respective gamlss fit check if these arguments are available in gamlss}
+\item{...}{additional arguments passed in all gamlss fit.}
 
 \item{data}{dataframe.}
 
 \item{indicator}{character. indicating the name of the missing/ (right/left)
 censored observation dummy variable in data}
 }
-\value{
-WRITE HERE WHAT TO BE RETURNED
-}
 \description{
-The MICE Algorithm (Multiple Imputation by Chained Equations) is a method to  impute missing data. This function uses this algorithm for imputing censored data, using inverse sampling to utilize the additional information.
+The MICE Algorithm (Multiple Imputation by Chained Equations) is
+  a method to impute missing data. This function uses this algorithm for
+  imputing censored data, using inverse sampling to utilize the additional
+  information.
 
 split dataset
 }
