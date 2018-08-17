@@ -13,7 +13,8 @@ Imports:
     dplyr,
     ggplot2,
     gamlss,
-    reshape2
+    reshape2,
+    MASS
 Suggests:
     dplyr,
     ggplot2,
