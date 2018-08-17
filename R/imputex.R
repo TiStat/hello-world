@@ -1,25 +1,30 @@
-# Dependencies -----------------------------------------------------------------
-# library('ggplot2')
-library(gamlss)
-
 #' @title Imputing censored covariates - GAMLSS
-#' @description MICE Algorithm (Multiple Imputation by Chained Equations)
-#'   adapted to impute missing & censored data. To do so, inverse sampling is
-#'   employed to ensure draws from the valid regions.
+
+#' @description The MICE Algorithm (Multiple Imputation by Chained Equations) is
+#'   a method to impute missing data. This function uses this algorithm for
+#'   imputing censored data, using inverse sampling to utilize the additional
+#'   information.
 #' @param data data.frame containing a dummy censoring indicator, 0 if not
 #'   indicator, 1 if indicator
 #' @param indicator character. Name of dummy column in data, which indicates the
 #'   damaged observation.
 #' @param censtype character. type of the damaged observation 'missing',
 #'   'right', 'left', 'interval'
-#' @param xmu_formula formula for mu
-#' @param xsigma_formula formula for sigma
-#' @param xnu_formula formula for nu
-#' @param xtau_formula formula for tau
+#' @param xmu_formula formula 
+#' @param xsigma_formula formula 
+#' @param xnu_formula formula 
+#' @param xtau_formula formula  
 #' @param xfamily gamlss family object.
 #' @param ... additional arguments passed in all gamlss fit.
-#'
+#' 
 #' @return 
+#' @example 
+#' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1),
+#' sigma = ~sin(x2)), variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8
+#' | NA, family = 'NO') 
+#' imputex(data = missing$defected, xmu_formula= x1~y+x2,
+#' xsigma_formula = ~1, xnu_formula = ~1, xtau_formula = ~1, xfamily =
+#' NO(mu.link = 'identity'), indicator = "indicator", censtype= 'missing' )
 #' @export
 imputex <- function(xmu_formula,
                     xsigma_formula = ~1,

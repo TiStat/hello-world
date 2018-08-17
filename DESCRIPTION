@@ -19,5 +19,6 @@ Suggests:
     ggplot2,
     gamlss,
     testthat,
+
     reshape2
 RoxygenNote: 6.1.0
