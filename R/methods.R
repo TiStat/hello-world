@@ -44,18 +44,19 @@ summary.imputed <- function(x) {
       paste("\n Number of imputations:", m))
 }
 
-#' title plot imputations and their quantiles
-#'@description Given an imputex object, this funciton plots the imputations and
+#' @title plot imputations and their quantiles
+#' @description Given an imputex object, this funciton plots the imputations and
 #'  optionally plots the approximate averaged quantiles of the valid part of the
 #'  censored conditonal distributions, from which the proposed vectors were
 #'  'drawn', before the proposals were aggregated to become the imputed vector.
-#'@param object imputex object.
-#'@example plotimputations(d, boxes = FALSE, quantiles = TRUE)
+#' @param object imputex object.
+#' @example plotimputations(d, boxes = FALSE, quantiles = TRUE)
 plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
   df = object$imputations
+  
   if(quantiles == TRUE){
-    print(ggplot(object$impquantiles,
-                 aes(x = seq(1:nrow(d2$impquantiles)),
+   plot1 <- ggplot(object$impquantiles,
+                 aes(x = seq(1:nrow(object$impquantiles)),
                      ymin=q5,
                      lower=q25,
                      middle=q50,
@@ -63,7 +64,7 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
                      ymax=q95)) +
             geom_boxplot(stat="identity")+
             xlab('draw')+
-            ylab('quantiles'))
+            ylab('quantiles')
 
   }
   
@@ -73,15 +74,21 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
   df <- melt(df ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
-    print( ggplot(data = subset(df, df$proposalVec != 'imputedx'), aes(observation, value)) +
+    plot2 <- ggplot(data = subset(df, df$proposalVec != 'imputedx'), aes(observation, value)) +
              geom_boxplot(aes(group = observation)) +
              geom_point(data = subset(df, df$proposalVec == 'imputedx'), aes(observation, value, color = 'red'))+
-             ylab('Proposals for observation [i]')) # NOTE that red dots are based on mean, boxes display median.
+             ylab('Proposals for observation [i]') # NOTE that red dots are based on mean, boxes display median.
   }else {
-    print( ggplot() +
+   plot2 <- ggplot() +
              geom_point(data = subset(df, df$proposalVec != 'imputedx'), aes(observation, value)) +
              geom_point(data = subset(df, df$proposalVec == 'imputedx'), aes(observation, value, color = proposalVec))+
-             ylab('Proposals for observation [i]'))
+             ylab('Proposals for observation [i]')
+  }
+  
+  if (exists("plot1")) {
+  grid.arrange(plot1, plot2, ncol=2)
+  } else {
+    plot2
   }
 }
 
