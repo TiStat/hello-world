@@ -139,13 +139,13 @@ imputex <- function(xmu_formula,
 
     # Simulate data from the corresponding fitted distribution.
     imputecandidate <- names(boot)[i]
-
+   
     impute = samplecensored(object = bootmodel[[i]],
                             censtype,
                             fitdata = boot,
                             predictdata = Wdat$cens,
                             censor, # censor becomes upper bound if !is.null(intervallstart)
-                            intervalstart,
+                            intervalstart = intervalstart,
                             quantil)
 
     

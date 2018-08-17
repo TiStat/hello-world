@@ -80,6 +80,7 @@ samplecensored = function(object,
                           censor,
                           quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95),
                           intervalstart = NULL) {
+  
   # quantprob i.e. an auxilliary data frame with rowwise repeated quantiles vector
   quantprob = as.data.frame(matrix(rep(quantiles, times = length(predictdata)),
                                    byrow = TRUE, nrow = length(predictdata)))
