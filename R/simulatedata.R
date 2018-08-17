@@ -53,7 +53,7 @@ simulateData = function(n,
     rvars = mvrnorm(n = n, mu = mu, Sigma = correlation)
     pvars = pnorm(rvars)
     rawdata = data.frame(qunif(pvars))
-    # cor(rawdata)
+
   } else {
     # generate some random data with no specific structure of correlation.
     rawdata = data.frame(matrix(runif(n*length(variablenames)), ncol = length(variablenames)))
