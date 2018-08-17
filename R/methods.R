@@ -63,7 +63,9 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
                      upper=q75,
                      ymax=q95)) +
             geom_boxplot(stat="identity")+
-            xlab('draw')+ylab('quantiles'))
+            xlab('draw')+
+            ylab('quantiles'))
+
   }
   
   
