@@ -7,14 +7,17 @@
 #'  to be censored
 #' @param family character. Specifies the gamlss family, from which the data is
 #'  drawn. e.g. 'NO' for a dependent variable drawn
-#' @param defect formula. specifies which data subset and how it is defected. is
-#'  specified as follows: ~subset condition | probability | defect. Subset
-#'  condition describes which part of the uniformly distributed covariate [0,1]
-#'  (whose name must be specified in variablenames) is selected to be exposed to
-#'  defection by a bernoulli variable with the specified probability. The
-#'  defection funciton is left at the users convenience The defect is some
-#'  function, that the user must specify. For missing specifiy NA.
+
+#' @param defect formula. specifies which data subset is defected and how.
+#'  Formula is specified as follows: ~subset condition | probability | defect.
+#'  Subset condition describes which part of the uniformly distributed covariate
+#'  [0,1] (whose name must be specified in variablenames in order to be
+#'  generated) is selected to be exposed to defection by a bernoulli variable
+#'  with the specified probability. The defection funciton is left at the users
+#'  convenience. The defect is some function, that the user must specify. For
+#'  missing data specifiy NA.
 #' @param correlation matrix. If a correlation/covariance matrix is provided, the
+
 #'  covariates specified in variablenames are inversely generated with a
 #'  surrogate Multivariate normal distribution to establish correlation between
 #'  draws. The draws' cumulative normal probabilities are evaluated in the
@@ -32,7 +35,13 @@
 #' right = simulateData(n = 100, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), 
 #'                      variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | 1/3*x1, family = 'NO', 
 #'                      correlation = matrix(0.7, ncol = 2, nrow = 2 + diag(2)* 0.3))
-#' @export 
+
+#' left = simulateData(n = 100, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), 
+#'                      variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8 | 6/5*x1, family = 'NO', 
+#'                      correlation = matrix(0.7, ncol = 2, nrow = 2 + diag(2)* 0.3))
+#' interval = simulateData
+#'@export 
+
 simulateData = function(n,
                         param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), # ensure sigma positive!
                         variablenames = c('x1', 'x2'),

@@ -51,58 +51,93 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
   }
 
 #' @title Inverse sampling - GAMLSS
-#' @description Inverse sampling of censored variables, to impute only valid observations
-#' conditional on the respective fit
-#' @param object gamlss. Fitted model whose parameters are predicted for predictdata.
-#' @param censtype chr. specifies the type of censoring, for which is imputed
-#' @param predictdata dataframe. predictdata of the missing/censored observations, for which
-#' imputations are drawn
+#' @description Inverse sampling of censored variables, to impute only valid
+#'   observations conditional on the respective fit
+#' @param object gamlss. Fitted model whose parameters are predicted for
+#'   predictdata.
+#' @param censtype character. specifies the type of censoring, for which is
+#'   imputed
+#' @param predictdata dataframe. predictdata of the missing/censored
+#'   observations, for which imputations are drawn
 #' @param fitdata dataframe. The orignal Dataset upon which gamlss was fitted
-#' @param censor character. Name of the to be predicted (damaged) column in predictdata.
-#' is only required if censtype is NOT 'missing'.
-#' @return WRITE HERE WHAT TO BE RETURNED
+#' @param censor character. Name of the to be predicted (damaged) column in
+#'   predictdata. is only required if censtype is NOT 'missing'.
+#' @param intervalstart character. Name of the column of interval starting
+#'   values. by convention, the starting duration in this column is assumed to
+#'   be the time passed without failure, before entering the interval, in which
+#'   the exact time of failure is unknown.
+#' @param quantiles vector. Containing the quantiles to be evaluated in the
+#'   conditoned distribution i.e. conditoned on the parameters and the
+#'   information contained in the censored value.
+#'
+#' @return
 #' @export
-samplecensored = function(object, censtype, predictdata, fitdata, censor, quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95)){
-
+samplecensored = function(object,
+                          censtype,
+                          predictdata,
+                          fitdata,
+                          censor,
+                          quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95),
+                          intervalstart = NULL) {
+  
+  # quantprob i.e. an auxilliary data frame with rowwise repeated quantiles vector
+  quantprob = as.data.frame(matrix(rep(quantiles, times = nrow(predictdata)),
+                                   byrow = TRUE, nrow = nrow(predictdata)))
   if(censtype == 'missing'){
-    # qindex does not require scaling!
-    qindex = as.data.frame(matrix(rep(quantiles, times = length(predictdata)),
-                                              byrow = TRUE, nrow = length(predictdata)))
     return(list(
       draw = family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)),
       quantiles = apply(
-        qindex,
+        quantprob,
         MARGIN = 2,
         FUN = function(q)
           family_fun(object, func = 'q', fitdata, predictdata, p = q)
       )
     ))
-
-  }else if(censtype == 'right'){
+  } else if (censtype == 'right') {
+    # pindex is the cum. prob. up until the censored variable
     pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
+    
+    # inverse sampling
     psample = runif(n = nrow(predictdata), min = pindex, max = 1)
     draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample)
+    
+    # remap the quantiles on the applicable region in the cdf (psample) 
+    qindex = (1-pindex)*quantprob + pindex
 
   }else if (censtype == 'left'){
+    # pindex is the cum. prob. up until the censored variable, 
+    # note that position in psample is reverted to 'right'
     pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
+    
+    # inverse sampling
     psample = runif(n = nrow(predictdata), min = 0, max = pindex)
     draw = family_fun(object, func = 'q', fitdata, predictdata, p = psample)
+    
+    # remap the quantiles on the applicable region in the cdf (psample) 
+    qindex = (pindex-0) * quantprob 
 
-  # }else if (censtype == 'interval'){ input format noch unklar:
-  # ggf indicator = c('start', 'stop') bei fnc call
+  }else if (censtype == 'interval'){ 
+    # applicable inverse sampling region is within the interval.
+    pindexupper = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
+    pindexlower = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[intervalstart]])
+    
+    # inverse sampling
+    psample = runif(n = nrow(predictdata), min = pindexlower, max = pindexupper)
+    draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample)
+    
+    # remap the quantiles on the applicable region in the cdf (psample) 
+    qindex = (pindexupper-pindexlower)*quantprob + pindexlower
+    
   }else{
     stop('invalid censtype')
   }
-
-  # quantiles
-  quantprob = as.data.frame(matrix(rep(quantiles, times = length(pindex)),
-                                   byrow = TRUE, nrow = length(pindex)))
-  qindex = (1-pindex)*quantprob + pindex
+  
+  # evaluate the rescaled quantiles on the (known) parametrized distribution 
   quantiles = apply(
     qindex,
     MARGIN = 2,
     FUN = function(q)
-      family_fun(object, func = 'q', fitdata, predictdata, p = q)
+      family_fun(object, func = 'q', fitdata, predictdata, p = q) #  bottleneck?
   )
 
   return(list(
