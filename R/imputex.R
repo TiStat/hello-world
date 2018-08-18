@@ -59,15 +59,12 @@ imputex <- function(xmu_formula,
     stop('indicator must be a column name in data')
   }
   
-
   if(!censtype == 'interval' && !is.null(intervalstart) ){
     stop('intervalstart is not required for estimation')
   } else if(censtype == 'interval' && is.null(intervalstart)){
     stop('intervalstart must be specified')
   }
   
-
-
   # split data set. for more ambitious projects, this function must be remastered
   # to cope with multiple imputations. In this case, a clear hirarchy of subsetting
   # and imputing should be established. NOTE that this even further increases 
@@ -81,8 +78,6 @@ imputex <- function(xmu_formula,
   # split dataset in fully observed & missing/censored data
   Wdat <- W(data, indicator)
   censor <- as.character(xmu_formula[[2]])
-
-  # Algorithm --------------------------------------------------------------------
 
   # Step 1: fit gamlss with user specified xfamily and formula on observed data
   obsmodel <- gamlss(
