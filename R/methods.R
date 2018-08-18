@@ -1,4 +1,4 @@
-# Create prin method for "imputed" class
+# Create print method for "imputed" class
 #' Title
 #'
 #' @param x 
@@ -52,6 +52,7 @@ summary.imputed <- function(x) {
 #' @param object imputex object.
 #' @example plotimputations(d, boxes = FALSE, quantiles = TRUE)
 plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
+
   d = object$imputations
   
   if(quantiles == TRUE){
@@ -66,6 +67,7 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
       xlab('Observation')+
       ylab('Avg. quantiles of censored\n conditional bootmodel distribution')
     
+
   }
   
   
@@ -74,9 +76,9 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
   d <- melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
+
     plot2 <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
-      #geom_point(data = subset(d, d$proposalVec == 'imputedx'), aes(observation, value, color = 'red'))+
       ylab('Proposals for observation [i]') # NOTE that red dots are based on mean, boxes display median.
   }else {
     plot2 <- ggplot() +
@@ -87,6 +89,7 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
   
   if (exists("plot1")) {
     grid.arrange(plot1, plot2, ncol=2) # make yaxis equal!
+
   } else {
     plot2
   }

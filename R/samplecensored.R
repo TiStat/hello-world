@@ -45,8 +45,7 @@ family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x
   param = param[!sapply(param, is.null)] # kick out NULL parameters
 
   if (any(!names(param) %in% names(formals(f_fun)))) {
-    stop("One of x,q,p,n,... arguments doesn't match with the distributional function
-         (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
+    stop("One of x,q,p,n,... arguments doesn't match with the distributional function (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
   }
   return(do.call(f_fun, param))
   }
