@@ -153,14 +153,14 @@ imputex <- function(xmu_formula,
     imputeq[[i]] = impute$quantiles
   }
   # imputed vector
-  imputemat$imputedx <- apply(imputemat, MARGIN = 1, mean)
+  imputedx <- apply(imputemat, MARGIN = 1,median)
 
   # complete data with imputations
-  Wdat$cens[censor] <- imputemat$imputedx
+  Wdat$cens[censor] <- imputedx
   fulldata <- rbind(Wdat$obs,Wdat$cens)
 
-  # variability of imputed vectors
-  imputevariance = apply(imputemat[,-ncol(imputemat)], MARGIN = 1, FUN = var)
+  # variability of imputed observation among all drawn from booted
+  imputevariance = apply(imputemat, MARGIN = 1, FUN = var)
 
   # average imputed quantiles
   A = array(unlist(imputeq), dim = c(nrow(imputeq[[1]]), ncol(imputeq[[1]]), length(imputeq)))
@@ -170,6 +170,7 @@ imputex <- function(xmu_formula,
   mcall <- match.call()
 
   result <- list(imputations = imputemat,
+                 imputedx = imputedx,
                  fulldata = fulldata,
                  mcall = mcall,
                  number_of_imputations = nrow(Wdat$cens),
