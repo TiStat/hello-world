@@ -95,14 +95,19 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
   }
 }
 
-#' @param data data.frame with defected observations ()
+#' @param data data.frame with defected observations 
 #' @param defected character. specifys which column is defected.
 #' @param indicator character. giving the name of the dummy variable, 
 andrew = function(data, defected, indicator){
   
-  if(length(names(data) != indicator)<=1){
-    stop('dataframe must contain at least two variables apart from indicator column')
+  if(length(names(data) != indicator)<=2){
+    stop('dataframe must contain at least two variables apart from indicator and defected column')
   }
+  
+  # reorder columns for later ease with positional matching in apply
+  d =  data[names(data) != defected]
+  index = which(names(d)== indicator)
+  d = d[, c(setdiff(1:ncol(d), index),index)]
   
   #' @param obs observation vector
   curveval = function(t, obs){
@@ -118,23 +123,19 @@ andrew = function(data, defected, indicator){
     }
     return(f)
   }
-  d = data
-  d = d[names(d) != defected]
+  
   p = ggplot(data.frame(t = c(-pi, pi)), aes(t))
-  for(i in 0:1){
-    p = p + apply(
-      subset(d,d[indicator] == i)[names(d) != indicator],
-      MARGIN = 1,
-      FUN = function(z)
-        stat_function(
-          fun = curveval,
-          geom = "line",
-          args = list(obs = z),
-          color = i+1 # must be positive 
-        )
-    )
-    
-  }
+  p = p + apply(
+    d,
+    MARGIN = 1,
+    FUN = function(z)
+      stat_function(
+        fun = curveval,
+        geom = "line",
+        args = list(obs = z[1:length(z)]),
+        color = z[length(z)] + 1  # must be positive and dummy is 0/1
+      )
+  )
   print(p)
 }
 
