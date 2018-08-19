@@ -76,7 +76,21 @@ simulateData = function(n,
     param.frame[[i]] = eval(param.formula[[i]][[2]], envir = rawdata)
   }
   names(param.frame) = names(param.formula)
+  
+  if(!is.null(param.frame$sigma)&& param.frame$sigma<0){
+    stop('sigma formula does not ensure positive sigma on possible covariate values, which are uniformly distributed on the interval [0,1]')
+  } 
+  
+  # if(!is.null(param.frame$nu) && param.formula$nu ....){
+  #   
+  # }
+  # if(!is.null(param.frame$tau) && param.formula$ta ....){
+  #   
+  # }
+
   param.frame$n = n
+  
+  
   
   # draw from conditional family 
   rfam = paste('r', family, sep= '')
