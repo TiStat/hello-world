@@ -94,3 +94,47 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
     plot2
   }
 }
+
+#' @param data data.frame with defected observations ()
+#' @param defected character. specifys which column is defected.
+#' @param indicator character. giving the name of the dummy variable, 
+andrew = function(data, defected, indicator){
+  
+  if(length(names(data) != indicator)<=1){
+    stop('dataframe must contain at least two variables apart from indicator column')
+  }
+  
+  #' @param obs observation vector
+  curveval = function(t, obs){
+    f = obs[1] / sqrt(2)
+    if(length(obs)>1){ # if branch will never be jumped over (due to stop!), but correct fourier function
+      for (i in 2:length(obs)){
+        if (i %% 2 == 0){ # even
+          f = f+ obs[i]*(sin((i-1)*t)+cos((i-1)*t))
+        }else{ # odd
+          f = f+ obs[i]*(sin((i-2)*t)+cos((i-2)*t))
+        }
+      }
+    }
+    return(f)
+  }
+  d = data
+  d = d[names(d) != defected]
+  p = ggplot(data.frame(t = c(-pi, pi)), aes(t))
+  for(i in 0:1){
+    p = p + apply(
+      subset(d,d[indicator] == i)[names(d) != indicator],
+      MARGIN = 1,
+      FUN = function(z)
+        stat_function(
+          fun = curveval,
+          geom = "line",
+          args = list(obs = z),
+          color = i+1 # must be positive 
+        )
+    )
+    
+  }
+  print(p)
+}
+
