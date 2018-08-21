@@ -48,10 +48,10 @@ imputex <- function(xmu_formula,
                     xfamily = NO(mu.link = 'identity'),
                     data,
                     indicator,
-                    censtype,
+                    censtype = c('missing', 'right', 'left', 'interval'),
                     intervalstart = NULL,
-                    ...)
-{
+                    ...){
+  censtype = match.arg(censtype)
   if(!(is.data.frame(data) && !nrow(data) == 0)){
     stop('data must be (non empty) data.frame')
   }

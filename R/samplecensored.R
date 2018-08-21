@@ -18,8 +18,8 @@
 #' @return Depending on the choice of func, the respective vector of
 #'   (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned
 #' @export
-family_fun <- function(object, func, fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
-
+family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
+func = match.arg(func)
   # find the correct family function to evaluate
   fam_name = object$family[1]
   f_fun = paste(func, fam_name, sep= '')
