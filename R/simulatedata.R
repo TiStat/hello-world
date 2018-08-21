@@ -41,7 +41,6 @@
 #'                      correlation = matrix(0.7, ncol = 2, nrow = 2 + diag(2)* 0.3))
 #' interval = simulateData
 #'@export 
-
 simulateData = function(n,
                         param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), # ensure sigma positive!
                         defect = ~ x1 > 0.6 | 0.8 | 1/3*x1,
@@ -57,7 +56,7 @@ simulateData = function(n,
   
   # extract all variable names from user specified formula
   varnames = sapply(param.formula, FUN = all.vars)
-  
+ 
   # draw some correlated data 
   # according to: https://www.r-bloggers.com/easily-generate-correlated-variables-from-any-distribution-without-copulas/
   if(!is.null(correlation)){
@@ -79,20 +78,18 @@ simulateData = function(n,
   }
   names(param.frame) = names(param.formula)
   
-  if(!is.null(param.frame$sigma)&& param.frame$sigma<0){
+  if(!is.null(param.frame$sigma) && param.frame$sigma<0){
     stop('sigma formula does not ensure positive sigma on possible covariate values, which are uniformly distributed on the interval [0,1]')
   } 
   
   # if(!is.null(param.frame$nu) && param.formula$nu ....){
   #   
   # }
-  # if(!is.null(param.frame$tau) && param.formula$ta ....){
+  # if(!is.null(param.frame$tau) && param.formula$tau ....){
   #   
   # }
 
   param.frame$n = n
-  
-  
   
   # draw from conditional family 
   rfam = paste('r', family, sep= '')
@@ -102,10 +99,10 @@ simulateData = function(n,
   y = do.call(rfam, param.frame)
   
   # data = data.frame(y, param.frame, indicator = 0)
-  prob = defect[[2]][[2]][[3]] # prob condition
+  prob = defect[[2]][[2]][[3]] #  defect prob.
   indicator = rep(0,nrow(rawdata))
   
-  # figure out which observation to be defected
+  # subset of observations to be defected
   indicator[eval(defect[[2]][[2]][[2]], envir = rawdata)] = 
     rbinom(n = sum(eval(defect[[2]][[2]][[2]], envir = rawdata)),1, prob)
   

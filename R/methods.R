@@ -38,51 +38,51 @@ summary.imputed <- function(x) {
       paste("\n Number of imputations:", m))
 }
 
+# erkläre die drei plots: CI, boxes/points: actual imp, andrew
 #' @title Plot imputations and their average quantiles
 #' @description Given an imputex object, this funciton plots the imputations and
 #'  optionally plots the approximate averaged quantiles of the valid part of the
 #'  censored conditonal distributions, from which the proposed vectors were
 #'  'drawn', before the proposals were aggregated to become the imputed vector.
 #' @param object imputex object.
-#' @example plotimputations(d, boxes = FALSE, quantiles = TRUE)
-plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
-
+#' @return 
+#' 
+#' @example plotimputations(d, boxes = FALSE)
+plot.imputed <- function(object, boxes = FALSE) {
   d = object$imputations
-  
-  if(quantiles == TRUE){
-    plot1 <- ggplot(object$impquantiles,
-                    aes(x = seq(1:nrow(object$impquantiles)),
-                        ymin=q5,
-                        lower=q25,
-                        middle=q50,
-                        upper=q75,
-                        ymax=q95)) +
-      geom_boxplot(stat="identity")+
-      xlab('Observation')+
-      ylab('Avg. quantiles of censored\n conditional bootmodel distribution')
-  }
+
+  quantil <- ggplot(object$impquantiles,
+                  aes(x = seq(1:nrow(object$impquantiles)),
+                      ymin=q5,
+                      lower=q25,
+                      middle=q50,
+                      upper=q75,
+                      ymax=q95)) +
+    geom_boxplot(stat="identity")+
+    xlab('Observation')+
+    ylab('Avg. quantiles of censored\n conditional bootmodel distribution')
   
   # Convert to Longformat
   d$observation = seq(1, nrow(d))
   d <- melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
-    plot2 <- ggplot(data = d, aes(observation, value)) +
+    imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
+      xlab('Observation')+
       ylab('Proposals for observation [i]') # NOTE that red dots are based on mean, boxes display median.
   }else {
-    plot2 <- ggplot() +
+    imputations <- ggplot() +
       geom_point(data = d, aes(observation, value)) +
-      geom_point(data = data.frame(obs = 1:length(object$imputedx),imputedx = object$imputedx), aes(x = obs, y = imputedx), color = 'red' )+
+      geom_point(data = data.frame(obs = 1:length(object$imputedx),imputedx = object$imputedx), 
+                 aes(x = obs, y = imputedx), color = 'red' )+
+      xlab('Observation')+
       ylab('Proposals for observation [i]')
   }
-  
-  if (exists("plot1")) {
-    grid.arrange(plot1, plot2, ncol=2) # make yaxis equal!
-  } else {
-    plot2
-  }
+    grid.arrange(quantil, imputations, nrow = 1)
 }
+
+# description: y and defected not included.
 
 #' @title Andrews Curves of defected observations
 #' @description Andrews Curves are a Fourier series upon the observations in
@@ -93,19 +93,20 @@ plot.imputed <- function(object, boxes = TRUE, quantiles = FALSE) {
 #'   the ordering of the variables determines the frequency that is affected
 #'   respectively, it is highly recommended use various column orders.
 #'   It may even be of use to some extent to employ Principle components.
-#' @param data data.frame. With the entire dataset. defected and indicator must
-#'   be columns
-#' @param defected character. specifys which column is defected.
-#' @param indicator character. giving the name of the dummy variable,
+#' @param dependent character. specifies the variable name of the dependent
+#'   variable in the original regression problem (not the imputation problem)
 #' @examples 
 #' data = data.frame(x = c(1,2,1), ind = c(1,0,1), z = c(4,5,5), f = c(4,2,4)) 
 #' # note that the first and third observation are somewhat similar 
 #' indicator = 'ind'; defected = 'x' 
 #' andrew(data, defected, indicator)
-andrew = function(data, defected, indicator){
+andrew.imputed = function(object, dependent){
+  defected = as.character(object$mcall$xmu_formula[[2]])
+  data = object$fulldata
+  indicator = object$mcall$indicator
   
-  if(length(names(data) != indicator)<2){
-    stop('dataframe must contain at least two variables apart from indicator and defected column')
+  if(length(setdiff(names(data), c(defected, dependent, indicator)))> 0){
+    stop('dataframe must contain at least one variable apart from indicator, defected and dependent column')
   }
   
   #' @param obs observation vector
@@ -124,7 +125,7 @@ andrew = function(data, defected, indicator){
   }
   
   # reorder columns for later ease with positional matching in apply
-  d =  data[names(data) != defected]
+  d =  data[set.diff(names(data), c(defected, dependent))]
   index = which(names(d)== indicator)
   d = d[, c(setdiff(1:ncol(d), index),index)]
   
