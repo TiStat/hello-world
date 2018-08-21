@@ -44,7 +44,6 @@
 
 simulateData = function(n,
                         param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), # ensure sigma positive!
-                        variablenames = c('x1', 'x2'),
                         defect = ~ x1 > 0.6 | 0.8 | 1/3*x1,
                         family = 'NO',
                         correlation = NULL) {
@@ -56,19 +55,22 @@ simulateData = function(n,
     stop('defect is not a formula')
   }
   
+  # extract all variable names from user specified formula
+  varnames = sapply(param.formula, FUN = all.vars)
+  
   # draw some correlated data 
   # according to: https://www.r-bloggers.com/easily-generate-correlated-variables-from-any-distribution-without-copulas/
   if(!is.null(correlation)){
-    mu = rep(0,length(variablenames))
+    mu = rep(0,length(varnames))
     rvars = mvrnorm(n = n, mu = mu, Sigma = correlation)
     pvars = pnorm(rvars)
     rawdata = data.frame(qunif(pvars))
 
   } else {
     # generate some random data with no specific structure of correlation.
-    rawdata = data.frame(matrix(runif(n*length(variablenames)), ncol = length(variablenames)))
+    rawdata = data.frame(matrix(runif(n*length(varnames)), ncol = length(varnames)))
   }
-  names(rawdata) = variablenames
+  names(rawdata) = varnames
   
   # evaluate the formulas on data.frame
   param.frame = list()
