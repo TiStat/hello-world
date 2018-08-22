@@ -153,6 +153,7 @@ imputex <- function(xmu_formula,
   # save censored values before they get overwritten
   censoredx <- Wdat$cens[[censor]]
   
+  # distances from imputed to censored values
   distances <- switch((censtype == "left" | censtype == "right") + 1,
                       NULL,
                       abs(censoredx - imputedx))
