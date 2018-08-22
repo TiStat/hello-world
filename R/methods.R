@@ -28,7 +28,7 @@ summary.imputed <- function(object) {
   sm <- summary(object$imputedx)
 
   cens_type <- object$censoring_type
-  r = ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
+  r <- ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
   
   cat("\n", 
       cat("Call:  \n", paste(deparse(object$mcall), sep = "\n", collapse = "\n")),
@@ -57,7 +57,7 @@ summary.imputed <- function(object) {
 #' @example plotimputations(d, boxes = FALSE)
 plot.imputed <- function(object, boxes = FALSE) {
   
-  d = object$imputations
+  d <- object$imputations
   
   quantil <- ggplot(object$impquantiles,
                     aes(x = seq(1:nrow(object$impquantiles)),
@@ -71,7 +71,7 @@ plot.imputed <- function(object, boxes = FALSE) {
     ylab('Avg. quantiles of censored\n conditional bootmodel distribution')
   
   # Convert to Longformat
-  d$observation = seq(1, nrow(d))
+  d$observation <- seq(1, nrow(d))
   d <- melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
@@ -105,11 +105,11 @@ plot.imputed <- function(object, boxes = FALSE) {
 #'   variable in the original regression problem (not the imputation problem)
 #' @examples 
 
-andrew.imputed = function(object, dependent){
+andrew.imputed <- function(object, dependent){
   
-  defected = as.character(object$mcall$xmu_formula[[2]])
-  data = object$fulldata
-  indicator = object$mcall$indicator
+  defected <- as.character(object$mcall$xmu_formula[[2]])
+  data <- object$fulldata
+  indicator <- object$mcall$indicator
   
   if(length(setdiff(names(data), c(defected, dependent, indicator)))> 0){
     stop('dataframe must contain at least one variable apart from indicator, defected and dependent column')
@@ -117,14 +117,14 @@ andrew.imputed = function(object, dependent){
   
   #' title fourier series
   #' @param obs observation vector
-  curveval = function(t, obs){
-    f = obs[1] / sqrt(2)
+  curveval <- function(t, obs){
+    f <- obs[1] / sqrt(2)
     if(length(obs)>1){ 
       for (i in 2:length(obs)){
         if (i %% 2 == 0){ # even
-          f = f+ obs[i]*(sin((i-1)*t)+cos((i-1)*t))
+          f <- f+ obs[i]*(sin((i-1)*t)+cos((i-1)*t))
         }else{ # odd
-          f = f+ obs[i]*(sin((i-2)*t)+cos((i-2)*t))
+          f <- f+ obs[i]*(sin((i-2)*t)+cos((i-2)*t))
         }
       }
     }
@@ -132,12 +132,12 @@ andrew.imputed = function(object, dependent){
   }
   
   # reorder columns for later ease with positional matching in apply
-  d =  data[set.diff(names(data), c(defected, dependent))]
-  index = which(names(d)== indicator)
-  d = d[, c(setdiff(1:ncol(d), index),index)]
+  d <-  data[set.diff(names(data), c(defected, dependent))]
+  index <- which(names(d)== indicator)
+  d <- d[, c(setdiff(1:ncol(d), index),index)]
   
-  p = ggplot(data.frame(t = c(-pi, pi)), aes(t))
-  p = p + apply(
+  p <- ggplot(data.frame(t = c(-pi, pi)), aes(t))
+  p <- p + apply(
     d,
     MARGIN = 1,
     FUN = function(z)
