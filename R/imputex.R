@@ -113,8 +113,8 @@ imputex <- function(xmu_formula,
   # step 3 estimate param. on each respective set {x*boot(j), W_obs} for all j
   bootmodel <- list()
   imputemat <- data.frame(X1 = vector(length= nrow(Wdat$cens)))
-  imputeq = list()
-  quantil = c(0.05, 0.25, 0.5, 0.75, 0.95)
+  imputeq <- list()
+  quantil <- c(0.05, 0.25, 0.5, 0.75, 0.95)
   for (i in 1:ncol(draws)){
     # iterate only over the names of booted vectors.
     
@@ -144,8 +144,8 @@ imputex <- function(xmu_formula,
                             quantil)
     
     
-    imputemat[[imputecandidate]] = impute$draw
-    imputeq[[i]] = impute$quantiles
+    imputemat[[imputecandidate]] <- impute$draw
+    imputeq[[i]] <- impute$quantiles
   }
   # imputed vector
   imputedx <- apply(imputemat, MARGIN = 1,median)
@@ -164,15 +164,15 @@ imputex <- function(xmu_formula,
   fulldata <- rbind(Wdat$obs,Wdat$cens)
   
   # variability of imputed observation among all drawn from booted
-  imputevariance = apply(imputemat, MARGIN = 1, FUN = var)
+  imputevariance <- apply(imputemat, MARGIN = 1, FUN = var)
   
   # average imputed quantiles
-  A = array(unlist(imputeq), 
+  A <- array(unlist(imputeq), 
             dim = c(nrow(imputeq[[1]]),
                     ncol(imputeq[[1]]), 
                     length(imputeq)))
-  impquantiles = as.data.frame(apply(A, c(1,2), mean))
-  colnames(impquantiles) = c('q5','q25','q50', 'q75', 'q95' )
+  impquantiles <- as.data.frame(apply(A, c(1,2), mean))
+  colnames(impquantiles) <- c('q5','q25','q50', 'q75', 'q95' )
   
   mcall <- match.call()
   
