@@ -51,7 +51,8 @@ imputex <- function(xmu_formula,
                     censtype = c('missing', 'right', 'left', 'interval'),
                     intervalstart = NULL,
                     ...){
-  censtype = match.arg(censtype)
+  censtype <- match.arg(censtype)
+  
   if(!(is.data.frame(data) && !nrow(data) == 0)){
     stop('data must be (non empty) data.frame')
   }
@@ -135,7 +136,7 @@ imputex <- function(xmu_formula,
     # Simulate data from the corresponding fitted distribution.
     imputecandidate <- names(boot)[i]
     
-    impute = samplecensored(object = bootmodel[[i]],
+    impute <- samplecensored(object = bootmodel[[i]],
                             censtype,
                             fitdata = boot,
                             predictdata = Wdat$cens,
