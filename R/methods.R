@@ -2,15 +2,15 @@
 #'
 #' @return 
 #' @export
-print.imputed <- function(x){
+print.imputed <- function(object){
   
-  m <- x$number_of_imputations
-  cens_type <- x$censoring_type
-  n <- x$number_of_observations
+  m <- object$number_of_imputations
+  cens_type <- object$censoring_type
+  n <- object$number_of_observations
   
   cat("\n", 
       cat("Call:"),
-      paste(deparse(x$mcall), sep = "\n", collapse = "\n"),
+      paste(deparse(object$mcall), sep = "\n", collapse = "\n"),
       sprintf("\n\n Number of observations: %s\n", n),
       paste("Imputed", m, cens_type, "censored values") )
 }
@@ -21,18 +21,17 @@ print.imputed <- function(x){
 #' @export
 #'
 #' @examples 
-summary.imputed <- function(x) {
+summary.imputed <- function(object) {
   
-  m <- x$number_of_imputations #number of imputations
-  n <- x$number_of_observations
-  sm <- summary(x$imputedx)
-  #  v <- x$variance #discrepancy
-  #  aic <- x$AIC
-  cens_type <- x$censoring_type
-  ifelse(!is.null(x$distances), r <- round(mean(x$distances), 3), r <- "undefined")
+  m <- object$number_of_imputations 
+  n <- object$number_of_observations
+  sm <- summary(object$imputedx)
+
+  cens_type <- object$censoring_type
+  ifelse(!is.null(object$distances), r <- round(mean(object$distances), 3), r <- "undefined")
   
   cat("\n", 
-      cat("Call:  \n", paste(deparse(x$mcall), sep = "\n", collapse = "\n")),
+      cat("Call:  \n", paste(deparse(object$mcall), sep = "\n", collapse = "\n")),
       paste("\n Number of observations:", n),
       paste("\n Type of censoring:", cens_type),
       paste("\n Number of imputations:", m),
@@ -110,6 +109,7 @@ plot.imputed <- function(object, boxes = FALSE) {
 #' indicator = 'ind'; defected = 'x' 
 #' andrew(data, defected, indicator)
 andrew.imputed = function(object, dependent){
+  
   defected = as.character(object$mcall$xmu_formula[[2]])
   data = object$fulldata
   indicator = object$mcall$indicator
