@@ -4,9 +4,9 @@
 #' @export
 print.imputed <- function(object){
   
-  m <- object$number_of_imputations
-  cens_type <- object$censoring_type
-  n <- object$number_of_observations
+  m <- object$nimputations
+  cens_type <- object$censtype
+  n <- object$nobservations
   
   cat("\n", 
       cat("Call:"),
@@ -23,11 +23,11 @@ print.imputed <- function(object){
 #' @examples 
 summary.imputed <- function(object) {
   
-  m <- object$number_of_imputations 
-  n <- object$number_of_observations
+  m <- object$nimputations 
+  n <- object$nobservations
   sm <- summary(object$imputedx)
 
-  cens_type <- object$censoring_type
+  cens_type <- object$censtype
   r <- ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
   
   cat("\n", 
@@ -116,6 +116,7 @@ andrew.imputed <- function(object, dependent){
   }
   
   #' title fourier series
+  #' @param t axis position at which to evaluate
   #' @param obs observation vector
   curveval <- function(t, obs){
     f <- obs[1] / sqrt(2)
