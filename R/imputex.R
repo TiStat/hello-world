@@ -98,15 +98,14 @@ imputex <- function(xmu_formula,
                       predictdata = Wdat$obs,
                       n = nrow(Wdat$obs)*nrow(Wdat$cens))
   
-  
-  
   draws <- data.frame(matrix(draws,
                              nrow = nrow(Wdat$obs),
                              ncol = nrow(Wdat$cens)))
+  
   # Basis for respective Bootstap samples (draws[,j], W).
   drawsW <- cbind(draws, Wdat$obs)
   
-  # Bootstap samples on simulated vectors (rowwise)
+  # Bootstap samples on simulated observations (rowwise)
   boot <- drawsW[sample(x= 1:nrow(drawsW),
                         size = nrow(Wdat$obs),
                         replace = TRUE), ]
@@ -150,6 +149,8 @@ imputex <- function(xmu_formula,
   }
   # imputed vector
   imputedx <- apply(imputemat, MARGIN = 1,median)
+  
+  # (output augmentation)-------------------------------------------------------
   # save censored values before they get overwritten
   censoredx <- Wdat$cens[[censor]]
   
@@ -166,7 +167,10 @@ imputex <- function(xmu_formula,
   imputevariance = apply(imputemat, MARGIN = 1, FUN = var)
   
   # average imputed quantiles
-  A = array(unlist(imputeq), dim = c(nrow(imputeq[[1]]), ncol(imputeq[[1]]), length(imputeq)))
+  A = array(unlist(imputeq), 
+            dim = c(nrow(imputeq[[1]]),
+                    ncol(imputeq[[1]]), 
+                    length(imputeq)))
   impquantiles = as.data.frame(apply(A, c(1,2), mean))
   colnames(impquantiles) = c('q5','q25','q50', 'q75', 'q95' )
   
