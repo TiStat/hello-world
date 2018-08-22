@@ -20,5 +20,8 @@ Suggests:
     gamlss,
     testthat,
     reshape2,
-    gridExtra
+    gridExtra,
+    knitr,
+    rmarkdown
 RoxygenNote: 6.1.0
+VignetteBuilder: knitr

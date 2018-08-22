@@ -4,14 +4,13 @@
 #' @export
 print.imputed <- function(x){
   
-  mcall <- noquote(capture.output(x$mcall)) #call
   m <- x$number_of_imputations
   cens_type <- x$censoring_type
   n <- x$number_of_observations
   
   cat("\n", 
       cat("Call:"),
-      mcall,
+      paste(deparse(x$mcall), sep = "\n", collapse = "\n"),
       sprintf("\n\n Number of observations: %s\n", n),
       paste("Imputed", m, cens_type, "censored values") )
 }
@@ -28,11 +27,10 @@ summary.imputed <- function(x) {
   n <- x$number_of_observations
   #  v <- x$variance #discrepancy
   #  aic <- x$AIC
-  mcall <- noquote(capture.output(x$mcall)) #call
   cens_type <- x$censoring_type
   
   cat("\n", 
-      cat("Call:  \n", mcall),
+      cat("Call:  \n", paste(deparse(x$mcall), sep = "\n", collapse = "\n")),
       paste("\n Number of observations:", n),
       paste("\n Type of censoring:", cens_type),
       paste("\n Number of imputations:", m))
