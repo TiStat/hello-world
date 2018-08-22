@@ -153,7 +153,9 @@ imputex <- function(xmu_formula,
   # save censored values before they get overwritten
   censoredx <- Wdat$cens[[censor]]
   
-  distances <- ifelse(censtype == "left" | censtype == "right", abs(censoredx - imputedx), NULL)
+  distances <- switch((censtype == "left" | censtype == "right") + 1,
+                      NULL,
+                      abs(censoredx - imputedx))
   
   # complete data with imputations
   Wdat$cens[censor] <- imputedx
@@ -178,7 +180,8 @@ imputex <- function(xmu_formula,
                  number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens),
                  imputevariance = imputevariance,
                  impquantiles = impquantiles,
-                 distances = distances)
+                 distances = distances
+                 )
   
   #  Create a class for this kind of result
   class(result) <- "imputed"
