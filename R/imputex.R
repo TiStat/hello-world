@@ -55,7 +55,7 @@ imputex <- function(xmu_formula,
   if(!(is.data.frame(data) && !nrow(data) == 0)){
     stop('data must be (non empty) data.frame')
   }
-
+  
   if(!(is.character(indicator) && indicator %in% names(data))){
     stop('indicator must be a column name in data')
   }
@@ -75,11 +75,11 @@ imputex <- function(xmu_formula,
     df_cens <- data[data[indicator] == 1, ]
     return(list(obs = df_obs, cens = df_cens))
   }
-
+  
   # split dataset in fully observed & missing/censored data
   Wdat <- W(data, indicator)
   censor <- as.character(xmu_formula[[2]])
-
+  
   # Step 1: fit gamlss with user specified xfamily and formula on observed data
   obsmodel <- gamlss(
     formula = xmu_formula,
@@ -89,7 +89,7 @@ imputex <- function(xmu_formula,
     family = xfamily,
     data = Wdat$obs,
     ...)
-
+  
   # Step 2: Resampling from fitted model
   # note that these are independent draws from the same distribution. Reframe to m vectors:
   draws <- family_fun(object = obsmodel,
@@ -97,20 +97,20 @@ imputex <- function(xmu_formula,
                       fitdata = Wdat$obs,
                       predictdata = Wdat$obs,
                       n = nrow(Wdat$obs)*nrow(Wdat$cens))
-
-
-
+  
+  
+  
   draws <- data.frame(matrix(draws,
                              nrow = nrow(Wdat$obs),
                              ncol = nrow(Wdat$cens)))
   # Basis for respective Bootstap samples (draws[,j], W).
   drawsW <- cbind(draws, Wdat$obs)
-
+  
   # Bootstap samples on simulated vectors (rowwise)
   boot <- drawsW[sample(x= 1:nrow(drawsW),
                         size = nrow(Wdat$obs),
                         replace = TRUE), ]
-
+  
   # step 3 estimate param. on each respective set {x*boot(j), W_obs} for all j
   bootmodel <- list()
   imputemat <- data.frame(X1 = vector(length= nrow(Wdat$cens)))
@@ -118,13 +118,13 @@ imputex <- function(xmu_formula,
   quantil = c(0.05, 0.25, 0.5, 0.75, 0.95)
   for (i in 1:ncol(draws)){
     # iterate only over the names of booted vectors.
-
+    
     # manipulate the formula for each estimation to get the respective
     # booted x column regressed on W
     bootformula <- as.formula(paste(names(boot)[i], '~',
                                     as.character(as.vector(xmu_formula)[3]),
                                     sep = ''))
-
+    
     bootmodel[[i]] <- gamlss(formula = bootformula,
                              sigma_formula = xsigma_formula,
                              nu_formula = xnu_formula,
@@ -132,10 +132,10 @@ imputex <- function(xmu_formula,
                              family = xfamily,
                              data = boot,
                              ...)
-
+    
     # Simulate data from the corresponding fitted distribution.
     imputecandidate <- names(boot)[i]
-   
+    
     impute = samplecensored(object = bootmodel[[i]],
                             censtype,
                             fitdata = boot,
@@ -143,28 +143,32 @@ imputex <- function(xmu_formula,
                             censor, # censor becomes upper bound if !is.null(intervallstart)
                             intervalstart = intervalstart,
                             quantil)
-
+    
     
     imputemat[[imputecandidate]] = impute$draw
     imputeq[[i]] = impute$quantiles
   }
   # imputed vector
   imputedx <- apply(imputemat, MARGIN = 1,median)
-
+  # save censored values before they get overwritten
+  censoredx <- Wdat$cens[[censor]]
+  
+  distances <- ifelse(censtype == "left" | censtype == "right", abs(censoredx - imputedx), NULL)
+  
   # complete data with imputations
   Wdat$cens[censor] <- imputedx
   fulldata <- rbind(Wdat$obs,Wdat$cens)
-
+  
   # variability of imputed observation among all drawn from booted
   imputevariance = apply(imputemat, MARGIN = 1, FUN = var)
-
+  
   # average imputed quantiles
   A = array(unlist(imputeq), dim = c(nrow(imputeq[[1]]), ncol(imputeq[[1]]), length(imputeq)))
   impquantiles = as.data.frame(apply(A, c(1,2), mean))
   colnames(impquantiles) = c('q5','q25','q50', 'q75', 'q95' )
-
+  
   mcall <- match.call()
-
+  
   result <- list(imputations = imputemat,
                  imputedx = imputedx,
                  fulldata = fulldata,
@@ -173,11 +177,13 @@ imputex <- function(xmu_formula,
                  censoring_type = censtype,
                  number_of_observations = nrow(Wdat$obs) + nrow(Wdat$cens),
                  imputevariance = imputevariance,
-                 impquantiles = impquantiles)
-
+                 impquantiles = impquantiles,
+                 distances = distances)
+  
   #  Create a class for this kind of result
-   class(result) <- "imputed"
-
+  class(result) <- "imputed"
+  
   return(result)
 }
+
 

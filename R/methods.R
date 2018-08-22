@@ -25,15 +25,26 @@ summary.imputed <- function(x) {
   
   m <- x$number_of_imputations #number of imputations
   n <- x$number_of_observations
+  sm <- summary(x$imputedx)
   #  v <- x$variance #discrepancy
   #  aic <- x$AIC
   cens_type <- x$censoring_type
+  ifelse(!is.null(x$distances), r <- round(mean(x$distances), 3), r <- "undefined")
   
   cat("\n", 
       cat("Call:  \n", paste(deparse(x$mcall), sep = "\n", collapse = "\n")),
       paste("\n Number of observations:", n),
       paste("\n Type of censoring:", cens_type),
-      paste("\n Number of imputations:", m))
+      paste("\n Number of imputations:", m),
+      "\n\n Imputed values:", 
+      "\n",
+      paste(names(sm), collapse = "     "),
+      "\n",
+      paste(round(sm, 3), collapse = "      "),
+      
+      paste("\n\n Average distance of imputations to censorings: \n", r)
+  )
+  
 }
 
 # erkläre die drei plots: CI, boxes/points: actual imp, andrew
@@ -48,14 +59,14 @@ summary.imputed <- function(x) {
 #' @example plotimputations(d, boxes = FALSE)
 plot.imputed <- function(object, boxes = FALSE) {
   d = object$imputations
-
+  
   quantil <- ggplot(object$impquantiles,
-                  aes(x = seq(1:nrow(object$impquantiles)),
-                      ymin=q5,
-                      lower=q25,
-                      middle=q50,
-                      upper=q75,
-                      ymax=q95)) +
+                    aes(x = seq(1:nrow(object$impquantiles)),
+                        ymin=q5,
+                        lower=q25,
+                        middle=q50,
+                        upper=q75,
+                        ymax=q95)) +
     geom_boxplot(stat="identity")+
     xlab('Observation')+
     ylab('Avg. quantiles of censored\n conditional bootmodel distribution')
@@ -77,7 +88,7 @@ plot.imputed <- function(object, boxes = FALSE) {
       xlab('Observation')+
       ylab('Proposals for observation [i]')
   }
-    grid.arrange(quantil, imputations, nrow = 1)
+  grid.arrange(quantil, imputations, nrow = 1)
 }
 
 # description: y and defected not included.
