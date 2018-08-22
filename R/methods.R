@@ -28,7 +28,7 @@ summary.imputed <- function(object) {
   sm <- summary(object$imputedx)
 
   cens_type <- object$censoring_type
-  ifelse(!is.null(object$distances), r <- round(mean(object$distances), 3), r <- "undefined")
+  r = ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
   
   cat("\n", 
       cat("Call:  \n", paste(deparse(object$mcall), sep = "\n", collapse = "\n")),
@@ -43,7 +43,6 @@ summary.imputed <- function(object) {
       
       paste("\n\n Average distance of imputations to censorings: \n", r)
   )
-  
 }
 
 # erkläre die drei plots: CI, boxes/points: actual imp, andrew
@@ -57,6 +56,7 @@ summary.imputed <- function(object) {
 #' 
 #' @example plotimputations(d, boxes = FALSE)
 plot.imputed <- function(object, boxes = FALSE) {
+  
   d = object$imputations
   
   quantil <- ggplot(object$impquantiles,
@@ -104,10 +104,7 @@ plot.imputed <- function(object, boxes = FALSE) {
 #' @param dependent character. specifies the variable name of the dependent
 #'   variable in the original regression problem (not the imputation problem)
 #' @examples 
-#' data = data.frame(x = c(1,2,1), ind = c(1,0,1), z = c(4,5,5), f = c(4,2,4)) 
-#' # note that the first and third observation are somewhat similar 
-#' indicator = 'ind'; defected = 'x' 
-#' andrew(data, defected, indicator)
+
 andrew.imputed = function(object, dependent){
   
   defected = as.character(object$mcall$xmu_formula[[2]])
@@ -122,7 +119,7 @@ andrew.imputed = function(object, dependent){
   #' @param obs observation vector
   curveval = function(t, obs){
     f = obs[1] / sqrt(2)
-    if(length(obs)>1){ # if branch will never be jumped over (due to stop!), but correct fourier function
+    if(length(obs)>1){ 
       for (i in 2:length(obs)){
         if (i %% 2 == 0){ # even
           f = f+ obs[i]*(sin((i-1)*t)+cos((i-1)*t))
