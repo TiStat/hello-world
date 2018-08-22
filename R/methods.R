@@ -1,4 +1,4 @@
-#' @param x 
+#' @param object 
 #'
 #' @return 
 #' @export
@@ -15,7 +15,7 @@ print.imputed <- function(object){
       paste("Imputed", m, cens_type, "censored values") )
 }
 
-#' @param x 
+#' @param object 
 #'
 #' @return
 #' @export
