@@ -134,7 +134,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #'             censtype= 'interval',
 #'             intervalstart = 'lower')
 #' andrew.imputed(d, dependent = 'y')
-#' @exportMethod 
+#' @export
 andrew.imputed <- function(object, dependent){
   
   defected <- as.character(object$mcall$xmu_formula[[2]])
