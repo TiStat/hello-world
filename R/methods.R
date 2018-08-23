@@ -45,16 +45,29 @@ summary.imputed <- function(object) {
   )
 }
 
-# erkläre die drei plots: CI, boxes/points: actual imp, andrew
-#' @title Plot imputations and their average quantiles
-#' @description Given an imputex object, this funciton plots the imputations and
-#'  optionally plots the approximate averaged quantiles of the valid part of the
-#'  censored conditonal distributions, from which the proposed vectors were
-#'  'drawn', before the proposals were aggregated to become the imputed vector.
+
+#' @title Plot proposed imputations and their conditional censored distributions' average quantiles
+#' @description Given an imputex object, this funciton plots (1) the the
+#'   approximate averaged quantiles of the valid part of the censored conditonal
+#'   distributions, from which the proposed vectors were 'drawn', before the
+#'   proposals were aggregated via median to become the imputed vector. (2) the
+#'   actual imputations for each observation. the red dots are the median
+#'   proposals, which are infact the final imputed vector
 #' @param object imputex object.
-#' @return 
-#' 
-#' @example plotimputations(d, boxes = FALSE)
+#' @param boxes boolean. indicating, whether (2) should be displayed as a boxplot
+#' @example
+#' rinterval = simulateData(n= 300,
+#'                          param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
+#'                          name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 ,
+#'                          damage =list(c(0.8, 0.99), c(1.2,1.5)),
+#'                          family = 'NO',
+#'                          correlation = NULL)
+#' d  <- imputex(data = rinterval$defected,
+#'               xmu_formula= x1~y,
+#'               indicator = "indicator",
+#'               censtype = 'interval',
+#'               intervalstart = 'lower')
+#' plot.imputed(d, boxes = FALSE)
 plot.imputed <- function(object, boxes = FALSE) {
   
   d <- object$imputations
@@ -72,22 +85,23 @@ plot.imputed <- function(object, boxes = FALSE) {
   
   # Convert to Longformat
   d$observation <- seq(1, nrow(d))
-  d <- melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
+  d <- reshape2::melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
     imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
       xlab('Observation')+
-      ylab('Proposals for observation [i]') # NOTE that red dots are based on mean, boxes display median.
+      ylab('Proposals for observation [i]')
   }else {
     imputations <- ggplot() +
       geom_point(data = d, aes(observation, value)) +
-      geom_point(data = data.frame(obs = 1:length(object$imputedx),imputedx = object$imputedx), 
+      geom_point(data = data.frame(obs = 1:length(object$imputedx),
+                                   imputedx = object$imputedx), 
                  aes(x = obs, y = imputedx), color = 'red' )+
       xlab('Observation')+
       ylab('Proposals for observation [i]')
   }
-  grid.arrange(quantil, imputations, nrow = 1)
+  gridExtra::grid.arrange(quantil, imputations, nrow = 1)
 }
 
 # description: y and defected not included.
