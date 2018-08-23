@@ -234,53 +234,6 @@ generateblankdata <- function(varnames, n, correlation= NULL) {
   return(rawdata)
 }
 
-# (working calls)----------------------------------
-# 
-# rinterval = simulateData(n= 300,
-#                          param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-#                          name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =list(c(0.3, 0.99), c(1.2,1.5)),
-#                          family = 'NO',
-#                          correlation = NULL)
-# 
-# rright = simulateData(n= 300,
-#                       param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-#                       name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(0.3, 0.9),
-#                       family = 'NO',
-#                       correlation = NULL)
-# 
-# rleft = simulateData(n= 300,
-#                      param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-#                      name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(1.2, 1.5),
-#                      family = 'NO',
-#                      correlation = NULL)
-# 
-# finterval = simulateData(n= 300,
-#                          param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-#                          name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =list(1/3,4/3),
-#                          family = 'NO',
-#                          correlation = NULL)
-# 
-# fright = simulateData(n= 300,
-#                       param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
-#                       name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =1/3,
-#                       family = 'NO',
-#                       correlation = matrix(c(1,0.3,0.2,
-#                                              0.3,1, 0.4,
-#                                              0.2,0.4,1), nrow = 3))
-# 
-# fleft = simulateData(n= 300,
-#                      param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-#                      name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =4/3,
-#                      family = 'NO',
-#                      correlation = NULL)
-# 
-# missing = simulateData(n= 300,
-#                        param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-#                        name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =NA,
-#                        family = 'NO',
-#                        correlation = NULL)
-# any(is.na(missing$defected$x1))
-
 
 
 
