@@ -137,6 +137,9 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #' @export
 andrew <- function(object, dependent){
   
+  if(class(object) != "imputed")
+    stop("Argument 'object' has to be of class 'imputed'!")
+  
   defected <- as.character(object$mcall$xmu_formula[[2]])
   data <- object$fulldata
   indicator <- object$mcall$indicator
