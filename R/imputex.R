@@ -56,6 +56,9 @@ imputex <- function(xmu_formula,
   if(!(is.data.frame(data) && !nrow(data) == 0)){
     stop('data must be (non empty) data.frame')
   }
+  if(length(xmu_formula)!= 3){
+    stop('xmu_formula must be specified as: censoredcovariate ~ set Of covariates')
+  }
   
   if(!(is.character(indicator) && indicator %in% names(data))){
     stop('indicator must be a column name in data')
