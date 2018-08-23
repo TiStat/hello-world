@@ -6,10 +6,13 @@
 \usage{
 imputex(xmu_formula, xsigma_formula = ~1, xnu_formula = ~1,
   xtau_formula = ~1, xfamily = NO(mu.link = "identity"), data,
-  indicator, censtype, ...)
+  indicator, censtype = c("missing", "right", "left", "interval"),
+  intervalstart = NULL, ...)
 }
 \arguments{
-\item{xmu_formula}{formula}
+\item{xmu_formula}{formula for location parameter of xfamily. Dependent
+variable specifys the variable which is partially censored/missing and is
+to be imputed}
 
 \item{xsigma_formula}{formula}
 
@@ -20,26 +23,33 @@ imputex(xmu_formula, xsigma_formula = ~1, xnu_formula = ~1,
 \item{xfamily}{gamlss family object.}
 
 \item{data}{data.frame containing a dummy censoring indicator, 0 if not
-indicator, 1 if indicator}
+censored/missing, 1 if censored/missing. Note that in case of right (left)
+censoring, the censored variable contains the respective minmal (maximal)
+duration of the followup which is used for conditional imputation. In case
+of interval censored data, two columns are required; specifying the start
+and end durations of the interval in question. This implementation assumes,
+that the start duration is the observed time, in which no failure occured
+before the interval is entered at which the exact point of the observed
+state change is unknown. For inverse sampling, the distribution is
+conditoned on the start duration and cut at the end duration to ensure the
+constrained.}
 
 \item{indicator}{character. Name of dummy column in data, which indicates the
 damaged observation.}
 
 \item{censtype}{character. type of the damaged observation 'missing',
-'right', 'left', 'interval'}
+'right', 'left' or 'interval'}
+
+\item{intervalstart}{character. Name of the column of interval starting
+values. by convention, the starting duration in this column is assumed to
+be the time passed without failure, before entering the interval, in which
+the exact time of failure is unknown.}
 
 \item{...}{additional arguments passed in all gamlss fit.}
-
-\item{data}{dataframe.}
-
-\item{indicator}{character. indicating the name of the missing/ (right/left)
-censored observation dummy variable in data}
 }
 \description{
 The MICE Algorithm (Multiple Imputation by Chained Equations) is
   a method to impute missing data. This function uses this algorithm for
   imputing censored data, using inverse sampling to utilize the additional
   information.
-
-split dataset
 }

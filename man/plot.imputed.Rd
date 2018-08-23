@@ -2,16 +2,20 @@
 % Please edit documentation in R/methods.R
 \name{plot.imputed}
 \alias{plot.imputed}
-\title{title plot imputations and their quantiles}
+\title{Plot proposed imputations and their conditional censored distributions' average quantiles}
 \usage{
-\method{plot}{imputed}(object, boxes = TRUE, quantiles = FALSE)
+\method{plot}{imputed}(x, boxes = FALSE, ...)
 }
 \arguments{
-\item{object}{imputex object.}
+\item{x}{imputex object.}
+
+\item{boxes}{boolean. indicating, whether (2) should be displayed as a boxplot}
 }
 \description{
-Given an imputex object, this funciton plots the imputations and
- optionally plots the approximate averaged quantiles of the valid part of the
- censored conditonal distributions, from which the proposed vectors were
- 'drawn', before the proposals were aggregated to become the imputed vector.
+Given an imputex object, this funciton plots (1) the the
+  approximate averaged quantiles of the valid part of the censored conditonal
+  distributions, from which the proposed vectors were 'drawn', before the
+  proposals were aggregated via median to become the imputed vector. (2) the
+  actual imputations for each observation. the red dots are the median
+  proposals, which are infact the final imputed vector
 }
