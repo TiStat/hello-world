@@ -12,7 +12,11 @@
 #'   the fraction of observations, that are to be defected. Note, that if
 #'   'subset' does not exclusivly use the 'name[d]' variable, this implies that
 #'   the independence assumption of MICE is not met (on purpose). e.g. of unmet
+<<<<<<< HEAD
 #'   condition: (x2 < 0.3 & x3 < 0.2)
+=======
+#'   condition: (x2 < 0.3 & x3<0.2)
+>>>>>>> 91112afc90079a89e7a68caf174e6e4abd3c6996
 #' @param prob numeric value. Specifies the binomial probability for each
 #'   observation in 'subset' to be defected.
 #' @param damage By users defintion, it specifies what type and how the data is
