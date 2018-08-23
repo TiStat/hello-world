@@ -143,9 +143,10 @@ andrew.imputed <- function(object, dependent){
     stop('dataframe must contain at least one variable apart from indicator, defected and dependent column')
   }
   
-  #' title fourier series
+  #' @title Fourier series
   #' @param t axis position at which to evaluate
   #' @param obs observation vector
+  #' @return Return of fourier series
   curveval <- function(t, obs){
     f <- obs[1] / sqrt(2)
     if(length(obs)>1){ 
