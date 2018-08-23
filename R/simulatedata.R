@@ -191,6 +191,7 @@ interpretdamage = function(truedata, name, subset, prob, damage){
 }
 
 
+#' @title Generating a blank data frame
 #' @description This function generates a blank data.frame with uniformly
 #'   distributed variables specified in varnames. The variables are drawn i.i.d.
 #'   uniform distrib. if correlation = NULL, and are drawn from a correlated
