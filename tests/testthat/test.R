@@ -3,19 +3,19 @@
 # Right censored data
 rd <- simulateData(n= 300,
                    param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-                   defect = list(name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(0.3, 0.9)),
+                   name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(0.3, 0.9),
                    family = 'NO',
                    correlation = NULL)$defected
 # Left censored data
 ld = simulateData(n= 300,
                   param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-                  defect = list(name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(1.2, 1.5)),
+                  name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(1.2, 1.5),
                   family = 'NO',
                   correlation = NULL)$defected
 # Interval censored data
 id = simulateData(n= 300,
                   param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-                  defect = list(name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =list(c(0.3, 0.99), c(1.2,1.5))),
+                  name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =list(c(0.3, 0.99), c(1.2,1.5)),
                   family = 'NO',
                   correlation = NULL)$defected
 
@@ -110,3 +110,4 @@ test_that('Valid draws, i.e. they are at least drawn from the valid region',{
   expect_true(all(limps <= lcens_values)) # x1 defines upper bound!
   expect_true(all(iimps >= ilower & iimps <= iupper)) # x1 defines upper bound and "lower" is the lower bound!
 })
+
