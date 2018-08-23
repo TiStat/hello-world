@@ -32,8 +32,8 @@
 #' @param xfamily gamlss family object.
 #' @param ... additional arguments passed in all gamlss fit.
 #' 
-#' @return 
-#' @example 
+#' @return Returns internal results of the algorithm.
+#' @examples 
 #' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1),
 #' sigma = ~sin(x2)), variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8
 #' | NA, family = 'NO') 

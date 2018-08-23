@@ -25,5 +25,20 @@ Andrews Curves are a Fourier series upon the observations in
   It may even be of use to some extent to employ Principle components.
 }
 \examples{
+finterval = simulateData(n= 100,
+                      param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
+                      name = 'x1', subset = ~ (x2 < 0.3& x3<0.2), prob = 0.4, damage =list(c(0.3,0.9),c(1.2,1.5)),
+                      family = 'NO',
+                      correlation = matrix(c(1,0.3,0.2,
+                                             0.3,1, 0.4,
+                                             0.2,0.4,1), nrow = 3))
+d = imputex(data = finterval$defected,
+            xmu_formula= x1~ y+x2+x3,
+            xsigma_formula = ~x2,
+            xfamily = NO(mu.link = 'identity'),
+            indicator = "indicator",
+            censtype= 'interval',
+            intervalstart = 'lower')
+andrew.imputed(d, dependent = 'y')
 title fourier series
 }

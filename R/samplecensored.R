@@ -6,7 +6,7 @@
 #' @param object gamlss fit object
 #' @param func character. "d", "p", "q", "r" for either density, distr. function,
 #'   quantile or random generation
-#' @param fitdata
+#' @param fitdata dataframe. Data used as input.
 #' @param predictdata dataframe. Containing the observations for which the
 #'   parameters are predicted.
 #' @param x,q scalar numeric. Quantile value. If density or probability function
@@ -70,7 +70,7 @@ func = match.arg(func)
 #'   conditoned distribution i.e. conditoned on the parameters and the
 #'   information contained in the censored value.
 #'
-#' @return
+#' @return Returns draws and quantiles.
 #' @export
 samplecensored = function(object,
                           censtype,
