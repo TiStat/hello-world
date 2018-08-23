@@ -31,6 +31,9 @@ values. by convention, the starting duration in this column is assumed to
 be the time passed without failure, before entering the interval, in which
 the exact time of failure is unknown.}
 }
+\value{
+Returns draws and quantiles.
+}
 \description{
 Inverse sampling of censored variables, to impute only valid
   observations conditional on the respective fit

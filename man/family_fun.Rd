@@ -13,6 +13,8 @@ family_fun(object, func = c("d", "p", "q", "r"), fitdata, predictdata,
 \item{func}{character. "d", "p", "q", "r" for either density, distr. function,
 quantile or random generation}
 
+\item{fitdata}{dataframe. Data used as input.}
+
 \item{predictdata}{dataframe. Containing the observations for which the
 parameters are predicted.}
 

@@ -11,6 +11,8 @@ simulateData(n, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
 \arguments{
 \item{n}{number of generated observations}
 
+\item{param.formula}{list. Formulas of the parameters to be estimated.}
+
 \item{name}{character. specifies variable name to be defected.}
 
 \item{subset}{formula. states a condition ( e.g. ~x1 > 0.6) which specifies
@@ -58,4 +60,12 @@ List of Dataframes. 'truedata' and 'defected' are dataframes
 }
 \description{
 Data generator for missing/censored data with Normal distribution
+}
+\examples{
+missing: damage = NA
+right: damage = ~1/3*x1
+rightRandom:  damage = c(0.01,1)
+left:  damage = 4/3
+intervalfix: damage = list(1/3, 4/3)
+intervalRandom: damage = list(c(0.01,1), c(1.01, 2))
 }

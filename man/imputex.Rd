@@ -47,9 +47,20 @@ the exact time of failure is unknown.}
 
 \item{...}{additional arguments passed in all gamlss fit.}
 }
+\value{
+Returns internal results of the algorithm.
+}
 \description{
 The MICE Algorithm (Multiple Imputation by Chained Equations) is
   a method to impute missing data. This function uses this algorithm for
   imputing censored data, using inverse sampling to utilize the additional
   information.
+}
+\examples{
+missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1),
+sigma = ~sin(x2)), variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8
+| NA, family = 'NO') 
+imputex(data = missing$defected, xmu_formula= x1~y+x2,
+xsigma_formula = ~1, xnu_formula = ~1, xtau_formula = ~1, xfamily =
+NO(mu.link = 'identity'), indicator = "indicator", censtype= 'missing' )
 }

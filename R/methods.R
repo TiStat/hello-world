@@ -55,7 +55,7 @@ summary.imputed <- function(object, ...) {
 #'   proposals, which are infact the final imputed vector
 #' @param x imputex object.
 #' @param boxes boolean. indicating, whether (2) should be displayed as a boxplot
-#' @example
+#' @examples 
 #' rinterval = simulateData(n= 300,
 #'                          param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
 #'                          name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 ,
