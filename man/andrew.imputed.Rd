@@ -42,5 +42,5 @@ d = imputex(data = finterval$defected,
             indicator = "indicator",
             censtype= 'interval',
             intervalstart = 'lower')
-andrew.imputed(d, dependent = 'y')
+andrew(d, dependent = 'y')
 }
