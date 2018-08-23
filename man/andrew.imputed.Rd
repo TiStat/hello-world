@@ -14,6 +14,9 @@ variable in the original regression problem (not the imputation problem)}
 
 \item{obs}{observation vector}
 }
+\value{
+Return of fourier series
+}
 \description{
 Andrews Curves are a Fourier series upon the observations in
   data. They are a tool for detecting hidden groupings, and in this case of
@@ -40,5 +43,4 @@ d = imputex(data = finterval$defected,
             censtype= 'interval',
             intervalstart = 'lower')
 andrew.imputed(d, dependent = 'y')
-title fourier series
 }
