@@ -1,40 +1,73 @@
 # Define some values from simulateData.R for unit test realisation --------------------------------------------
-rd <- simulateData(n = 100)$defected
-model <- gamlss(formula = y ~ ., data=rd) # . includes indicator column. But this is only to test the functions...
-nl <- length(rd$x1[rd$indicator==1]) # number of censored values. This is important for the unit tests!
-predict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), indicator = 1) #data frame to predict on, not a prediction!!!
-impute <-  imputex(xmu_formula = x1 ~ y + x2, data = rd, indicator = "indicator", censtype = "right")
+
+# Right censored data
+rd <- simulateData(n= 300,
+                   param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
+                   defect = list(name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(0.3, 0.9)),
+                   family = 'NO',
+                   correlation = NULL)$defected
+# Left censored data
+ld = simulateData(n= 300,
+                  param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
+                  defect = list(name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(1.2, 1.5)),
+                  family = 'NO',
+                  correlation = NULL)$defected
+# Interval censored data
+id = simulateData(n= 300,
+                  param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
+                  defect = list(name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =list(c(0.3, 0.99), c(1.2,1.5))),
+                  family = 'NO',
+                  correlation = NULL)$defected
+
+# . includes indicator column. But this is only to test the functions...
+rmodel <- gamlss(formula = y ~ ., data=rd) 
+lmodel <- gamlss(formula = y ~ ., data=ld)
+imodel <- gamlss(formula = y ~ ., data=id)
+
+# number of censored values. This is important for the unit tests!
+nr <- length(rd$x1[rd$indicator==1]) 
+nl <- length(ld$x1[ld$indicator==1])
+ni <- length(id$x1[ld$indicator==1])
+
+#data frame to predict on, not a prediction!!!
+rpredict.df <- data.frame(x1 = runif(n = nr), x2 = runif(n = nr), indicator = 1) 
+lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), indicator = 1)
+ipredict.df <- data.frame(x1 = runif(n = ni), x2 = runif(n = ni), indicator = 1)
+
+rimpute <-  imputex(xmu_formula = x1 ~ y + x2, data = rd, indicator = "indicator", censtype = "right")
+limpute <-  imputex(xmu_formula = x1 ~ y + x2, data = ld, indicator = "indicator", censtype = "left")
+iimpute <-  imputex(xmu_formula = x1 ~ y + x2, data = id, indicator = "indicator", censtype = "interval", intervalstart = "lower")
 
 # Unit tests for family_fun -----------------------------------------------------------------------------------
 context('Evaluate family functions')
 
 test_that('Test that mismatching arguments are stoped',{
-  expect_error(family_fun(model, func = 'r',rd, predict.df, x = 0.5))
+  expect_error(family_fun(rmodel, func = 'r',rd, rpredict.df, x = 0.5))
 })
 
 test_that('Test if output is as expected', {
-  expect_is(family_fun(model, func = 'r',rd, predict.df, n = 10), 'numeric')
-  expect_is(family_fun(model, func = 'p',rd, predict.df, q = c(0.5, 0.7)), 'numeric')
-  expect_equal(length(family_fun(model, func = 'r',rd, predict.df, n = 10)), 10)
+  expect_is(family_fun(rmodel, func = 'r',rd, rpredict.df, n = 10), 'numeric')
+  expect_is(family_fun(rmodel, func = 'p',rd, rpredict.df, q = c(0.5, 0.7)), 'numeric')
+  expect_equal(length(family_fun(rmodel, func = 'r',rd, rpredict.df, n = 10)), 10)
 })
 
 test_that("Test that there are no NA's for censored data",{
-  expect_equal(nrow(predict.df),length(family_fun(model, func = 'd', rd, predict.df, x = 5)))
+  expect_equal(nrow(rpredict.df),length(family_fun(rmodel, func = 'd', rd, rpredict.df, x = 5)))
   # Next is only valid, if func is not 'r', since they are called at different seeds!
-  expect_identical(family_fun(model, func = 'd', rd, predict.df, x = 10), na.omit(family_fun(model, func = 'd', rd, predict.df, x = 10)))
+  expect_identical(family_fun(rmodel, func = 'd', rd, rpredict.df, x = 10), na.omit(family_fun(rmodel, func = 'd', rd, rpredict.df, x = 10)))
 })
 
 # Unit tests for samplecensored ----------------------------------------------------------------------------
 context('Evaluate inverse sampling in samplecensored')
 
-if (nrow(predict.df) == 1) {
+if (nrow(rpredict.df) == 1) {
   test_that('Test that quantiles of samplecensored are of the right class', {
-    expect_is(samplecensored(model ,censtype = 'right', predict.df, rd, censor = "x1")$quantiles, 'numeric')
+    expect_is(samplecensored(rmodel ,censtype = 'right', rpredict.df, rd, censor = "x1")$quantiles, 'numeric')
   })
   
 } else {
   test_that('Test that quantiles of samplecensored are of the right class', {
-    expect_is(samplecensored(model ,censtype = 'right', predict.df, rd, censor = "x1")$quantiles, 'matrix')
+    expect_is(samplecensored(rmodel ,censtype = 'right', rpredict.df, rd, censor = "x1")$quantiles, 'matrix')
   })
 }
 
@@ -42,16 +75,16 @@ if (nrow(predict.df) == 1) {
 context('Some tests for imputex')
 
 test_that('Test that return is as expected', {
-  expect_is(impute$imputations , 'data.frame') 
-  expect_identical(impute$imputations, na.omit(impute$imputations))
-  expect_equal(ncol(impute$imputations), impute$number_of_imputations+1) # there are m + 1 columns, as final imputed vector is also attached
-  expect_is(impute$fulldata , 'data.frame')
-  expect_equal(nrow(impute$fulldata), nrow(rd))
-  expect_equal(ncol(impute$fulldata), ncol(rd))
-  expect_is(impute$impquantiles , 'data.frame')
-  expect_equal(nrow(impute$impquantiles), impute$number_of_imputations)
-  expect_identical(impute$impquantiles, na.omit(impute$impquantiles))
-  expect_true(all(impute$imputevariance > 0))
+  expect_is(rimpute$imputations , 'data.frame') 
+  expect_identical(rimpute$imputations, na.omit(rimpute$imputations))
+  expect_equal(ncol(rimpute$imputations), rimpute$nimputations)
+  expect_is(rimpute$fulldata , 'data.frame')
+  expect_equal(nrow(rimpute$fulldata), nrow(rd))
+  expect_equal(ncol(rimpute$fulldata), ncol(rd))
+  expect_is(rimpute$impquantiles , 'data.frame')
+  expect_equal(nrow(rimpute$impquantiles), rimpute$nimputations)
+  expect_identical(rimpute$impquantiles, na.omit(rimpute$impquantiles))
+  expect_true(all(rimpute$imputevariance > 0))
 })
 
 test_that('Test that call stops correctly with the valid error message', {
@@ -59,13 +92,21 @@ test_that('Test that call stops correctly with the valid error message', {
   expect_error(imputex(xmu_formula = x1 ~ y + x2, data = rd, indicator = "indicator", censtype = "right"), 'indicator must be a column name in data')
 })
 
-cens_values <- rd$x1[rd$indicator == 1] # censored values
-imps <- impute$imputations$imputedx     # imputed values
+# right censored values and imputations
+rcens_values <- rd$x1[rd$indicator == 1] # censored values
+rimps <- rimpute$imputedx     # imputed values
+
+# left censored values and imputations
+lcens_values <- ld$x1[ld$indicator == 1] # censored values
+limps <- limpute$imputedx     # imputed values
+
+# interval censored values and imputations
+iupper <- id$x1[id$indicator == 1] # upper bound censoring
+ilower <- id$lower[id$indicator == 1] # lower bound censoring
+iimps <- iimpute$imputedx     # imputed values
 
 test_that('Valid draws, i.e. they are at least drawn from the valid region',{
-  expect_true(all(imps >= cens_values)) # x1 defines the lower bound!
-  expect_true(all(imps >= cens_values)) # x1 defines the upper bound!
+  expect_true(all(rimps >= rcens_values)) # x1 defines lower bound!
+  expect_true(all(limps <= lcens_values)) # x1 defines upper bound!
+  expect_true(all(iimps >= ilower & iimps <= iupper)) # x1 defines upper bound and "lower" is the lower bound!
 })
-####### Inteval censored fehlen! (folgenedes Muster ungefähr)
-#expect_true(all(samplecensored(model ,censtype = 'interval', predict.df, rd, censor = "x1")$draw >= Wdat$cens$lower) &  # interval is not implemented yet
-# all(samplecensored(...,censtype = 'interval')$draw <= Wdat$cens$upper))
