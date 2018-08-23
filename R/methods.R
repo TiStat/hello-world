@@ -118,14 +118,27 @@ plot.imputed <- function(object, boxes = FALSE) {
 #' @param dependent character. specifies the variable name of the dependent
 #'   variable in the original regression problem (not the imputation problem)
 #' @examples 
-
+rright = simulateData(n= 300,
+                      param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
+                      name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(0.3,0.9),
+                      family = 'NO',
+                      correlation = matrix(c(1,0.3,0.2,
+                                             0.3,1, 0.4,
+                                             0.2,0.4,1), nrow = 3))
+d = imputex(data = fright$defected,
+            xmu_formula= x1~ y+x2+x3,
+            xsigma_formula = ~x2,
+            xfamily = NO(mu.link = 'identity'),
+            indicator = "indicator",
+            censtype= 'right' )
+andrew.imputed(d, dependent = 'y')
 andrew.imputed <- function(object, dependent){
   
   defected <- as.character(object$mcall$xmu_formula[[2]])
   data <- object$fulldata
   indicator <- object$mcall$indicator
   
-  if(length(setdiff(names(data), c(defected, dependent, indicator)))> 0){
+  if(length(setdiff(names(data), c(defected, dependent, indicator)))== 0){
     stop('dataframe must contain at least one variable apart from indicator, defected and dependent column')
   }
   
@@ -147,7 +160,7 @@ andrew.imputed <- function(object, dependent){
   }
   
   # reorder columns for later ease with positional matching in apply
-  d <-  data[set.diff(names(data), c(defected, dependent))]
+  d <-  data[setdiff(names(data), c(defected, dependent))]
   index <- which(names(d)== indicator)
   d <- d[, c(setdiff(1:ncol(d), index),index)]
   
