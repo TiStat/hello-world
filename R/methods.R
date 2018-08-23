@@ -1,6 +1,7 @@
-#' @param x 
+#' @title Printing an object of class "imputed"
+#' @param x Object of class "imputed"
 #'
-#' @return 
+#' @return Retruns a print in the console
 #' @export
 print.imputed <- function(x, ...){
   
@@ -15,12 +16,11 @@ print.imputed <- function(x, ...){
       paste("Imputed", m, cens_type, "censored values") )
 }
 
-#' @param object 
+#' @title Summarizing an object of class "imputed"
+#' @param object Object of class "imputed"
 #'
-#' @return
+#' @return Retruns a summary in the console
 #' @export
-#'
-#' @examples 
 summary.imputed <- function(object, ...) {
   
   m <- object$nimputations 
