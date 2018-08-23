@@ -1,27 +1,27 @@
-#' @param object 
+#' @title Printing an object of class "imputed"
+#' @param x Object of class "imputed"
 #'
-#' @return 
+#' @return Retruns a print in the console
 #' @export
-print.imputed <- function(object){
+print.imputed <- function(x, ...){
   
-  m <- object$nimputations
-  cens_type <- object$censtype
-  n <- object$nobservations
+  m <- x$nimputations
+  cens_type <- x$censtype
+  n <- x$nobservations
   
   cat("\n", 
       cat("Call:"),
-      paste(deparse(object$mcall), sep = "\n", collapse = "\n"),
+      paste(deparse(x$mcall), sep = "\n", collapse = "\n"),
       sprintf("\n\n Number of observations: %s\n", n),
       paste("Imputed", m, cens_type, "censored values") )
 }
 
-#' @param object 
+#' @title Summarizing an object of class "imputed"
+#' @param object Object of class "imputed"
 #'
-#' @return
+#' @return Retruns a summary in the console
 #' @export
-#'
-#' @examples 
-summary.imputed <- function(object) {
+summary.imputed <- function(object, ...) {
   
   m <- object$nimputations 
   n <- object$nobservations
@@ -53,7 +53,7 @@ summary.imputed <- function(object) {
 #'   proposals were aggregated via median to become the imputed vector. (2) the
 #'   actual imputations for each observation. the red dots are the median
 #'   proposals, which are infact the final imputed vector
-#' @param object imputex object.
+#' @param x imputex object.
 #' @param boxes boolean. indicating, whether (2) should be displayed as a boxplot
 #' @example
 #' rinterval = simulateData(n= 300,
@@ -68,12 +68,12 @@ summary.imputed <- function(object) {
 #'               censtype = 'interval',
 #'               intervalstart = 'lower')
 #' plot.imputed(d, boxes = FALSE)
-plot.imputed <- function(object, boxes = FALSE) {
+plot.imputed <- function(x, boxes = FALSE, ...) {
   
-  d <- object$imputations
+  d <- x$imputations
   
-  quantil <- ggplot(object$impquantiles,
-                    aes(x = seq(1:nrow(object$impquantiles)),
+  quantil <- ggplot(x$impquantiles,
+                    aes(x = seq(1:nrow(x$impquantiles)),
                         ymin=q5,
                         lower=q25,
                         middle=q50,
@@ -95,8 +95,8 @@ plot.imputed <- function(object, boxes = FALSE) {
   }else {
     imputations <- ggplot() +
       geom_point(data = d, aes(observation, value)) +
-      geom_point(data = data.frame(obs = 1:length(object$imputedx),
-                                   imputedx = object$imputedx), 
+      geom_point(data = data.frame(obs = 1:length(x$imputedx),
+                                   imputedx = x$imputedx), 
                  aes(x = obs, y = imputedx), color = 'red' )+
       xlab('Observation')+
       ylab('Proposals for observation [i]')

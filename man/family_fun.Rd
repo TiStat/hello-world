@@ -4,8 +4,8 @@
 \alias{family_fun}
 \title{Evaluate gamlss family functions from gamlss object}
 \usage{
-family_fun(object, func, fitdata, predictdata, p = NULL, q = NULL,
-  x = NULL, n = NULL, ...)
+family_fun(object, func = c("d", "p", "q", "r"), fitdata, predictdata,
+  p = NULL, q = NULL, x = NULL, n = NULL, ...)
 }
 \arguments{
 \item{object}{gamlss fit object}

@@ -5,25 +5,33 @@
 \title{Inverse sampling - GAMLSS}
 \usage{
 samplecensored(object, censtype, predictdata, fitdata, censor,
-  quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95))
+  quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95), intervalstart = NULL)
 }
 \arguments{
-\item{object}{gamlss. Fitted model whose parameters are predicted for predictdata.}
+\item{object}{gamlss. Fitted model whose parameters are predicted for
+predictdata.}
 
-\item{censtype}{chr. specifies the type of censoring, for which is imputed}
+\item{censtype}{character. specifies the type of censoring, for which is
+imputed}
 
-\item{predictdata}{dataframe. predictdata of the missing/censored observations, for which
-imputations are drawn}
+\item{predictdata}{dataframe. predictdata of the missing/censored
+observations, for which imputations are drawn}
 
 \item{fitdata}{dataframe. The orignal Dataset upon which gamlss was fitted}
 
-\item{censor}{character. Name of the to be predicted (damaged) column in predictdata.
-is only required if censtype is NOT 'missing'.}
-}
-\value{
-WRITE HERE WHAT TO BE RETURNED
+\item{censor}{character. Name of the to be predicted (damaged) column in
+predictdata. is only required if censtype is NOT 'missing'.}
+
+\item{quantiles}{vector. Containing the quantiles to be evaluated in the
+conditoned distribution i.e. conditoned on the parameters and the
+information contained in the censored value.}
+
+\item{intervalstart}{character. Name of the column of interval starting
+values. by convention, the starting duration in this column is assumed to
+be the time passed without failure, before entering the interval, in which
+the exact time of failure is unknown.}
 }
 \description{
-Inverse sampling of censored variables, to impute only valid observations
-conditional on the respective fit
+Inverse sampling of censored variables, to impute only valid
+  observations conditional on the respective fit
 }
