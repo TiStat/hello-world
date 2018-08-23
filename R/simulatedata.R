@@ -11,7 +11,8 @@
 #' @param subset formula. states a condition ( e.g. ~x1 > 0.6) which specifies
 #'   the fraction of observations, that are to be defected. Note, that if
 #'   'subset' does not exclusivly use the 'name[d]' variable, this implies that
-#'   the independence assumption of MICE is not met (on purpose).
+#'   the independence assumption of MICE is not met (on purpose). e.g. of unmet
+#'   condition: (x2 < 0.3 & x3<0.2)
 #' @param prob numeric value. Specifies the binomial probability for each
 #'   observation in 'subset' to be defected.
 #' @param damage By users defintion, it specifies what type and how the data is

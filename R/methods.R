@@ -118,19 +118,20 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #' @param dependent character. specifies the variable name of the dependent
 #'   variable in the original regression problem (not the imputation problem)
 #' @examples 
-rright = simulateData(n= 300,
+finterval = simulateData(n= 100,
                       param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
-                      name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(0.3,0.9),
+                      name = 'x1', subset = ~ (x2 < 0.3& x3<0.2), prob = 0.4, damage =list(c(0.3,0.9),c(1.2,1.5)),
                       family = 'NO',
                       correlation = matrix(c(1,0.3,0.2,
                                              0.3,1, 0.4,
                                              0.2,0.4,1), nrow = 3))
-d = imputex(data = fright$defected,
+d = imputex(data = finterval$defected,
             xmu_formula= x1~ y+x2+x3,
             xsigma_formula = ~x2,
             xfamily = NO(mu.link = 'identity'),
             indicator = "indicator",
-            censtype= 'right' )
+            censtype= 'interval',
+            intervalstart = 'lower')
 andrew.imputed(d, dependent = 'y')
 andrew.imputed <- function(object, dependent){
   
@@ -160,7 +161,12 @@ andrew.imputed <- function(object, dependent){
   }
   
   # reorder columns for later ease with positional matching in apply
-  d <-  data[setdiff(names(data), c(defected, dependent))]
+  if(object$mcall$censtype == 'interval'){
+    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
+  }else{
+    d <-  data[setdiff(names(data), c(defected, dependent))]
+  }
+  
   index <- which(names(d)== indicator)
   d <- d[, c(setdiff(1:ncol(d), index),index)]
   
@@ -173,7 +179,7 @@ andrew.imputed <- function(object, dependent){
         fun = curveval,
         geom = "line",
         args = list(obs = z[1:length(z)]),
-        color = z[length(z)] + 1  # must be positive and dummy is 0/1
+        color = z[length(z)] + 1  # based on indicator! color must be positive and dummy is 0/1
       )
   )
   print(p)
