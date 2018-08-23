@@ -207,3 +207,5 @@ any(is.na(missing$defected$x1))
 
 
 
+
+
