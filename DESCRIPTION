@@ -9,6 +9,8 @@ License: GPL-2
 Encoding: UTF-8
 URL: https://github.com/TiStat/Imputegamlss.git
 LazyData: true
+Depends:
+    gamlss
 Imports:
     ggplot2,
     gamlss,
