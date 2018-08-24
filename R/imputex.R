@@ -70,18 +70,10 @@ imputex <- function(xmu_formula,
     stop('intervalstart must be specified')
   }
   
-  # split data set. for more ambitious projects, this function must be remastered
-  # to cope with multiple imputations. In this case, a clear hirarchy of subsetting
-  # and imputing should be established. NOTE that this even further increases 
-  # the uncertainty contained in the full dataset. 
-  W <- function(data, indicator){ 
-    df_obs <- data[data[indicator] == 0, ]
-    df_cens <- data[data[indicator] == 1, ]
-    return(list(obs = df_obs, cens = df_cens))
-  }
-  
+
   # split dataset in fully observed & missing/censored data
-  Wdat <- W(data, indicator)
+  Wdat =  list(obs = data[data[indicator] == 0, ],
+               cens = data[data[indicator] == 1, ])
   censor <- as.character(xmu_formula[[2]])
   
   # Step 1: fit gamlss with user specified xfamily and formula on observed data
