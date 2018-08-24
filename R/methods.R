@@ -5,15 +5,16 @@
 #' @export
 print.imputed <- function(x, ...){
   
-  m <- x$nimputations
+  v <- x$nreplacements
   cens_type <- x$censtype
   n <- x$nobservations
+  mcall <- x$mcall
   
   cat("\n", 
       cat("Call:"),
-      paste(deparse(x$mcall), sep = "\n", collapse = "\n"),
+      paste(deparse(mcall), sep = "\n", collapse = "\n"),
       sprintf("\n\n Number of observations: %s\n", n),
-      paste("Imputed", m, cens_type, "censored values") )
+      paste("Replaced", v, cens_type, "censored values") )
 }
 
 #' @title Summarizing an object of class "imputed"
@@ -23,18 +24,19 @@ print.imputed <- function(x, ...){
 #' @export
 summary.imputed <- function(object, ...) {
   
-  m <- object$nimputations 
+  v <- object$nreplacements
   n <- object$nobservations
   sm <- summary(object$imputedx)
+  mcall <- object$mcall
 
   cens_type <- object$censtype
   r <- ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
   
   cat("\n", 
-      cat("Call:  \n", paste(deparse(object$mcall), sep = "\n", collapse = "\n")),
+      cat("Call:  \n", paste(deparse(mcall), sep = "\n", collapse = "\n")),
       paste("\n Number of observations:", n),
       paste("\n Type of censoring:", cens_type),
-      paste("\n Number of imputations:", m),
+      paste("\n Number of replacements:", v),
       "\n\n Imputed values:", 
       "\n",
       paste(names(sm), collapse = "     "),
@@ -71,10 +73,10 @@ summary.imputed <- function(object, ...) {
 #' @export
 plot.imputed <- function(x, boxes = FALSE, ...) {
   
-  d <- x$imputations
+  d <- x$proposals
   
-  quantil <- ggplot(x$impquantiles,
-                    aes(x = seq(1:nrow(x$impquantiles)),
+  quantil <- ggplot(x$imputequantiles,
+                    aes(x = seq(1:nrow(x$imputequantiles)),
                         ymin=q5,
                         lower=q25,
                         middle=q50,

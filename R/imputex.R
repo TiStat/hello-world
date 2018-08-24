@@ -30,7 +30,7 @@
 #' @param xtau_formula formula  
 #' @param xfamily gamlss family object.
 #' @param ... additional arguments passed in all gamlss fit.
-#' 
+#' @param m Number of imputations. Default is m = 5
 #' @return Returns internal results of the algorithm.
 #' @examples 
 #' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1) + x3,
@@ -49,6 +49,7 @@ imputex <- function(xmu_formula,
                     indicator,
                     censtype = c('missing', 'right', 'left', 'interval'),
                     intervalstart = NULL,
+                    m = 5,
                     ...){
   censtype <- match.arg(censtype)
   
@@ -91,11 +92,11 @@ imputex <- function(xmu_formula,
                       func = "r",
                       fitdata = Wdat$obs,
                       predictdata = Wdat$obs,
-                      n = nrow(Wdat$obs)*nrow(Wdat$cens))
+                      n = nrow(Wdat$obs) * m)
   
   draws <- data.frame(matrix(draws,
                              nrow = nrow(Wdat$obs),
-                             ncol = nrow(Wdat$cens)))
+                             ncol = m))
   
   # Basis for respective Bootstap samples (draws[,j], W).
   drawsW <- cbind(draws, Wdat$obs)
@@ -107,10 +108,10 @@ imputex <- function(xmu_formula,
   
   # step 3 estimate param. on each respective set {x*boot(j), W_obs} for all j
   bootmodel <- list()
-  imputemat <- data.frame(X1 = vector(length= nrow(Wdat$cens)))
+  proposals <- data.frame(X1 = vector(length= nrow(Wdat$cens)))
   imputeq <- list()
   quantil <- c(0.05, 0.25, 0.5, 0.75, 0.95)
-  for (i in 1:ncol(draws)){
+  for (i in 1:m){
     # iterate only over the names of booted vectors.
     
     # manipulate the formula for each estimation to get the respective
@@ -139,11 +140,11 @@ imputex <- function(xmu_formula,
                             quantil)
     
     
-    imputemat[[imputecandidate]] <- impute$draw
+    proposals[[imputecandidate]] <- impute$draw
     imputeq[[i]] <- impute$quantiles
   }
   # imputed vector
-  imputedx <- apply(imputemat, MARGIN = 1,median)
+  imputedx <- apply(proposals, MARGIN = 1,median)
   
   # (output augmentation)-------------------------------------------------------
   # save censored values before they get overwritten
@@ -159,28 +160,29 @@ imputex <- function(xmu_formula,
   fulldata <- rbind(Wdat$obs,Wdat$cens)
   
   # variability of imputed observation among all drawn from booted
-  imputevariance <- apply(imputemat, MARGIN = 1, FUN = var)
+  imputevariance <- apply(proposals, MARGIN = 1, FUN = var)
   
   # average imputed quantiles
   A <- array(unlist(imputeq), 
             dim = c(nrow(imputeq[[1]]),
                     ncol(imputeq[[1]]), 
                     length(imputeq)))
-  impquantiles <- as.data.frame(apply(A, c(1,2), mean))
-  colnames(impquantiles) <- c('q5','q25','q50', 'q75', 'q95' )
+  imputequantiles <- as.data.frame(apply(A, c(1,2), mean))
+  colnames(imputequantiles) <- c('q5','q25','q50', 'q75', 'q95' )
   
   mcall <- match.call()
   
-  result <- list(imputations = imputemat,
+  result <- list(proposals = proposals,
                  imputedx = imputedx,
                  fulldata = fulldata,
                  mcall = mcall,
-                 nimputations = nrow(Wdat$cens),
                  nobservations = nrow(data),
+                 nreplacements = nrow(Wdat$cens),
                  censtype = censtype,
                  imputevariance = imputevariance,
-                 impquantiles = impquantiles,
-                 distances = distances
+                 imputequantiles = imputequantiles,
+                 distances = distances,
+                 m = m
                  )
   
   #  Create a class for this kind of result
