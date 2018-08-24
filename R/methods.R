@@ -98,7 +98,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   }else {
     imputations <- ggplot() +
       geom_point(data = d, aes(observation, value)) +
-      geom_point(data = data.frame(obs = 1:length(x$imputedx),
+      geom_point(data = data.frame(obs = 1:x$nreplacements,
                                    imputedx = x$imputedx), 
                  aes(x = obs, y = imputedx), color = 'red' )+
       xlab('Observation')+
