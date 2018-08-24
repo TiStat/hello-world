@@ -16,3 +16,5 @@ The distribution of the later averaged imputation is not as easily computed. the
 (8) Roxy überarbeuten von simulatedata. subset bezieht sich auf param frame (nicht formula). Dadurch ist x1 nicht im (0,1) intervall.
 
 (9) xlim und legends in plot
+
+(10) family_fun im user call muss n=nrow(predictdata) (in der description vermerken und stop condition). Besser noch: n vielfaches von nrow predictdata. Sonst wird das sample eingeschränkt von dem man zieht.
