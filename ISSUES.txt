@@ -13,7 +13,7 @@ The distribution of the later averaged imputation is not as easily computed. the
 
 (7) Into Vignette: andrew() function doesnt need to be a method per se. Instead, a stop condition inserted to ensure class "imputed". Investigate outcome of andrew curves further for correctness!
 
-(8) Roxy überarbeuten von simulatedata. subset bezieht sich auf param frame (nicht formula). Dadurch ist x1 nicht im (0,1) intervall.
+(8) Roxy überarbeuten von simulatedata. subset bezieht sich auf param frame (nicht formula). Dadurch ist x1 nicht im (0,1) intervall. Für subset den default rep(1,n)
 
 (9) xlim und legends in plot
 
