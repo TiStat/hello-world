@@ -87,7 +87,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     ylab('Avg. quantiles of censored\n conditional bootmodel distribution')
   
   # Convert to Longformat
-  d$observation <- seq(1, nrow(d))
+  d$observation <- 1:nrow(d)
   d <- reshape2::melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
