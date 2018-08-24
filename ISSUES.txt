@@ -18,3 +18,8 @@ The distribution of the later averaged imputation is not as easily computed. the
 (9) xlim und legends in plot
 
 (10) family_fun im user call muss n=nrow(predictdata) (in der description vermerken und stop condition). Besser noch: n vielfaches von nrow predictdata. Sonst wird das sample eingeschränkt von dem man zieht.
+
+(11) set.seed(1)
+rnorm(n = 8, mean = c(10,20,60,100))
+output: [1]   9.373546  20.183643  59.164371 101.595281  10.329508  19.179532  60.487429 100.738325
+Right kind of behavior!
