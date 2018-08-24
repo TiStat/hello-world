@@ -28,7 +28,7 @@ summary.imputed <- function(object, ...) {
   n <- object$nobservations
   sm <- summary(object$imputedx)
   mcall <- object$mcall
-
+  
   cens_type <- object$censtype
   r <- ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
   
@@ -104,7 +104,23 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
       xlab('Observation')+
       ylab('Proposals for observation [i]')
   }
-  gridExtra::grid.arrange(quantil, imputations, nrow = 1)
+  
+  # Densities
+  # Access censored covariate
+  x1 <- as.character(x$mcall$xmu_formula[2])
+  xobs <- x$Wobs$x1
+  
+  densities <-  ggplot() + 
+    geom_density(data = data.frame(xobs), aes( x = xobs, color = "red"), fill = "red", alpha = 0.4) +
+    geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "blue"), 
+                 data = d, stat = "density") +
+    xlab('Covariate which includes defected data') +
+    ylab('Density') 
+  
+
+ 
+  
+  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
 }
 
 # description: y and defected not included.

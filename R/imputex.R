@@ -72,7 +72,7 @@ imputex <- function(xmu_formula,
   
 
   # split dataset in fully observed & missing/censored data
-  Wdat =  list(obs = data[data[indicator] == 0, ],
+  Wdat <- list(obs = data[data[indicator] == 0, ],
                cens = data[data[indicator] == 1, ])
   censor <- as.character(xmu_formula[[2]])
   
@@ -182,7 +182,8 @@ imputex <- function(xmu_formula,
                  imputevariance = imputevariance,
                  imputequantiles = imputequantiles,
                  distances = distances,
-                 m = m
+                 m = m,
+                 Wobs = Wdat$obs
                  )
   
   #  Create a class for this kind of result
