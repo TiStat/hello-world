@@ -86,8 +86,9 @@ imputex <- function(xmu_formula,
     data = Wdat$obs,
     ...)
   
-  # Step 2: Resampling from fitted model
-  # note that these are independent draws from the same distribution. Reframe to m vectors:
+  # Step 2: Resampling from fitted model.
+  # Note that these are m independent draws from vectors of length nrow(Wdat$cens), which are stacked!
+  # Reframe to m vectors:
   draws <- family_fun(object = obsmodel,
                       func = "r",
                       fitdata = Wdat$obs,
