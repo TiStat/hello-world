@@ -185,7 +185,7 @@ imputex <- function(xmu_formula,
                  imputequantiles = imputequantiles,
                  distances = distances,
                  m = m,
-                 Wobs = Wdat$obs
+                 Wobs = Wdat$obs[, names(Wdat$obs) != indicator]
                  )
   
   #  Create a class for this kind of result
