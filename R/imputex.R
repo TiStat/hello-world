@@ -53,20 +53,20 @@ imputex <- function(xmu_formula,
                     ...){
   censtype <- match.arg(censtype)
   
-  if(!(is.data.frame(data) && !nrow(data) == 0)){
+  if(!(is.data.frame(data) & !nrow(data) == 0)){
     stop('data must be (non empty) data.frame')
   }
   if(length(xmu_formula)!= 3){
     stop('xmu_formula must be specified as: censoredcovariate ~ set Of covariates')
   }
   
-  if(!(is.character(indicator) && indicator %in% names(data))){
+  if(!(is.character(indicator) & indicator %in% names(data))){
     stop('indicator must be a column name in data')
   }
   
-  if(!censtype == 'interval' && !is.null(intervalstart) ){
+  if(!censtype == 'interval' & !is.null(intervalstart) ){
     stop('intervalstart is not required for estimation')
-  } else if(censtype == 'interval' && is.null(intervalstart)){
+  } else if(censtype == 'interval' & is.null(intervalstart)){
     stop('intervalstart must be specified')
   }
   

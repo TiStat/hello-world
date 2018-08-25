@@ -72,7 +72,7 @@ simulateData = function(n,
   param.frame = lapply(param.formula, FUN = function(x) eval(x[[2]], envir = blankdata))
   param.frame$n = n
   
-  if(!is.null(param.frame$sigma) && param.frame$sigma<0){
+  if(!is.null(param.frame$sigma) & param.frame$sigma<0){
     stop('sigma formula does not ensure positive sigma on all possible covariate values, which are from interval [0,1]')
   } 
   
