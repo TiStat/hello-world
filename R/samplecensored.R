@@ -19,7 +19,12 @@
 #'   (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned
 #' @export
 family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
-func = match.arg(func)
+  func = match.arg(func)
+  
+  if(func == 'r' && nrow(predictdata) %% n != 0){
+    stop('Length of provided mu vector for rfamily is not a multiple of row length of predictdata. n > length(mu) implies, that the draws from multivarite distributions are stacked. If n is not a multiple, the last vector that is to be stacked will be drawn from a shorter multivarite distribution.')
+  }
+  
   # find the correct family function to evaluate
   fam_name = object$family[1]
   f_fun = paste(func, fam_name, sep= '')
@@ -83,9 +88,17 @@ samplecensored = function(object,
   # quantprob i.e. an auxilliary data frame with rowwise repeated quantiles vector
   quantprob = as.data.frame(matrix(rep(quantiles, times = nrow(predictdata)),
                                    byrow = TRUE, nrow = nrow(predictdata)))
+  
+  # WICKHAM STYLE: make calls more readdable! always same arguments are passed
+  ffamily = function(object = object, fitdata = fitdata, predictdata = predictdata){
+    f = function(func, p = NULL, q = NULL, x = NULL, n = NULL ){
+      family_fun(object, fitdata, predictdata, p = NULL, q = NULL, x = NULL, n = NULL)
+    }
+  }
+  
   if(censtype == 'missing'){
     return(list(
-      draw = family_fun(object, func = 'r', fitdata, predictdata, n = nrow(predictdata)),
+      draw = ffamily(func = 'r', n = nrow(predictdata)),
       quantiles = apply(
         quantprob,
         MARGIN = 2,
@@ -95,11 +108,11 @@ samplecensored = function(object,
     ))
   } else if (censtype == 'right') {
     # pindex is the cum. prob. up until the censored variable
-    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
+    pindex = ffamily(func = 'p', q = predictdata[[censor]])
     
     # inverse sampling
     psample = runif(n = nrow(predictdata), min = pindex, max = 1)
-    draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample)
+    draw = 
     
     # remap the quantiles on the applicable region in the cdf (psample) 
     qindex = (1-pindex)*quantprob + pindex
@@ -107,23 +120,23 @@ samplecensored = function(object,
   }else if (censtype == 'left'){
     # pindex is the cum. prob. up until the censored variable, 
     # note that position in psample is reverted to 'right'
-    pindex = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
+    pindex = ffamily(func =  'q',  p = psample)
     
     # inverse sampling
     psample = runif(n = nrow(predictdata), min = 0, max = pindex)
-    draw = family_fun(object, func = 'q', fitdata, predictdata, p = psample)
+    draw = ffamily(func = 'q', p = psample)
     
     # remap the quantiles on the applicable region in the cdf (psample) 
     qindex = (pindex-0) * quantprob 
 
   }else if (censtype == 'interval'){ 
     # applicable inverse sampling region is within the interval.
-    pindexupper = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[censor]])
-    pindexlower = family_fun(object, func = 'p', fitdata, predictdata, q = predictdata[[intervalstart]])
+    pindexupper = ffamily(func = 'p', q = predictdata[[censor]])
+    pindexlower = ffamily(func = 'p', q = predictdata[[intervalstart]])
     
     # inverse sampling
     psample = runif(n = nrow(predictdata), min = pindexlower, max = pindexupper)
-    draw = family_fun(object, func =  'q', fitdata, predictdata, p = psample)
+    draw = ffamily(func =  'q', p = psample)
     
     # remap the quantiles on the applicable region in the cdf (psample) 
     qindex = (pindexupper-pindexlower)*quantprob + pindexlower
@@ -137,7 +150,7 @@ samplecensored = function(object,
     qindex,
     MARGIN = 2,
     FUN = function(q)
-      family_fun(object, func = 'q', fitdata, predictdata, p = q) #  bottleneck?
+      ffamily(func = 'q', p = q) #  bottleneck?
   )
 
   return(list(
