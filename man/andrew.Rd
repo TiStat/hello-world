@@ -40,6 +40,8 @@ Andrews Curves are a Fourier series upon the observations in
   Note, that given after deleting those columns only one covariate remains,
   the fourier will correctly return parallel lines: each value of that
   covariate is devided by sqrt(2). This is a feature not a bug.
+
+Evaluates fourier series at "t" for parameter set "obs"
 }
 \examples{
 finterval = simulateData(n= 100,
