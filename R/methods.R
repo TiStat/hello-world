@@ -48,15 +48,23 @@ summary.imputed <- function(object, ...) {
 }
 
 
-#' @title Plot proposed imputations and their conditional censored distributions' average quantiles
+#' @title Plot proposed imputations and their conditional censored
+#'   distributions' average quantiles
 #' @description Given an imputex object, this funciton plots (1) the the
 #'   approximate averaged quantiles of the valid part of the censored conditonal
 #'   distributions, from which the proposed vectors were 'drawn', before the
 #'   proposals were aggregated via median to become the imputed vector. (2) the
 #'   actual imputations for each observation. the red dots are the median
-#'   proposals, which are infact the final imputed vector
+#'   proposals, which are infact the final imputed vector. (3) Density plots on
+#'   each Proposalvector. Consider, that each proposalvector is drawn from a
+#'   bootmodel-distribution whose observations have their own parameters. So
+#'   each proposalvector is a realization of a mixed distribution. Suppose, that
+#'   the booted models are relatively simmilar, the density estimates on all
+#'   proposalvectors (which are displayed) should be relatively simmilar with
+#'   little variation.
 #' @param x imputex object.
-#' @param boxes boolean. indicating, whether (2) should be displayed as a boxplot
+#' @param boxes boolean. indicating, whether (2) should be displayed as a
+#'   boxplot. Note, that the median values are the imputation values.
 #' @examples 
 #' rinterval = simulateData(n= 300,
 #'                          param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
@@ -75,7 +83,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   
   d <- x$proposals
   
-  quantil <- ggplot(x$imputequantiles,
+  quantil <- ggplot2::ggplot(x$imputequantiles,
                     aes(x = seq(1:nrow(x$imputequantiles)),
                         ymin=q5,
                         lower=q25,
@@ -91,12 +99,12 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   d <- reshape2::melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
-    imputations <- ggplot(data = d, aes(observation, value)) +
+    imputations <- ggplot2::ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
       xlab('Observation')+
       ylab('Proposals for observation [i]')
   }else {
-    imputations <- ggplot() +
+    imputations <- ggplot2::ggplot() +
       geom_point(data = d, aes(observation, value)) +
       geom_point(data = data.frame(obs = 1:x$nreplacements,
                                    imputedx = x$imputedx), 
@@ -110,20 +118,18 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   x1 <- as.character(x$mcall$xmu_formula[2])
   xobs <- x$Wobs$x1
   
-  densities <-  ggplot() + 
+  densities <-  ggplot2::ggplot() + 
     geom_density(data = data.frame(xobs), aes( x = xobs, color = "red"), fill = "red", alpha = 0.4) +
     geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "blue"), 
                  data = d, stat = "density") +
     xlab('Covariate which includes defected data') +
     ylab('Density') 
   
-
- 
-  
   gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
 }
 
 # description: y and defected not included.
+# not a bug but a feature, that if only one var is remaining, its parallel lines
 
 #' @title Andrews Curves of defected observations
 #' @description Andrews Curves are a Fourier series upon the observations in
@@ -132,10 +138,21 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #'   structure in the remaining covariates, that may explain why a certain
 #'   observation is likely to be defected. As it is an explorative tool, where
 #'   the ordering of the variables determines the frequency that is affected
-#'   respectively, it is highly recommended use various column orders.
-#'   It may even be of use to some extent to employ Principle components.
+#'   respectively, it is highly recommended use various column orders. It may
+#'   even be of use to some extent to employ Principle components. Note, that
+#'   the defected, dependent and defect-indicator (and lowerbound in the
+#'   intervalcase) variables are not considered for the andrews curve, as the
+#'   information contained is ambigous and misleading. Particulary the dependent
+#'   variable of the actual regression problem (not the imputation problem) is
+#'   misleading, as it is caused by the covariates and not vice versa. Further
+#'   Note, that given after deleting those columns only one covariate remains,
+#'   the fourier will correctly return parallel lines: each value of that
+#'   covariate is devided by sqrt(2). This is a feature not a bug.
 #' @param dependent character. specifies the variable name of the dependent
 #'   variable in the original regression problem (not the imputation problem)
+#' @param ordering character vector, specifying the order of the variables in
+#'   the andrews curve. Note that the ordering relates to the frequency in a
+#'   fourier that is associated with a covariate.
 #' @examples 
 #' finterval = simulateData(n= 100,
 #'                       param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
@@ -153,14 +170,31 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #'             intervalstart = 'lower')
 #' andrew(d, dependent = 'y')
 #' @export
-andrew <- function(object, dependent){
+andrew <- function(object, dependent, ordering = NULL){
   
   if(class(object) != "imputed")
     stop("Argument 'object' has to be of class 'imputed'!")
-  
+
   defected <- as.character(object$mcall$xmu_formula[[2]])
   data <- object$fulldata
   indicator <- object$mcall$indicator
+  
+  if(object$mcall$censtype == 'interval'){
+    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
+  }else{
+    d <-  data[setdiff(names(data), c(defected, dependent))]
+  }
+  
+  # reorder columns for later ease with positional matching in apply
+  index <- which(names(d)== indicator)
+  if(is.null(ordering)){
+    d <- d[, c(setdiff(1:ncol(d), index),index)]
+  } else {
+    if(!identical(setdiff(names(d), c(ordering, indicator)) ,character(0))){
+      stop('Names in Ordering were not found in provided data. All variable names must be specified')
+    }
+    d <- d[, c(ordering, indicator)]
+  }
   
   if(length(setdiff(names(data), c(defected, dependent, indicator)))== 0){
     stop('dataframe must contain at least one variable apart from indicator, defected and dependent column')
@@ -184,17 +218,7 @@ andrew <- function(object, dependent){
     return(f)
   }
   
-  # reorder columns for later ease with positional matching in apply
-  if(object$mcall$censtype == 'interval'){
-    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
-  }else{
-    d <-  data[setdiff(names(data), c(defected, dependent))]
-  }
-  
-  index <- which(names(d)== indicator)
-  d <- d[, c(setdiff(1:ncol(d), index),index)]
-  
-  p <- ggplot(data.frame(t = c(-pi, pi)), aes(t))
+  p <- ggplot2::ggplot(data.frame(t = c(-pi, pi)), aes(t))
   p <- p + apply(
     d,
     MARGIN = 1,
@@ -202,7 +226,7 @@ andrew <- function(object, dependent){
       stat_function(
         fun = curveval,
         geom = "line",
-        args = list(obs = z[1:length(z)]),
+        args = list(obs = z[1:(length(z)-1)]), # last is indicator
         color = z[length(z)] + 1  # based on indicator! color must be positive and dummy is 0/1
       )
   )
