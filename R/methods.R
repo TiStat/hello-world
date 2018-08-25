@@ -203,11 +203,11 @@ andrew <- function(object, dependent, ordering = NULL){
     stop('dataframe must contain at least one variable apart from indicator, defected and dependent column')
   }
   
-  #' @title Fourier series
-  #' @description Evaluates fourier series at "t" for parameter set "obs"
-  #' @param t axis position at which to evaluate
-  #' @param obs observation vector
-  #' @return Return of fourier series
+  #@title Fourier series
+  #@description Evaluates fourier series at "t" for parameter set "obs"
+  #@param t axis position at which to evaluate
+  #@param obs observation vector
+  #@return Return of fourier series
   curveval <- function(t, obs){
     f <- obs[1] / sqrt(2)
     if(length(obs)>1){ 

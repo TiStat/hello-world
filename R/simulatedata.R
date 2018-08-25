@@ -2,12 +2,9 @@
 #' @description Data generator for missing/censored data with Normal distribution
 #' @param n number of generated observations
 #' @param param.formula list. Formulas of the parameters to be estimated.
-#' @param variablenames vector filled with characters specifying all variable
-#'  names, that are used in param.formulas. First string is the variable that is
-#'  to be censored
 #' @param family character. Specifies the gamlss family, from which the data is
 #'  drawn. e.g. 'NO' for a dependent variable drawn
-#' @param name character. specifies variable name to be defected.
+#' @param name character. specifies variable names to be defected.
 #' @param subset formula. states a condition ( e.g. ~x1 > 0.6) which specifies
 #'   the fraction of observations, that are to be defected. Note, that if
 #'   'subset' does not exclusivly use the 'name[d]' variable, this implies that

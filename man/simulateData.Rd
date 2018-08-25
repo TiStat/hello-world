@@ -13,7 +13,7 @@ simulateData(n, param.formula = list(mu = ~exp(x1) + x2, sigma =
 
 \item{param.formula}{list. Formulas of the parameters to be estimated.}
 
-\item{name}{character. specifies variable name to be defected.}
+\item{name}{character. specifies variable names to be defected.}
 
 \item{subset}{formula. states a condition ( e.g. ~x1 > 0.6) which specifies
 the fraction of observations, that are to be defected. Note, that if
@@ -46,10 +46,6 @@ drawn. e.g. 'NO' for a dependent variable drawn}
 
 \item{correlation}{matrix. If a correlation/covariance matrix is provided,
 the drawn variables are uniformly drawn, but correlated according to this matrix.}
-
-\item{variablenames}{vector filled with characters specifying all variable
-names, that are used in param.formulas. First string is the variable that is
-to be censored}
 }
 \value{
 List of Dataframes. 'truedata' and 'defected' are dataframes
