@@ -6,10 +6,11 @@
 #'  drawn. e.g. 'NO' for a dependent variable drawn
 #' @param name character. specifies variable names to be defected.
 #' @param subset formula. states a condition ( e.g. ~x1 > 0.6) which specifies
-#'   the fraction of observations, that are to be defected. Note, that if
-#'   'subset' does not exclusivly use the 'name[d]' variable, this implies that
-#'   the independence assumption of MICE is not met (on purpose). e.g. of unmet
-#'   condition: (x2 < 0.3 & x3 < 0.2)
+#'   the fraction of observations, that are to be defected. Default: The entire
+#'   Dataset is potentially subject to defect. Note, that if 'subset' does not
+#'   exclusivly use the 'name[d]' variable, this implies that the independence
+#'   assumption of MICE is not met (on purpose). e.g. of unmet condition: (x2 <
+#'   0.3 & x3 < 0.2).
 #' @param prob numeric value. Specifies the binomial probability for each
 #'   observation in 'subset' to be defected.
 #' @param damage By users defintion, it specifies what type and how the data is
@@ -30,7 +31,6 @@
 #'   NOTE: if a list is provided, both members must either vectors or sigle values.
 #' @param correlation matrix. If a correlation/covariance matrix is provided,
 #'   the drawn variables are uniformly drawn, but correlated according to this matrix. 
-#'  
 #' @return List of Dataframes. 'truedata' and 'defected' are dataframes
 #'   containing the dependent (generated according to the param.formula list),
 #'   the generated covariates, and a censoring/missing 'indicator' The mere
@@ -46,9 +46,14 @@
 #'@export 
 simulateData = function(n,
                         param.formula = list(mu = ~exp(x1) +x2, sigma = ~sin(x2)), 
-                        name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =1/3,
+                        name = 'x1', subset = NULL, prob = 0.8 , damage =1/3,
                         family = 'NO',
                         correlation = NULL) {
+  
+  # default case is no Subset; all values are potentially subject to defect
+  if(is.null(subset)){
+    subset = ~rep(1, n)
+  }
   
   # extract all variable names from user specified formula
   varnames = unique(unlist(sapply(param.formula, FUN = all.vars)))
@@ -79,7 +84,7 @@ simulateData = function(n,
   y = do.call(rfam, param.frame)
   
   
-  defectdata = interpretdamage(blankdata, name, subset, prob, damage)
+  defectdata = simulatedefect(blankdata, name, subset, prob, damage)
   indicator = defectdata$indicator
   return(list(truedata = data.frame(y,blankdata,indicator), 
               defected = cbind(y, defectdata$defected, indicator),
@@ -87,8 +92,8 @@ simulateData = function(n,
 }
 
 #' @title Defect existing data.
-#' @description Takes the defect argument and interprets it on the truedataset.
-#' Note, that interpretdamage is generic and can defect any existing dataset according to rule
+#' @description Interprets the defect rule and defects the true dataset.
+#' Note, that simulatedefect is generic and can defect any existing dataset according to rule
 #' @param truedata data.frame containing the un-defected data.
 #' @param name character. specifies variable name to be defected.
 #' @param subset formula. states a condition ( e.g. ~x1 > 0.6) which specifies
@@ -117,7 +122,7 @@ simulateData = function(n,
 #'   observation was defected and atomatically description of censtype, which
 #'   the user implicitly defined by damage.
 #' @export 
-interpretdamage = function(truedata, name, subset, prob, damage){
+simulatedefect = function(truedata, name, subset, prob, damage){
   
   # catch corner cases of user failure owed to complex input.
   if(class(subset) != 'formula' ){
