@@ -119,7 +119,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   x1 <- as.character(x$mcall$xmu_formula[2])
   xobs <- x$Wobs$x1
   
-  densities <-  ggplot() + 
+  densities <-  ggplot2::ggplot() + 
     geom_density(data = data.frame(xobs), aes(x = xobs, color = "observed"), alpha = 0.4, size = 1.1) +
     geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "proposal vector"), 
                  data = d, stat = "density", size = 1.1) +
