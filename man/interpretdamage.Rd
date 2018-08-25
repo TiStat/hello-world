@@ -40,13 +40,8 @@ NOTE: if a list is provided, both members must either vectors or sigle values.}
 list. Defected dataframe, an indicator vector specifying which
   observation was defected and atomatically description of censtype, which
   the user implicitly defined by damage.
-
-if x is skalar, return x. if x is a vector of length two, drawn n
-  dimensional vector from unifom on interval [x[1], x[2]]
 }
 \description{
 Takes the defect argument and interprets it on the truedataset.
 Note, that interpretdamage is generic and can defect any existing dataset according to rule
-
-function differentiates, if input is a skalar or vektor
 }

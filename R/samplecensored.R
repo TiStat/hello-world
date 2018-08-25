@@ -21,7 +21,7 @@
 family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
   func = match.arg(func)
   
-  if(func == 'r' && nrow(predictdata) %% n != 0){
+  if(func == 'r' && n %% nrow(predictdata) != 0){
     stop('Length of provided mu vector for rfamily is not a multiple of row length of predictdata. n > length(mu) implies, that the draws from multivarite distributions are stacked. If n is not a multiple, the last vector that is to be stacked will be drawn from a shorter multivarite distribution.')
   }
   
