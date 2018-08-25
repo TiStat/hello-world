@@ -5,8 +5,8 @@
 \title{Simluate missing/censored data}
 \usage{
 simulateData(n, param.formula = list(mu = ~exp(x1) + x2, sigma =
-  ~sin(x2)), name = "x1", subset = ~x1 > 0.6, prob = 0.8,
-  damage = 1/3, family = "NO", correlation = NULL)
+  ~sin(x2)), name = "x1", subset = NULL, prob = 0.8, damage = 1/3,
+  family = "NO", correlation = NULL)
 }
 \arguments{
 \item{n}{number of generated observations}
@@ -16,10 +16,11 @@ simulateData(n, param.formula = list(mu = ~exp(x1) + x2, sigma =
 \item{name}{character. specifies variable names to be defected.}
 
 \item{subset}{formula. states a condition ( e.g. ~x1 > 0.6) which specifies
-the fraction of observations, that are to be defected. Note, that if
-'subset' does not exclusivly use the 'name[d]' variable, this implies that
-the independence assumption of MICE is not met (on purpose). e.g. of unmet
-condition: (x2 < 0.3 & x3 < 0.2)}
+the fraction of observations, that are to be defected. Default: The entire
+Dataset is potentially subject to defect. Note, that if 'subset' does not
+exclusivly use the 'name[d]' variable, this implies that the independence
+assumption of MICE is not met (on purpose). e.g. of unmet condition: (x2 <
+0.3 & x3 < 0.2).}
 
 \item{prob}{numeric value. Specifies the binomial probability for each
 observation in 'subset' to be defected.}

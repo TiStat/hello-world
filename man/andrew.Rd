@@ -14,7 +14,8 @@ variable in the original regression problem (not the imputation problem)}
 
 \item{ordering}{character vector, specifying the order of the variables in
 the andrews curve. Note that the ordering relates to the frequency in a
-fourier that is associated with a covariate.}
+fourier that is associated with a covariate.
+@return Return Andrew's curves figure}
 }
 \description{
 Andrews Curves are a Fourier series upon the observations in

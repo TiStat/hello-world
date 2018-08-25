@@ -118,7 +118,7 @@ samplecensored = function(object,
     
     # inverse sampling
     psample = runif(n = nrow(predictdata), min = pindex, max = 1)
-    draw = 
+    draw = ffamily(func = 'q', p = psample)
     
     # remap the quantiles on the applicable region in the cdf (psample) 
     qindex = (1-pindex)*quantprob + pindex
@@ -126,7 +126,7 @@ samplecensored = function(object,
   }else if (censtype == 'left'){
     # pindex is the cum. prob. up until the censored variable, 
     # note that position in psample is reverted to 'right'
-    pindex = ffamily(func =  'q',  p = psample)
+    pindex = ffamily(func =  'p',  q = predictdata[[censor]])
     
     # inverse sampling
     psample = runif(n = nrow(predictdata), min = 0, max = pindex)

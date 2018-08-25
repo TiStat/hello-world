@@ -52,7 +52,7 @@ simulateData = function(n,
   
   # default case is no Subset; all values are potentially subject to defect
   if(is.null(subset)){
-    subset = ~rep(1, n)
+    subset = as.formula(paste("~rep(1,", n,")"))
   }
   
   # extract all variable names from user specified formula
@@ -72,7 +72,7 @@ simulateData = function(n,
   param.frame = lapply(param.formula, FUN = function(x) eval(x[[2]], envir = blankdata))
   param.frame$n = n
   
-  if(!is.null(param.frame$sigma) & param.frame$sigma<0){
+  if(!is.null(param.frame$sigma) & all(param.frame$sigma < 0)){
     stop('sigma formula does not ensure positive sigma on all possible covariate values, which are from interval [0,1]')
   } 
   

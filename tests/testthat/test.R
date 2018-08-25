@@ -50,9 +50,9 @@ test_that('Test that mismatching arguments are stoped',{
 })
 
 test_that('Test if output is as expected', {
-  expect_is(family_fun(rmodel, func = 'r',rd, rpredict.df, n = 10), 'numeric')
+  expect_is(family_fun(rmodel, func = 'r',rd, rpredict.df, n = nrow(rpredict.df)), 'numeric')
   expect_is(family_fun(rmodel, func = 'p',rd, rpredict.df, q = c(0.5, 0.7)), 'numeric')
-  expect_equal(length(family_fun(rmodel, func = 'r',rd, rpredict.df, n = 10)), 10)
+  expect_equal(length(family_fun(rmodel, func = 'r',rd, rpredict.df, n = nrow(rpredict.df))), nrow(rpredict.df))
 })
 
 test_that("Test that there are no NA's for censored data",{

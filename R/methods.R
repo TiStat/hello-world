@@ -156,6 +156,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #' @param ordering character vector, specifying the order of the variables in
 #'   the andrews curve. Note that the ordering relates to the frequency in a
 #'   fourier that is associated with a covariate.
+#'   @return Return Andrew's curves figure
 #' @examples 
 #' finterval = simulateData(n= 100,
 #'                       param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
@@ -227,7 +228,7 @@ andrew <- function(object, dependent, ordering = NULL){
     d,
     MARGIN = 1,
     FUN = function(z)
-      stat_function(
+      ggplot2::stat_function(
         fun = curveval,
         geom = "line",
         args = list(obs = z[1:(length(z)-1)]), # last is indicator
