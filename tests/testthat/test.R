@@ -41,6 +41,10 @@ iimpute <-  imputex(xmu_formula = x1 ~ y + x2, data = id, indicator = "indicator
 # Unit tests for family_fun -----------------------------------------------------------------------------------
 context('Evaluate family functions')
 
+test_that('Test that n is a multiple of nrow(predictdata)', {
+  expect_error(family_fun(object = rimpute, fitdata = rd, predictdata = rpredict.df, func = 'r', n = nrow(rpredict.df) + 1))
+})
+
 test_that('Test that mismatching arguments are stoped',{
   expect_error(family_fun(rmodel, func = 'r',rd, rpredict.df, x = 0.5))
 })
