@@ -24,3 +24,4 @@ rnorm(n = 8, mean = c(10,20,60,100))
 output: [1]   9.373546  20.183643  59.164371 101.595281  10.329508  19.179532  60.487429 100.738325
 Right kind of behavior!
 
+(12) median in boxplots. Maybe also fill in density
