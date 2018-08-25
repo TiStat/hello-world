@@ -14,6 +14,8 @@ variable in the original regression problem (not the imputation problem)}
 the andrews curve. Note that the ordering relates to the frequency in a
 fourier that is associated with a covariate.}
 
+\item{Object}{of class "imputed"}
+
 \item{t}{axis position at which to evaluate}
 
 \item{obs}{observation vector}
