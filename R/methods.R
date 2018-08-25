@@ -204,6 +204,7 @@ andrew <- function(object, dependent, ordering = NULL){
   }
   
   #' @title Fourier series
+  #' @description Evaluates fourier series at "t" for parameter set "obs"
   #' @param t axis position at which to evaluate
   #' @param obs observation vector
   #' @return Return of fourier series
