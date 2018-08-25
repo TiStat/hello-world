@@ -148,9 +148,9 @@ simulatedefect = function(truedata, name, subset, prob, damage){
     }
   }
 
-  #' @description function differentiates, if input is a skalar or vektor
-  #' @return if x is skalar, return x. if x is a vector of length two, drawn n
-  #'   dimensional vector from unifom on interval [x[1], x[2]]
+  # @description function differentiates, if input is a skalar or vektor
+  # @return if x is skalar, return x. if x is a vector of length two, drawn n
+  # dimensional vector from unifom on interval [x[1], x[2]]
   f = function(x, n){ # differentiate random /fix
     if (length(x) == 1) { # fix
       return(multiply = x)
