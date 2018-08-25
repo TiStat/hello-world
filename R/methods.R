@@ -118,12 +118,13 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   x1 <- as.character(x$mcall$xmu_formula[2])
   xobs <- x$Wobs$x1
   
-  densities <-  ggplot2::ggplot() + 
-    geom_density(data = data.frame(xobs), aes( x = xobs, color = "red"), fill = "red", alpha = 0.4) +
-    geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "blue"), 
-                 data = d, stat = "density") +
+  densities <-  ggplot() + 
+    geom_density(data = data.frame(xobs), aes(x = xobs, color = "observed"), alpha = 0.4, size = 1.1) +
+    geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "proposal vector"), 
+                 data = d, stat = "density", size = 1.1) +
     xlab('Covariate which includes defected data') +
-    ylab('Density') 
+    ylab('Density') +
+    scale_color_discrete("")
   
   gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
 }
