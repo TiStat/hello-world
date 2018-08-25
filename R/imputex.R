@@ -34,11 +34,11 @@
 #' @return Returns internal results of the algorithm.
 #' @examples 
 #' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1) + x3,
-#' sigma = ~sin(x2)), variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8
-#' | NA, family = 'NO') 
+#' sigma = ~sin(x2)), name = 'x1', subset = ~ x1 > 0.6, prob = 0.8,
+#' damage = NA, family = 'NO', correlation = NULL) 
 #' imputex(data = missing$defected, xmu_formula= x1~y+x3,
 #' xsigma_formula = ~x2, xnu_formula = ~1, xtau_formula = ~1, xfamily =
-#' NO(mu.link = 'identity'), indicator = "indicator", censtype= 'missing' )
+#' NO(mu.link = 'identity'), indicator = "indicator", censtype= 'missing')
 #' @export
 imputex <- function(xmu_formula,
                     xsigma_formula = ~1,

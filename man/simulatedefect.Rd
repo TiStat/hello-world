@@ -23,7 +23,7 @@ observation in 'subset' to be defected.}
 to be defected.
 'damage' = NA generates missing data. 
 A value between [0, 1] implies right censoring (e.g. 'damage' = 1/3), 
-[1,...] left censoring. The value is used to multiply the truevalue of 
+[1,...] left censoring. The value is used to multiply the true value of 
 'name' in order to defect the data. 
 The generalization for fixed interval factors is 'damage' = list(1/3, 4/3),
 where the values specifiy the factor for the lower and the upper bound respectively.

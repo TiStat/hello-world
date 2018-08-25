@@ -78,13 +78,13 @@ summary.imputed <- function(object, ...) {
 #'               indicator = "indicator",
 #'               censtype = 'interval',
 #'               intervalstart = 'lower')
-#' plot.imputed(d, boxes = FALSE)
+#' plot(d, boxes = FALSE)
 #' @export
 plot.imputed <- function(x, boxes = FALSE, ...) {
   
   d <- x$proposals
   
-  quantil <- ggplot2::ggplot(x$imputequantiles,
+  quantil <- ggplot(x$imputequantiles,
                     aes(x = seq(1:nrow(x$imputequantiles)),
                         ymin=q5,
                         lower=q25,
@@ -100,12 +100,12 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   d <- reshape2::melt(d ,  id.vars = 'observation', variable.name = 'proposalVec')
   
   if (boxes) {
-    imputations <- ggplot2::ggplot(data = d, aes(observation, value)) +
+    imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
       xlab('Observation')+
       ylab('Proposals for observation [i]')
   }else {
-    imputations <- ggplot2::ggplot() +
+    imputations <- ggplot() +
       geom_point(data = d, aes(observation, value)) +
       geom_point(data = data.frame(obs = 1:x$nreplacements,
                                    imputedx = x$imputedx), 
@@ -119,7 +119,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   x1 <- as.character(x$mcall$xmu_formula[2])
   xobs <- x$Wobs$x1
   
-  densities <-  ggplot2::ggplot() + 
+  densities <-  ggplot() + 
     geom_density(data = data.frame(xobs), aes(x = xobs, color = "observed"), alpha = 0.4, size = 1.1) +
     geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "proposal vector"), 
                  data = d, stat = "density", size = 1.1) +
@@ -223,12 +223,12 @@ andrew <- function(object, dependent, ordering = NULL){
     return(f)
   }
   
-  p <- ggplot2::ggplot(data.frame(t = c(-pi, pi)), aes(t))
+  p <- ggplot(data.frame(t = c(-pi, pi)), aes(t))
   p <- p + apply(
     d,
     MARGIN = 1,
     FUN = function(z)
-      ggplot2::stat_function(
+      stat_function(
         fun = curveval,
         geom = "line",
         args = list(obs = z[1:(length(z)-1)]), # last is indicator

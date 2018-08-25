@@ -17,7 +17,7 @@
 #'   to be defected.
 #'   'damage' = NA generates missing data. 
 #'   A value between [0, 1] implies right censoring (e.g. 'damage' = 1/3), 
-#'   [1,...] left censoring. The value is used to multiply the truevalue of 
+#'   [1,...] left censoring. The value is used to multiply the true value of 
 #'   'name' in order to defect the data. 
 #'   The generalization for fixed interval factors is 'damage' = list(1/3, 4/3),
 #'   where the values specifiy the factor for the lower and the upper bound respectively.
@@ -37,12 +37,12 @@
 #'   difference between the two Dataframes is, that 'defected' has arteficially generated
 #'   censored/missing values according to the 'defect' specification.
 #' @examples
-#' missing: damage = NA
-#' right: damage = ~1/3*x1
-#' rightRandom:  damage = c(0.01,1)
-#' left:  damage = 4/3
-#' intervalfix: damage = list(1/3, 4/3)
-#' intervalRandom: damage = list(c(0.01,1), c(1.01, 2))
+#' # missing: damage = NA
+#' # right: damage = ~1/3*x1
+#' # rightRandom:  damage = c(0.01,1)
+#' # left:  damage = 4/3
+#' # intervalfix: damage = list(1/3, 4/3)
+#' # intervalRandom: damage = list(c(0.01,1), c(1.01, 2))
 #'@export 
 simulateData = function(n,
                         param.formula = list(mu = ~exp(x1) +x2, sigma = ~sin(x2)), 
@@ -106,7 +106,7 @@ simulateData = function(n,
 #'   to be defected.
 #'   'damage' = NA generates missing data. 
 #'   A value between [0, 1] implies right censoring (e.g. 'damage' = 1/3), 
-#'   [1,...] left censoring. The value is used to multiply the truevalue of 
+#'   [1,...] left censoring. The value is used to multiply the true value of 
 #'   'name' in order to defect the data. 
 #'   The generalization for fixed interval factors is 'damage' = list(1/3, 4/3),
 #'   where the values specifiy the factor for the lower and the upper bound respectively.

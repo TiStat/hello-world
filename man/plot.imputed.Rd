@@ -41,5 +41,5 @@ d  <- imputex(data = rinterval$defected,
               indicator = "indicator",
               censtype = 'interval',
               intervalstart = 'lower')
-plot.imputed(d, boxes = FALSE)
+plot(d, boxes = FALSE)
 }

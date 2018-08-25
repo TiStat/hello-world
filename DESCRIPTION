@@ -4,15 +4,17 @@ Title: Imputing censored covariates with distributional regression - gamlss
 Version: 0.1.0
 Author: Tim Ruhkopf, Petros Christanas
 Maintainer: Tim Ruhkopf <tim.ruhkopf@outlook.de>, Petros Christanas <petroschristanas@gmail.com> 
-Description: Impute censored/missing covariates with distributional regression (gamlss)
+Description: The MICE Algorithm (Multiple Imputation by Chained Equations) is a method to 
+             impute missing data. This package uses this algorithm for imputing censored data, 
+             using inverse sampling to utilize the additional information.
 License: GPL-2
 Encoding: UTF-8
 URL: https://github.com/TiStat/Imputegamlss.git
 LazyData: true
 Depends:
-    gamlss
+    gamlss,
+    ggplot2
 Imports:
-    ggplot2,
     reshape2, 
     MASS,
     gridExtra
