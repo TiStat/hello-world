@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{Object of class "imputed"}
+
+\item{...}{print specific arguments. See print() documentation}
 }
 \value{
 Retruns a print in the console

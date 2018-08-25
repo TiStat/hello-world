@@ -12,6 +12,8 @@
 
 \item{boxes}{boolean. indicating, whether (2) should be displayed as a
 boxplot. Note, that the median values are the imputation values.}
+
+\item{...}{plot specific arguments. See plot() documentation}
 }
 \description{
 Given an imputex object, this funciton plots (1) the the

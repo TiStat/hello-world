@@ -7,14 +7,14 @@
 andrew(object, dependent, ordering = NULL)
 }
 \arguments{
+\item{object}{of class "imputed"}
+
 \item{dependent}{character. specifies the variable name of the dependent
 variable in the original regression problem (not the imputation problem)}
 
 \item{ordering}{character vector, specifying the order of the variables in
 the andrews curve. Note that the ordering relates to the frequency in a
 fourier that is associated with a covariate.}
-
-\item{Object}{of class "imputed"}
 
 \item{t}{axis position at which to evaluate}
 
