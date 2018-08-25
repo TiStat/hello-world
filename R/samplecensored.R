@@ -21,9 +21,12 @@
 family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
   func = match.arg(func)
   
-  if(func == 'r' && n %% nrow(predictdata) != 0){
-    stop('Length of provided mu vector for rfamily is not a multiple of row length of predictdata. n > length(mu) implies, that the draws from multivarite distributions are stacked. If n is not a multiple, the last vector that is to be stacked will be drawn from a shorter multivarite distribution.')
+  if(!is.null(n)){
+    if(func == 'r' & n %% nrow(predictdata) != 0){
+      stop('Length of provided mu vector for rfamily is not a multiple of row length of predictdata. n > length(mu) implies, that the draws from multivarite distributions are stacked. If n is not a multiple, the last vector that is to be stacked will be drawn from a shorter multivarite distribution.')
+    }
   }
+
   
   # find the correct family function to evaluate
   fam_name = object$family[1]
@@ -90,11 +93,14 @@ samplecensored = function(object,
                                    byrow = TRUE, nrow = nrow(predictdata)))
   
   # WICKHAM STYLE: make calls more readdable! always same arguments are passed
-  ffamily = function(object = object, fitdata = fitdata, predictdata = predictdata){
-    f = function(func, p = NULL, q = NULL, x = NULL, n = NULL ){
-      family_fun(object, fitdata, predictdata, p = NULL, q = NULL, x = NULL, n = NULL)
+  f = function(object, fitdata, predictdata){
+    g = function(func, p = NULL, q = NULL, x = NULL, n = NULL){
+      family_fun(object, func, fitdata, predictdata, p, q, x, n)
     }
   }
+  
+  ffamily = f(object = object, fitdata = fitdata, predictdat = predictdata)
+  
   
   if(censtype == 'missing'){
     return(list(
