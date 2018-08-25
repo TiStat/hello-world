@@ -7,7 +7,7 @@
 imputex(xmu_formula, xsigma_formula = ~1, xnu_formula = ~1,
   xtau_formula = ~1, xfamily = NO(mu.link = "identity"), data,
   indicator, censtype = c("missing", "right", "left", "interval"),
-  intervalstart = NULL, ...)
+  intervalstart = NULL, m = 5, ...)
 }
 \arguments{
 \item{xmu_formula}{formula for location parameter of xfamily. Dependent
@@ -45,6 +45,8 @@ values. by convention, the starting duration in this column is assumed to
 be the time passed without failure, before entering the interval, in which
 the exact time of failure is unknown.}
 
+\item{m}{Number of imputations. Default is m = 5}
+
 \item{...}{additional arguments passed in all gamlss fit.}
 }
 \value{
@@ -57,10 +59,10 @@ The MICE Algorithm (Multiple Imputation by Chained Equations) is
   information.
 }
 \examples{
-missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1),
+missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1) + x3,
 sigma = ~sin(x2)), variablenames =  c('x1', 'x2'), defect = ~ x1 > 0.6 | 0.8
 | NA, family = 'NO') 
-imputex(data = missing$defected, xmu_formula= x1~y+x2,
-xsigma_formula = ~1, xnu_formula = ~1, xtau_formula = ~1, xfamily =
+imputex(data = missing$defected, xmu_formula= x1~y+x3,
+xsigma_formula = ~x2, xnu_formula = ~1, xtau_formula = ~1, xfamily =
 NO(mu.link = 'identity'), indicator = "indicator", censtype= 'missing' )
 }

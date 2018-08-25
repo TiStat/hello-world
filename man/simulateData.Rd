@@ -4,9 +4,9 @@
 \alias{simulateData}
 \title{Simluate missing/censored data}
 \usage{
-simulateData(n, param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-  name = "x1", subset = ~x1 > 0.6, prob = 0.8, damage = 1/3,
-  family = "NO", correlation = NULL)
+simulateData(n, param.formula = list(mu = ~exp(x1) + x2, sigma =
+  ~sin(x2)), name = "x1", subset = ~x1 > 0.6, prob = 0.8,
+  damage = 1/3, family = "NO", correlation = NULL)
 }
 \arguments{
 \item{n}{number of generated observations}
