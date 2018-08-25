@@ -2,14 +2,18 @@
 % Please edit documentation in R/methods.R
 \name{plot.imputed}
 \alias{plot.imputed}
-\title{Plot proposed imputations and their conditional censored distributions' average quantiles}
+\title{Plot proposed imputations and their conditional censored
+  distributions' average quantiles}
 \usage{
 \method{plot}{imputed}(x, boxes = FALSE, ...)
 }
 \arguments{
 \item{x}{imputex object.}
 
-\item{boxes}{boolean. indicating, whether (2) should be displayed as a boxplot}
+\item{boxes}{boolean. indicating, whether (2) should be displayed as a
+boxplot. Note, that the median values are the imputation values.}
+
+\item{...}{plot specific arguments. See plot() documentation}
 }
 \description{
 Given an imputex object, this funciton plots (1) the the
@@ -17,7 +21,13 @@ Given an imputex object, this funciton plots (1) the the
   distributions, from which the proposed vectors were 'drawn', before the
   proposals were aggregated via median to become the imputed vector. (2) the
   actual imputations for each observation. the red dots are the median
-  proposals, which are infact the final imputed vector
+  proposals, which are infact the final imputed vector. (3) Density plots on
+  each Proposalvector. Consider, that each proposalvector is drawn from a
+  bootmodel-distribution whose observations have their own parameters. So
+  each proposalvector is a realization of a mixed distribution. Suppose, that
+  the booted models are relatively simmilar, the density estimates on all
+  proposalvectors (which are displayed) should be relatively simmilar with
+  little variation.
 }
 \examples{
 rinterval = simulateData(n= 300,

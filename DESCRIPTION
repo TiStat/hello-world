@@ -10,17 +10,14 @@ Encoding: UTF-8
 URL: https://github.com/TiStat/Imputegamlss.git
 LazyData: true
 Depends:
+    gamlss
+Imports:
     ggplot2,
-    gamlss,
     reshape2, 
     MASS,
     gridExtra
 Suggests:
-    ggplot2,
-    gamlss,
     testthat,
-    reshape2,
-    gridExtra,
     knitr,
     rmarkdown
 RoxygenNote: 6.1.0

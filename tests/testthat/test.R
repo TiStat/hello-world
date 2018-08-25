@@ -75,15 +75,15 @@ if (nrow(rpredict.df) == 1) {
 context('Some tests for imputex')
 
 test_that('Test that return is as expected', {
-  expect_is(rimpute$imputations , 'data.frame') 
-  expect_identical(rimpute$imputations, na.omit(rimpute$imputations))
-  expect_equal(ncol(rimpute$imputations), rimpute$nimputations)
+  expect_is(rimpute$proposals , 'data.frame') 
+  expect_identical(rimpute$proposals, na.omit(rimpute$proposals))
+  expect_equal(ncol(rimpute$proposals), rimpute$m)
   expect_is(rimpute$fulldata , 'data.frame')
   expect_equal(nrow(rimpute$fulldata), nrow(rd))
   expect_equal(ncol(rimpute$fulldata), ncol(rd))
-  expect_is(rimpute$impquantiles , 'data.frame')
-  expect_equal(nrow(rimpute$impquantiles), rimpute$nimputations)
-  expect_identical(rimpute$impquantiles, na.omit(rimpute$impquantiles))
+  expect_is(rimpute$imputequantiles , 'data.frame')
+  expect_equal(nrow(rimpute$imputequantiles), rimpute$nreplacements)
+  expect_identical(rimpute$imputequantiles, na.omit(rimpute$imputequantiles))
   expect_true(all(rimpute$imputevariance > 0))
 })
 

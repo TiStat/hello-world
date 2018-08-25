@@ -4,11 +4,17 @@
 \alias{andrew}
 \title{Andrews Curves of defected observations}
 \usage{
-andrew(object, dependent)
+andrew(object, dependent, ordering = NULL)
 }
 \arguments{
+\item{object}{of class "imputed"}
+
 \item{dependent}{character. specifies the variable name of the dependent
 variable in the original regression problem (not the imputation problem)}
+
+\item{ordering}{character vector, specifying the order of the variables in
+the andrews curve. Note that the ordering relates to the frequency in a
+fourier that is associated with a covariate.}
 
 \item{t}{axis position at which to evaluate}
 
@@ -24,8 +30,18 @@ Andrews Curves are a Fourier series upon the observations in
   structure in the remaining covariates, that may explain why a certain
   observation is likely to be defected. As it is an explorative tool, where
   the ordering of the variables determines the frequency that is affected
-  respectively, it is highly recommended use various column orders.
-  It may even be of use to some extent to employ Principle components.
+  respectively, it is highly recommended use various column orders. It may
+  even be of use to some extent to employ Principle components. Note, that
+  the defected, dependent and defect-indicator (and lowerbound in the
+  intervalcase) variables are not considered for the andrews curve, as the
+  information contained is ambigous and misleading. Particulary the dependent
+  variable of the actual regression problem (not the imputation problem) is
+  misleading, as it is caused by the covariates and not vice versa. Further
+  Note, that given after deleting those columns only one covariate remains,
+  the fourier will correctly return parallel lines: each value of that
+  covariate is devided by sqrt(2). This is a feature not a bug.
+
+Evaluates fourier series at "t" for parameter set "obs"
 }
 \examples{
 finterval = simulateData(n= 100,

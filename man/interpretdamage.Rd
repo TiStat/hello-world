@@ -7,6 +7,8 @@
 interpretdamage(truedata, name, subset, prob, damage)
 }
 \arguments{
+\item{truedata}{data.frame containing the un-defected data.}
+
 \item{name}{character. specifies variable name to be defected.}
 
 \item{subset}{formula. states a condition ( e.g. ~x1 > 0.6) which specifies

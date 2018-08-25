@@ -92,6 +92,7 @@ simulateData = function(n,
 #' @title Defect existing data.
 #' @description Takes the defect argument and interprets it on the truedataset.
 #' Note, that interpretdamage is generic and can defect any existing dataset according to rule
+#' @param truedata data.frame containing the un-defected data.
 #' @param name character. specifies variable name to be defected.
 #' @param subset formula. states a condition ( e.g. ~x1 > 0.6) which specifies
 #'   the fraction of observations, that are to be defected. Note, that if

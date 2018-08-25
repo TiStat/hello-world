@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{Object of class "imputed"}
+
+\item{...}{summary specific arguments. See summary() documentation}
 }
 \value{
 Retruns a summary in the console

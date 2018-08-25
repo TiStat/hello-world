@@ -1,6 +1,6 @@
 #' @title Printing an object of class "imputed"
 #' @param x Object of class "imputed"
-#'
+#' @param ... print specific arguments. See print() documentation
 #' @return Retruns a print in the console
 #' @export
 print.imputed <- function(x, ...){
@@ -19,7 +19,7 @@ print.imputed <- function(x, ...){
 
 #' @title Summarizing an object of class "imputed"
 #' @param object Object of class "imputed"
-#'
+#' @param ... summary specific arguments. See summary() documentation
 #' @return Retruns a summary in the console
 #' @export
 summary.imputed <- function(object, ...) {
@@ -65,6 +65,7 @@ summary.imputed <- function(object, ...) {
 #' @param x imputex object.
 #' @param boxes boolean. indicating, whether (2) should be displayed as a
 #'   boxplot. Note, that the median values are the imputation values.
+#' @param ... plot specific arguments. See plot() documentation
 #' @examples 
 #' rinterval = simulateData(n= 300,
 #'                          param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
@@ -118,7 +119,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   x1 <- as.character(x$mcall$xmu_formula[2])
   xobs <- x$Wobs$x1
   
-  densities <-  ggplot() + 
+  densities <-  ggplot2::ggplot() + 
     geom_density(data = data.frame(xobs), aes(x = xobs, color = "observed"), alpha = 0.4, size = 1.1) +
     geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "proposal vector"), 
                  data = d, stat = "density", size = 1.1) +
@@ -149,6 +150,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #'   Note, that given after deleting those columns only one covariate remains,
 #'   the fourier will correctly return parallel lines: each value of that
 #'   covariate is devided by sqrt(2). This is a feature not a bug.
+#' @param object of class "imputed"
 #' @param dependent character. specifies the variable name of the dependent
 #'   variable in the original regression problem (not the imputation problem)
 #' @param ordering character vector, specifying the order of the variables in
@@ -202,6 +204,7 @@ andrew <- function(object, dependent, ordering = NULL){
   }
   
   #' @title Fourier series
+  #' @description Evaluates fourier series at "t" for parameter set "obs"
   #' @param t axis position at which to evaluate
   #' @param obs observation vector
   #' @return Return of fourier series
