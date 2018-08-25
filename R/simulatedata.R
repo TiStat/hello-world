@@ -48,7 +48,7 @@
 #' intervalRandom: damage = list(c(0.01,1), c(1.01, 2))
 #'@export 
 simulateData = function(n,
-                        param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)), 
+                        param.formula = list(mu = ~exp(x1) +x2, sigma = ~sin(x2)), 
                         name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =1/3,
                         family = 'NO',
                         correlation = NULL) {
