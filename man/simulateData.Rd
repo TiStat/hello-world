@@ -9,18 +9,18 @@ simulateData(n, param.formula = list(mu = ~exp(x1) + x2, sigma =
   family = "NO", correlation = NULL)
 }
 \arguments{
-\item{n}{number of generated observations}
+\item{n}{Number of generated observations.}
 
 \item{param.formula}{list. Formulas of the parameters to be estimated.}
 
-\item{name}{character. specifies variable names to be defected.}
+\item{name}{character; Specifies variable names to be defected.}
 
-\item{subset}{formula. states a condition ( e.g. ~x1 > 0.6) which specifies
+\item{subset}{formula. States a condition (e.g. ~x1 > 0.6) which specifies
 the fraction of observations, that are to be defected. Default: The entire
 Dataset is potentially subject to defect. Note, that if 'subset' does not
 exclusivly use the 'name[d]' variable, this implies that the independence
-assumption of MICE is not met (on purpose). e.g. of unmet condition: (x2 <
-0.3 & x3 < 0.2).}
+assumption of MICE is not met (on purpose). 
+e.g. of unmet condition: (x2 < 0.3 & x3 < 0.2).}
 
 \item{prob}{numeric value. Specifies the binomial probability for each
 observation in 'subset' to be defected.}
@@ -40,10 +40,10 @@ drawn for each observation with which the true data is multiplied.
 The generalization for random interval factors is 'damage' = list(c(0.2, 1), c(1,3)),
 where the first vector specifies the unif interval for factors affecting 
 the lower bound and the second affecting the upper bound.
-NOTE: if a list is provided, both members must either vectors or sigle values.}
+NOTE: if a list is provided, both members must either vectors or single values.}
 
-\item{family}{character. Specifies the gamlss family, from which the data is
-drawn. e.g. 'NO' for a dependent variable drawn}
+\item{family}{character; Specifies the gamlss family, from which the data is
+drawn. e.g. 'NO' for a dependent variable drawn.}
 
 \item{correlation}{matrix. If a correlation/covariance matrix is provided,
 the drawn variables are uniformly drawn, but correlated according to this matrix.}
@@ -52,17 +52,17 @@ the drawn variables are uniformly drawn, but correlated according to this matrix
 List of Dataframes. 'truedata' and 'defected' are dataframes
   containing the dependent (generated according to the param.formula list),
   the generated covariates, and a censoring/missing 'indicator' The mere
-  difference between the two Dataframes is, that 'defected' has arteficially generated
+  difference between the two dataframes is, that 'defected' has artificially generated
   censored/missing values according to the 'defect' specification.
 }
 \description{
-Data generator for missing/censored data with Normal distribution
+Data generator for missing/censored data with Normal distribution.
 }
 \examples{
 # missing: damage = NA
 # right: damage = ~1/3*x1
-# rightRandom:  damage = c(0.01,1)
+# rightRandom:  damage = c(0.01, 1)
 # left:  damage = 4/3
 # intervalfix: damage = list(1/3, 4/3)
-# intervalRandom: damage = list(c(0.01,1), c(1.01, 2))
+# intervalRandom: damage = list(c(0.01, 1), c(1.01, 2))
 }

@@ -9,9 +9,9 @@ simulatedefect(truedata, name, subset, prob, damage)
 \arguments{
 \item{truedata}{data.frame containing the un-defected data.}
 
-\item{name}{character. specifies variable name to be defected.}
+\item{name}{character. Specifies variable name to be defected.}
 
-\item{subset}{formula. states a condition ( e.g. ~x1 > 0.6) which specifies
+\item{subset}{formula. States a condition (e.g. ~x1 > 0.6) which specifies
 the fraction of observations, that are to be defected. Note, that if
 'subset' does not exclusivly use the 'name[d]' variable, this implies that
 the independence assumption of MICE is not met (on purpose).}
@@ -34,14 +34,14 @@ drawn for each observation with which the true data is multiplied.
 The generalization for random interval factors is 'damage' = list(c(0.2, 1), c(1,3)),
 where the first vector specifies the unif interval for factors affecting 
 the lower bound and the second affecting the upper bound.
-NOTE: if a list is provided, both members must either vectors or sigle values.}
+NOTE: if a list is provided, both members must either vectors or single values.}
 }
 \value{
-list. Defected dataframe, an indicator vector specifying which
-  observation was defected and atomatically description of censtype, which
+list. List elements are the defected dataframe, an indicator vector specifying which
+  observation was defected and an atomic description of censoring type, which
   the user implicitly defined by damage.
 }
 \description{
 Interprets the defect rule and defects the true dataset.
-Note, that simulatedefect is generic and can defect any existing dataset according to rule
+Note, that simulatedefect is generic and can defect any existing dataset according to rule.
 }
