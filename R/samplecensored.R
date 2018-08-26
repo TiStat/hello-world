@@ -109,7 +109,7 @@ samplecensored = function(object,
         quantprob,
         MARGIN = 2,
         FUN = function(q)
-          family_fun(object, func = 'q', fitdata, predictdata, p = q)
+          ffamily(func = 'q', p = q)
       )
     ))
   } else if (censtype == 'right') {
