@@ -10,26 +10,26 @@ family_fun(object, func = c("d", "p", "q", "r"), fitdata, predictdata,
 \arguments{
 \item{object}{gamlss fit object}
 
-\item{func}{character. "d", "p", "q", "r" for either density, distr. function,
-quantile or random generation}
+\item{func}{character. "d", "p", "q", "r" for either density, distribution function,
+quantile or random data generation.}
 
 \item{fitdata}{dataframe. Data used as input.}
 
 \item{predictdata}{dataframe. Containing the observations for which the
 parameters are predicted.}
 
-\item{p}{scalar numeric. Probability value. If quantile function used}
+\item{p}{scalar numeric. Probability value if quantile function used.}
 
-\item{x, q}{scalar numeric. Quantile value. If density or probability function
-used respectively}
+\item{x, q}{scalar numeric. Quantile value if density or probability function
+used respectively.}
 
-\item{n}{scalar numeric. Number of observations. If random generator function used}
+\item{n}{scalar numeric. Number of observations if random generator function used.}
 
-\item{...}{argumenst to be passed to the called distributional function}
+\item{...}{argumenst to be passed to the called distributional function.}
 }
 \value{
 Depending on the choice of func, the respective vector of
-  (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned
+  (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned.
 }
 \description{
 Function that, given a "gamlss" object, evaluates the
