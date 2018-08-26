@@ -23,22 +23,25 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
   
   if(!is.null(n)){
     if(func == 'r' & n %% nrow(predictdata) != 0){
-      stop('Length of provided mu vector for rfamily is not a multiple of row length of predictdata. n > length(mu) implies, that the draws from multivarite distributions are stacked. If n is not a multiple, the last vector that is to be stacked will be drawn from a shorter multivarite distribution.')
+      stop('Length of provided mu vector for rfamily is not a multiple of nrow(predictdata). 
+            n > length(mu) implies, that the draws from multivarite 
+            distributions are stacked. If n is not a multiple, the last vector that
+            is to be stacked will be drawn from a shorter multivarite distribution.')
     }
   }
-
+  
   
   # find the correct family function to evaluate
   fam_name = object$family[1]
   f_fun = paste(func, fam_name, sep= '')
-
+  
   prd <- predictAll(
     object = object,
     type = "response",
     newdata = predictdata,
     data = fitdata
   )
-
+  
   param = list(
     mu = prd$mu,
     sigma = prd$sigma,
@@ -51,12 +54,12 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
     ...
   )
   param = param[!sapply(param, is.null)] # kick out NULL parameters
-
+  
   if (any(!names(param) %in% names(formals(f_fun)))) {
     stop("One of x,q,p,n,... arguments doesn't match with the distributional function (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
   }
   return(do.call(f_fun, param))
-  }
+}
 
 #' @title Inverse sampling - GAMLSS
 #' @description Inverse sampling of censored variables, to impute only valid
@@ -122,7 +125,7 @@ samplecensored = function(object,
     
     # remap the quantiles on the applicable region in the cdf (psample) 
     qindex = (1-pindex)*quantprob + pindex
-
+    
   }else if (censtype == 'left'){
     # pindex is the cum. prob. up until the censored variable, 
     # note that position in psample is reverted to 'right'
@@ -134,7 +137,7 @@ samplecensored = function(object,
     
     # remap the quantiles on the applicable region in the cdf (psample) 
     qindex = (pindex-0) * quantprob 
-
+    
   }else if (censtype == 'interval'){ 
     # applicable inverse sampling region is within the interval.
     pindexupper = ffamily(func = 'p', q = predictdata[[censor]])
@@ -158,7 +161,7 @@ samplecensored = function(object,
     FUN = function(q)
       ffamily(func = 'q', p = q) #  bottleneck?
   )
-
+  
   return(list(
     draw = draw,
     quantiles = quantiles
