@@ -1,3 +1,5 @@
+# family_fun ------------------------------------------------------------------------------
+
 #' @title  Evaluate gamlss family functions from gamlss object
 #' 
 #' @description Function that, given a "gamlss" object, evaluates the
@@ -74,6 +76,9 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
   
   return(do.call(f_fun, param))
 }
+
+
+# samplecensored ----------------------------------------------------------------------------
 
 #' @title Inverse sampling - GAMLSS
 #' 

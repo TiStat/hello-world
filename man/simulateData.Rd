@@ -60,7 +60,7 @@ Data generator for missing/censored data with Normal distribution.
 }
 \examples{
 # missing: damage = NA
-# right: damage = ~1/3*x1
+# right: damage = ~ 1/3*x1
 # rightRandom:  damage = c(0.01, 1)
 # left:  damage = 4/3
 # intervalfix: damage = list(1/3, 4/3)

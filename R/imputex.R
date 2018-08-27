@@ -212,7 +212,7 @@ imputex <- function(xmu_formula,
                  Wobs = Wdat$obs
                  )
   
-  # Create S3 class so that methods can access them:
+  # Create S3 class so that methods can access results:
   class(result) <- "imputed"
   
   return(result)

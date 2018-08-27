@@ -3,7 +3,7 @@
 S3method(plot,imputed)
 S3method(print,imputed)
 S3method(summary,imputed)
-export(andrew)
+export(andrew_imputed)
 export(family_fun)
 export(imputex)
 export(samplecensored)

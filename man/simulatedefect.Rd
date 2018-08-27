@@ -43,5 +43,5 @@ list. List elements are the defected dataframe, an indicator vector specifying w
 }
 \description{
 Interprets the defect rule and defects the true dataset.
-Note, that simulatedefect is generic and can defect any existing dataset according to rule.
+Note that simulatedefect is generic and can defect any existing dataset according to rule.
 }

@@ -2,41 +2,42 @@
 
 # Right censored data
 rd <- simulateData(n= 300,
-                   param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-                   name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(0.3, 0.9),
-                   family = 'NO',
-                   correlation = NULL)$defected
+                   param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
+                   name = 'x1', subset = ~ (x2 > 0.6 & x3 > 0.7), prob = 0.75, 
+                   damage =c(0.3, 0.9), family = 'NO', 
+                   correlation = matrix(c(1, 0.41, 0.23, 0.27, 1, 0.35, 0.29, 0.4, 1), nrow = 3))$defected
 # Left censored data
-ld = simulateData(n= 300,
-                  param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-                  name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =c(1.2, 1.5),
-                  family = 'NO',
-                  correlation = NULL)$defected
+ld <- simulateData(n= 300,
+                   param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
+                   name = 'x1', subset = ~ (x2 < 0.3 & x3 < 0.4), prob = 0.8, 
+                   damage =c(0.3, 0.9), family = 'NO', 
+                   correlation = NULL)$defected
 # Interval censored data
-id = simulateData(n= 300,
-                  param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
-                  name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =list(c(0.3, 0.99), c(1.2,1.5)),
-                  family = 'NO',
-                  correlation = NULL)$defected
+id <- simulateData(n= 300, 
+                   param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
+                   name = 'x1', subset = ~ (x2 < 0.3 & x3 < 0.2), prob = 0.4, 
+                   damage =list(c(0.3, 0.9), c(1.2, 1.5)), family = 'NO',
+                   correlation = matrix(c(1, 0.3, 0.2, 0.3, 1, 0.4, 0.2, 0.4, 1), nrow = 3))$defected
 
-# . includes indicator column. But this is only to test the functions...
-rmodel <- gamlss(formula = y ~ ., data=rd) 
-lmodel <- gamlss(formula = y ~ ., data=ld)
-imodel <- gamlss(formula = y ~ ., data=id)
+# dot(.) - indicator to prevent multicollinearity!
+rmodel <- gamlss(formula = y ~ . -indicator, data=rd) 
+lmodel <- gamlss(formula = y ~ . -indicator, data=ld)
+imodel <- gamlss(formula = y ~ . -indicator, data=id)
 
-# number of censored values. This is important for the unit tests!
+# Number of censored values. This is important for the unit tests!
 nr <- length(rd$x1[rd$indicator==1]) 
 nl <- length(ld$x1[ld$indicator==1])
 ni <- length(id$x1[ld$indicator==1])
 
 #data frame to predict on, not a prediction!!!
-rpredict.df <- data.frame(x1 = runif(n = nr), x2 = runif(n = nr), indicator = 1) 
-lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), indicator = 1)
-ipredict.df <- data.frame(x1 = runif(n = ni), x2 = runif(n = ni), indicator = 1)
+rpredict.df <- data.frame(x1 = runif(n = nr), x2 = runif(n = nr), x3 = runif(n = nr), indicator = 1) 
+lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), x3 = runif(n = nl), indicator = 1)
+ipredict.df <- data.frame(x1 = runif(n = ni), x2 = runif(n = ni), x3 = runif(n = ni), indicator = 1)
 
-rimpute <-  imputex(xmu_formula = x1 ~ y + x2, data = rd, indicator = "indicator", censtype = "right")
-limpute <-  imputex(xmu_formula = x1 ~ y + x2, data = ld, indicator = "indicator", censtype = "left")
-iimpute <-  imputex(xmu_formula = x1 ~ y + x2, data = id, indicator = "indicator", censtype = "interval", intervalstart = "lower")
+rimpute <-  imputex(xmu_formula = x1 ~ y + x2 + x3, data = rd, indicator = "indicator", censtype = "right")
+limpute <-  imputex(xmu_formula = x1 ~ y + x2 + x3, data = ld, indicator = "indicator", censtype = "left")
+iimpute <-  imputex(xmu_formula = x1 ~ y + x2 + x3, data = id, indicator = "indicator", censtype = "interval", intervalstart = "lower")
+
 
 # Unit tests for family_fun -----------------------------------------------------------------------------------
 context('Evaluate family functions')
@@ -61,6 +62,7 @@ test_that("Test that there are no NA's for censored data",{
   expect_identical(family_fun(rmodel, func = 'd', rd, rpredict.df, x = 10), na.omit(family_fun(rmodel, func = 'd', rd, rpredict.df, x = 10)))
 })
 
+
 # Unit tests for samplecensored ----------------------------------------------------------------------------
 context('Evaluate inverse sampling in samplecensored')
 
@@ -74,6 +76,7 @@ if (nrow(rpredict.df) == 1) {
     expect_is(samplecensored(rmodel ,censtype = 'right', rpredict.df, rd, censor = "x1")$quantiles, 'matrix')
   })
 }
+
 
 # Unit tests for imputex ---------------------------------------------------------------------------------
 context('Some tests for imputex')

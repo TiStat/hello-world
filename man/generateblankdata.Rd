@@ -7,11 +7,11 @@
 generateblankdata(varnames, n, correlation = NULL)
 }
 \arguments{
-\item{varnames}{character vector. specifies variables to be created}
+\item{varnames}{character vector. Specifies variables to be created.}
 
-\item{n}{integer. Number of observations}
+\item{n}{integer. Number of observations.}
 
-\item{correlation}{symmetric correlation matix}
+\item{correlation}{Symmetric correlation matix}
 }
 \value{
 data.frame
@@ -19,10 +19,10 @@ data.frame
 \description{
 This function generates a blank data.frame with uniformly
   distributed variables specified in varnames. The variables are drawn i.i.d.
-  uniform distrib. if correlation = NULL, and are drawn from a correlated
-  uniform distrib. if a correlation matrix is supplied. The algorithm for the
-  introduction of correlation is follows to:
-  https://www.r-bloggers.com/easily-generate-correlated-variables-from-any-distribution-without-copulas/
+  uniform distribution if correlation = NULL, and are drawn from a correlated
+  uniform distribution if a correlation matrix is supplied. The algorithm for the
+  introduction of correlation is follows to: \cr
+  https://www.r-bloggers.com/easily-generate-correlated-variables-from-any-distribution-without-copulas/ \cr
   The idea is: covariates specified in variablenames are inversely generated
   with a surrogate Multivariate normal distribution to establish correlation
   between mvnormal draws. The draws' cumulative normal probabilities are

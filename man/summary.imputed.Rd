@@ -7,12 +7,12 @@
 \method{summary}{imputed}(object, ...)
 }
 \arguments{
-\item{object}{Object of class "imputed"}
+\item{object}{Object of class "imputed".}
 
-\item{...}{summary specific arguments. See summary() documentation}
+\item{...}{summary-specific arguments. See summary() documentation.}
 }
 \value{
-Retruns a summary in the console
+Retruns a summary in the console.
 }
 \description{
 Summarizing an object of class "imputed"
