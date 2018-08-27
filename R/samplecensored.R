@@ -118,7 +118,7 @@ samplecensored <- function(object,
   quantprob <- as.data.frame(matrix(rep(quantiles, times = nrow(predictdata)),
                                     byrow = TRUE, nrow = nrow(predictdata)))
   
-  # WICKHAM STYLE: Make calls more readable! Always same arguments are passed
+  # WICKHAM STYLE: Make calls more readable! Always same arguments are passed:
   f <- function(object, fitdata, predictdata) {
     g <- function(func, p = NULL, q = NULL, x = NULL, n = NULL) {
       family_fun(object, func, fitdata, predictdata, p, q, x, n)
@@ -128,7 +128,7 @@ samplecensored <- function(object,
   ffamily <- f(object = object, fitdata = fitdata, predictdat = predictdata)
   
   
-  if(censtype == 'missing'){
+  if(censtype == 'missing') {
     return(list(
       draw = ffamily(func = 'r', n = nrow(predictdata)),
       quantiles = apply(quantprob,
