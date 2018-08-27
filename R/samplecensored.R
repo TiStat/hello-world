@@ -5,7 +5,7 @@
 #' @description Function that, given a "gamlss" object, evaluates the
 #'   distribution under predicted parameters of the provided dataframe
 #'   "predictdata".
-#'   CAUTION: Exactly ONE of the arguments x,q,p,n MUST be specfied!
+#'   CAUTION: Exactly ONE of the arguments x, q, p, n MUST be specfied!
 #'   
 #' @param object gamlss fit object
 #' 
@@ -27,7 +27,24 @@
 #' @param ... argumenst to be passed to the called distributional function.
 #'
 #' @return Depending on the choice of func, the respective vector of
-#'   (d)density-, (p)cdf.- , (q)quantile- or (r)random values is returned.
+#'   (d)density-, (p)probability- , (q)quantile- or (r)random values is returned.
+#'   
+#' @examples 
+#' # Simulating a dataset
+#' ld <- simulateData(n= 300,
+#' param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
+#' name = 'x1', subset = ~ (x2 < 0.3 & x3 < 0.4), prob = 0.8, 
+#' damage =c(0.3, 0.9), family = 'NO', 
+#' correlation = NULL)$defected
+#' 
+#' # Fitting a gamlss model
+#' lmodel <- gamlss(formula = y ~ . -indicator, data=ld)
+#' 
+#' nl <- length(ld$x1[ld$indicator==1])
+#' 
+#' lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), x3 = runif(n = nl), indicator = 1)
+#' 
+#' family_fun(lmodel, func = 'r',ld, lpredict.df, n = nrow(lpredict.df))
 #'   
 #' @export
 
@@ -108,6 +125,23 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
 #'   information contained in the censored value.
 #'
 #' @return Returns draws and quantiles.
+#' 
+#' @examples
+#' # Simulating a dataset
+#' ld <- simulateData(n= 300,
+#' param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
+#' name = 'x1', subset = ~ (x2 < 0.3 & x3 < 0.4), prob = 0.8, 
+#' damage =c(0.3, 0.9), family = 'NO', 
+#' correlation = NULL)$defected
+#' 
+#' # Fitting a gamlss model
+#' lmodel <- gamlss(formula = y ~ . -indicator, data=ld)
+#' 
+#' nl <- length(ld$x1[ld$indicator==1])
+#' 
+#' lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), x3 = runif(n = nl), indicator = 1)
+#' 
+#' samplecensored(lmodel ,censtype = 'left', lpredict.df, ld, censor = "x1")
 #' 
 #' @export
 

@@ -12,7 +12,7 @@
 \item{...}{summary-specific arguments. See summary() documentation.}
 }
 \value{
-Retruns a summary in the console.
+Returns a summary in the console.
 }
 \description{
 Summarizing an object of class "imputed"

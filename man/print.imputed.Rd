@@ -12,7 +12,7 @@
 \item{...}{print-specific arguments. See print() documentation.}
 }
 \value{
-Retruns a print in the console.
+Returns a print in the console.
 }
 \description{
 Printing an object of class "imputed"

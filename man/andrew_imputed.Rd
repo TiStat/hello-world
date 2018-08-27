@@ -14,9 +14,10 @@ variable in the original regression problem (not the imputation problem).}
 
 \item{ordering}{character vector, specifying the order of the variables in
 the Andrew's curve. Note that the ordering relates to the frequency in a
-fourier that is associated with a covariate.
-
-@return Returns Andrew's curves figure.}
+fourier that is associated with a covariate.}
+}
+\value{
+Returns Andrew's curves figure.
 }
 \description{
 Andrew's Curves are a Fourier series upon the observations in
@@ -42,13 +43,15 @@ finterval = simulateData(n= 100,
                       name = 'x1', subset = ~ (x2 < 0.3 & x3 < 0.2), prob = 0.4, damage =list(c(0.3, 0.9), c(1.2, 1.5)),
                       family = 'NO',
                       correlation = matrix(c(1, 0.3, 0.2, 0.3,1, 0.4, 0.2, 0.4, 1), nrow = 3))
-d = imputex(data = finterval$defected,
+
+d <- imputex(data = finterval$defected,
             xmu_formula= x1~ y + x2 + x3,
             xsigma_formula = ~x2,
             xfamily = NO(mu.link = 'identity'),
             indicator = "indicator",
             censtype= 'interval',
             intervalstart = 'lower')
+            
 andrew_imputed(d, dependent = 'y')
 
 }

@@ -110,7 +110,7 @@ simulateData <- function(n,
 #' @title Defect existing data.
 #' 
 #' @description Interprets the defect rule and defects the true dataset.
-#' Note, that simulatedefect is generic and can defect any existing dataset according to rule.
+#' Note that simulatedefect is generic and can defect any existing dataset according to rule.
 #' 
 #' @param truedata data.frame containing the un-defected data.
 #'
@@ -231,21 +231,21 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
 #' 
 #' @description This function generates a blank data.frame with uniformly
 #'   distributed variables specified in varnames. The variables are drawn i.i.d.
-#'   uniform distrib. if correlation = NULL, and are drawn from a correlated
-#'   uniform distrib. if a correlation matrix is supplied. The algorithm for the
-#'   introduction of correlation is follows to:
-#'   https://www.r-bloggers.com/easily-generate-correlated-variables-from-any-distribution-without-copulas/
+#'   uniform distribution if correlation = NULL, and are drawn from a correlated
+#'   uniform distribution if a correlation matrix is supplied. The algorithm for the
+#'   introduction of correlation is follows to: \cr
+#'   https://www.r-bloggers.com/easily-generate-correlated-variables-from-any-distribution-without-copulas/ \cr
 #'   The idea is: covariates specified in variablenames are inversely generated
 #'   with a surrogate Multivariate normal distribution to establish correlation
 #'   between mvnormal draws. The draws' cumulative normal probabilities are
 #'   evaluated in the Uniform distribution to arrive at correlated uniformly
 #'   distributed covariates.
 #'
-#' @param n integer. Number of observations
+#' @param n integer. Number of observations.
 #' 
-#' @param varnames character vector. specifies variables to be created
+#' @param varnames character vector. Specifies variables to be created.
 #' 
-#' @param correlation symmetric correlation matix
+#' @param correlation Symmetric correlation matix
 #' 
 #' @return data.frame
 

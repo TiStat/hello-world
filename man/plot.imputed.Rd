@@ -15,6 +15,9 @@ boxplot. Note that the median values are the imputation values.}
 
 \item{...}{plot-specific arguments. See plot() documentation.}
 }
+\value{
+Return figures with information on object of class "imputed".
+}
 \description{
 Given an imputex object, this funciton plots: \cr (1) The
   approximate averaged quantiles of the valid part of the censored conditonal
@@ -30,17 +33,20 @@ Given an imputex object, this funciton plots: \cr (1) The
   little variation.
 }
 \examples{
+# Simulating a dataset
 rinterval = simulateData(n= 300,
                          param.formula = list(mu = ~exp(x1), sigma = ~sin(x2)),
                          name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 ,
                          damage =list(c(0.8, 0.99), c(1.2,1.5)),
                          family = 'NO',
                          correlation = NULL)
+                         
 d  <- imputex(data = rinterval$defected,
               xmu_formula= x1~y,
               indicator = "indicator",
               censtype = 'interval',
               intervalstart = 'lower')
+              
 plot(d, boxes = FALSE)
 
 }
