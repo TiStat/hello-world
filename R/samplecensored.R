@@ -118,26 +118,27 @@ samplecensored <- function(object,
   quantprob <- as.data.frame(matrix(rep(quantiles, times = nrow(predictdata)),
                                     byrow = TRUE, nrow = nrow(predictdata)))
   
-  # WICKHAM STYLE: Make calls more readable! Always same arguments are passed:
+  # WICKHAM STYLE: Make calls more readable!
+  # Always same arguments are passed  (i.e. object, fitdata, predictdata):
   f <- function(object, fitdata, predictdata) {
     g <- function(func, p = NULL, q = NULL, x = NULL, n = NULL) {
       family_fun(object, func, fitdata, predictdata, p, q, x, n)
     }
   }
   
+  # Closure; ffamily still a function:
   ffamily <- f(object = object, fitdata = fitdata, predictdat = predictdata)
   
   
   if(censtype == 'missing') {
-    return(list(
-      draw = ffamily(func = 'r', n = nrow(predictdata)),
-      quantiles = apply(quantprob,
-                        MARGIN = 2,
-                        FUN = function(q) ffamily(func = 'q', p = q)))
-      )
+    return(list(draw = ffamily(func = 'r', n = nrow(predictdata)),
+                quantiles = apply(quantprob,
+                                  MARGIN = 2,
+                                  FUN = function(q) ffamily(func = 'q', p = q)))
+    )
     
   } else if (censtype == 'right') {
-    # pindex is the cum. probability up until the censored variable:
+    # pindex is the cumulative probability up until the censored variable:
     pindex <- ffamily(func = 'p', q = predictdata[[censor]])
     
     # Inverse sampling:
@@ -145,10 +146,10 @@ samplecensored <- function(object,
     draw <- ffamily(func = 'q', p = psample)
     
     # Remap the quantiles on the applicable region in the cdf (psample):
-    qindex <- (1-pindex)*quantprob + pindex
+    qindex <- (1 - pindex)*quantprob + pindex
     
   }else if (censtype == 'left'){
-    # pindex is the cum. probability up until the censored variable.
+    # pindex is the cumulative probability up until the censored variable.
     # Note that position in psample is reverted to 'right':
     pindex <- ffamily(func =  'p',  q = predictdata[[censor]])
     
@@ -157,7 +158,7 @@ samplecensored <- function(object,
     draw <- ffamily(func = 'q', p = psample)
     
     # Remap the quantiles on the applicable region in the cdf (psample):
-    qindex <- (pindex-0) * quantprob 
+    qindex <- (pindex - 0)*quantprob 
     
   }else if (censtype == 'interval'){ 
     # Applicable inverse sampling region is within the interval:
@@ -181,11 +182,7 @@ samplecensored <- function(object,
                      FUN = function(q) ffamily(func = 'q', p = q) #  bottleneck?
   )
   
-  return(list(
-    draw = draw,
-    quantiles = quantiles
-  ))
+  return(list(draw = draw, 
+              quantiles = quantiles))
 }
-
-
 

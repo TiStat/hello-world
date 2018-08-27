@@ -10,44 +10,44 @@ imputex(xmu_formula, xsigma_formula = ~1, xnu_formula = ~1,
   intervalstart = NULL, m = 5, ...)
 }
 \arguments{
-\item{xmu_formula}{formula for location parameter of xfamily. Dependent
-variable specifys the variable which is partially censored/missing and is
-to be imputed}
+\item{xmu_formula}{formula. Formula for location parameter of xfamily. Dependent
+variable specifies the variable which is partially censored/missing and is
+to be imputed.}
 
-\item{xsigma_formula}{formula}
+\item{xsigma_formula}{formula. Formula for scale parameter of gamlss family object.}
 
-\item{xnu_formula}{formula}
+\item{xnu_formula}{formula. Formula for skewness of gamlss family object.}
 
-\item{xtau_formula}{formula}
+\item{xtau_formula}{formula. Formula for kurtosis of gamlss family object.}
 
-\item{xfamily}{gamlss family object.}
+\item{xfamily}{gamlss family object. Determines the family membership of the gamlss object.}
 
-\item{data}{data.frame containing a dummy censoring indicator, 0 if not
-censored/missing, 1 if censored/missing. Note that in case of right (left)
-censoring, the censored variable contains the respective minmal (maximal)
-duration of the followup which is used for conditional imputation. In case
+\item{data}{data.frame. Input data frame containing a dummy variable as column, acting as an 
+indicator; 1 if censored/missing, 0 if not. Note that in case of right (left) censoring,
+the censored variable contains the respective minimal (maximal)
+duration of the follow-up which is used for conditional imputation. In case
 of interval censored data, two columns are required; specifying the start
 and end durations of the interval in question. This implementation assumes,
 that the start duration is the observed time, in which no failure occured
-before the interval is entered at which the exact point of the observed
-state change is unknown. For inverse sampling, the distribution is
-conditoned on the start duration and cut at the end duration to ensure the
-constrained.}
+before the interval is entered. The exact point of the observed
+state change within the interval is unknown. For inverse sampling, the distribution is
+conditioned on the start-duration and cut at the end-duration to ensure the
+constraints.}
 
 \item{indicator}{character. Name of dummy column in data, which indicates the
 damaged observation.}
 
-\item{censtype}{character. type of the damaged observation 'missing',
-'right', 'left' or 'interval'}
+\item{censtype}{character. The type of the damaged observation; 'missing',
+'right', 'left' or 'interval'.}
 
 \item{intervalstart}{character. Name of the column of interval starting
-values. by convention, the starting duration in this column is assumed to
+values. By convention, the starting duration in this column is assumed to
 be the time passed without failure, before entering the interval, in which
 the exact time of failure is unknown.}
 
-\item{m}{Number of imputations. Default is m = 5}
+\item{m}{Number of imputations (How many rounds should the algorithm execute). Default is m = 5.}
 
-\item{...}{additional arguments passed in all gamlss fit.}
+\item{...}{Additional arguments passed in all gamlss fit.}
 }
 \value{
 Returns internal results of the algorithm.
@@ -56,12 +56,15 @@ Returns internal results of the algorithm.
 The MICE Algorithm (Multiple Imputation by Chained Equations) is
   a method to impute missing data. This function uses this algorithm for
   imputing censored data, using inverse sampling to utilize the additional
-  information.
+  information given by the censored values.
 }
 \examples{
+# Simulating a dataset
 missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1) + x3,
 sigma = ~sin(x2)), name = 'x1', subset = ~ x1 > 0.6, prob = 0.8,
 damage = NA, family = 'NO', correlation = NULL) 
+
+# Imputing missing covariates
 imputex(data = missing$defected, xmu_formula= x1~y+x3,
 xsigma_formula = ~x2, xnu_formula = ~1, xtau_formula = ~1, xfamily =
 NO(mu.link = 'identity'), indicator = "indicator", censtype= 'missing')
