@@ -129,7 +129,8 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
                             ymax=q95)) +
     geom_boxplot(stat="identity") +
     xlab('Observation') +
-    ylab('Avg. quantiles of censored\n conditional bootmodel distribution')
+    ylab('Avg. quantiles of censored\n conditional bootmodel distribution') +
+    theme(axis.title=element_text(size=11,face="bold"))
   
   # Convert to Longformat:
   d$observation <- 1:nrow(d)
@@ -140,7 +141,8 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
       xlab('Observation') +
-      ylab('Proposals for observation [i]')
+      ylab('Proposals for observation [i]') +
+      theme(axis.title=element_text(size=11,face="bold"))
     
   } else {
     imputations <- ggplot() +
@@ -148,7 +150,8 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
       geom_point(data = data.frame(obs = 1:x$nreplacements, imputedx = x$imputedx),
                  aes(x = obs, y = imputedx), color = 'red' ) +
       xlab('Observation') +
-      ylab('Proposals for observation [i]')
+      ylab('Proposals for observation [i]') +
+      theme(axis.title=element_text(size=11,face="bold"))
   }
   
   # Densities;
@@ -162,10 +165,11 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
                  data = d, stat = "density", size = 1.1) +
     xlab('Covariate which includes defected data') +
     ylab('Density') +
-    scale_color_discrete("")
+    scale_color_discrete("") +
+    theme(axis.title=element_text(size=11,face="bold"))
   
   # Display plots in one window:
-  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 2)
+  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
 }
 
 
