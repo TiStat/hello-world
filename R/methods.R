@@ -127,6 +127,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
                             middle=q50,
                             upper=q75,
                             ymax=q95)) +
+    
     geom_boxplot(stat="identity") +
     xlab('Observation') +
     ylab('Avg. quantiles of censored\n conditional bootmodel distribution') +
@@ -140,6 +141,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     
     imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
+      
       xlab('Observation') +
       ylab('Proposals for observation [i]') +
       theme(axis.title=element_text(size=11,face="bold"))
@@ -147,8 +149,10 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   } else {
     imputations <- ggplot() +
       geom_point(data = d, aes(observation, value)) +
+      
       geom_point(data = data.frame(obs = 1:x$nreplacements, imputedx = x$imputedx),
                  aes(x = obs, y = imputedx), color = 'red' ) +
+      
       xlab('Observation') +
       ylab('Proposals for observation [i]') +
       theme(axis.title=element_text(size=11,face="bold"))
@@ -160,16 +164,23 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   xobs <- x$Wobs$x1
   
   densities <-  ggplot() + 
-    geom_density(data = data.frame(xobs), aes(x = xobs, color = "observed"), alpha = 0.4, size = 1.1) +
-    geom_density(aes(x = value, y = ..density.., group = proposalVec, color = "proposal vector"), 
-                 data = d, stat = "density", size = 1.1) +
+    geom_density(data = data.frame(xobs), 
+                 aes(x = xobs, fill = "observed", color = "observed"),
+                 alpha = 0.4, size = 1) +
+    
+    geom_density(aes(x = value, y = ..density.., 
+                     group = proposalVec, 
+                     color = "proposal vector"), 
+                 data = d, stat = "density", size = 1) +
+    
+    scale_fill_discrete(guide=FALSE) +
     xlab('Covariate which includes defected data') +
     ylab('Density') +
     scale_color_discrete("") +
     theme(axis.title=element_text(size=11,face="bold"))
   
   # Display plots in one window:
-  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 2)
+  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
 }
 
 
