@@ -165,7 +165,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     scale_color_discrete("")
   
   # Display plots in one window:
-  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
+  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 2)
 }
 
 

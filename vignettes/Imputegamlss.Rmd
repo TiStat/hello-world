@@ -1,7 +1,7 @@
 ---
-title: "Imputing censored covariates with distributional regression - gamlss"
+title: "Imputing censored covariates with distributional regression - GAMLSS"
 author: "Tim Ruhkopf, Petros Christanas"
-date: "`r Sys.Date()`"
+#date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 number_sections: yes
 vignette: >
@@ -16,17 +16,108 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
+
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{bm}
+\usepackage{amsmath}
+
+
+
+
 # 1. Introduction
-The purpose of the package `Imputegamlss` is to provide a way of imputing values of a covariate which are defected, i.e. missing or censored. <br>
-The "mice" algorithm (Multiple Imputation by Chained Equations), blabla.....
+The purpose of the package `Imputegamlss` is to provide a way for imputing values of a covariate which are defected, i.e. missing or censored. To do so, the so called MICE Algorithm is being used.
 
-## 1.1 dgg
-dgfdv
+## 1.1 Basic Assumptions
 
-
-
+#### Assumption 1 
+Data are generated and analyzed according to\newline
 
 
+\begin{equation}
+y _ { i } = \alpha + x _ { i } ^ { T } \beta + u _ { i }\qquad i=1,...,N ,
+\end{equation} 
+\newline
+ where $\beta$ the parameter vector of main interest, \newline
+  $u_i$ latent iid error with $E(u_i)=0$. <br>
+  Unknown parameters are estimated by OLS. \newline
+  
+#### Assumption 2
+W.l.o.g., missing values are generated in the first predictor $x_{i1}$, where for 
+${w}_i \: = \: (y,x_{i,-1}^T)^T$ we assume that 
+
+\begin{equation}
+P(x_{i1} \; \text{missing}) \perp P(x_{i1} \: | \:{w}_i).
+\end{equation}
+\newline
+***NOTE:** In imputation models, $x_{i1}$ becomes the response variable.
+
+## 1.2 The MICE Algorithm (Multiple Imputation by Chained Equations)
+
+#### Step 1
+Using the observed data $\{ x_{1,obs}, W_{obs} \}$, w.l.o.g. fit the below model as follows: \newline
+\
+ 
+For $x_{1,obs} \sim \mathcal{D}(\mu , \sigma )$ where $\mathcal{D}$ some specified distribution with
+
+\begin{equation}
+ \mu = g _ { 1 } ^ { - 1 } ( \tilde { \alpha } _ { ( 1 ) } + \sum\limits _ { j = 1 } ^ {k _ { 1 }} { h _ { 1 j } ( {w} _ { j } ) } ) \quad \& \quad \sigma = g _ { 2 } ^ { - 1 } ( \tilde { \alpha } _ { ( 2 ) } + \sum\limits _ { j = 1 } ^ {k _ { 1 }} { h _ { 2 j } ( {w} _ { j } ) } ),
+\end{equation}
+\newline
+(For additional scale and shape parameters $x_{1,obs} \sim \mathcal{D}(\mu , \sigma ,
+ \nu, \tau)$) \newline
+
+
+where $g_p^-1(\cdot), \; p=1,2$, are inverse monotonic link functions, \newline
+$j=1,...k_p$ and $h_{pj}(\cdot)$ the type of effect of the j-th covariate. \newline
+  
+
+
+
+#### Step 2
+Resample $x_{1,obs}$ as follows: \newline
+\begin{equation}
+x_{1,obs}^\ast \sim \mathcal{D}(\hat{\mu} , \hat{\sigma} ) 
+\end{equation}
+Define bootstrap sample $B:= \{ x_{1,obs}^\ast, W_{obs} \}$ \newline
+
+
+
+#### Step 3
+Refit the model using the bootstrap sample B. Draw $n_{mis}$ imputations for $x_{1,mis}$ as follows: 
+\begin{equation}
+\tilde{x}_{1,mis} \sim \mathcal{D}(\dot{\mu}, \dot{\sigma})
+\end{equation}
+
+
+#### Step 4
+
+Repeat step 2 and 3 m independent times, where m the number of imputations (number of rounds the algorithm is being run).
+
+## 1.3 Utilizing the additional information given by censored values
+In step 3, the algorithm doesn't take into account the information contained in the observed censored values. To deal with this issue and trying to represent the distribution of the true censored values as accurate as possible, we applied a method called inverse sampling. <br>
+Since we know the cumulative distribution function (cdf) of our covariate ${x}_{1,obs}$, we can simply get the respective value of the cdf $y_i = F({x}_{i,1})$. Then, in case of e.g. right censoring, we can draw random values from a continuous uniform distribution with min = $y_i$ and max = $1$ (and accordingly the corresponding min and max parameters for left/interval censoring). <br>
+To obtain a better approximation of the censored values's distribution, we re-map the quantiles on the applicable region in the cdf by shifting appropriately.
+
+
+
+
+
+# 2. Implementation
+The package consist of several functions and features, which will be presented in this section.
+
+## 2.1 family_fun
+The function `family_fun`is a helper function, which we decided to export to the user since it provides useful outcome. Given a gamlss object as input, the user can explicitly decide if he/she wants to obtain a density function, cdf, quantile function or a random generation of values. <br>
+`family_fun(object, func = c("d", "p", "q", "r"), fitdata, predictdata, p = NULL, q = NULL, x = NULL, n = NULL, ...)` <br>
+
+For that, the function first accesses the corresponding family of the input "gamlss" object (note that the user must explicitly specify the `fitdata`, i.e. the data on which the gamlss object was fitted on). <br>
+Next, the function pulls the `predictdata`, meaning the data on which the user wishes to predict on, and return the family's parameter vectors $\mu$, $\sigma$, $\nu$ and $\tau$ (if one or more of these aren't defined in the family object, they won't be considered). <br>
+**Some remarks:** <br>
+- The character argument `func` (which is one of 'd', 'p', 'q', 'r')  needs to match with the   corresponding argument p, q, x, or n respectively. <br>
+- If a random generation is desired, the numeric argument n has to be a multiple of the length   of the provided parameter vectors to exclude drawing from a false multivariate distribution   (false in the sense of dimensionality), i.e. The integer n must be a multiple of              nrow(predictdata). <br>
+_For an example, look at the documentation of_ `family_fun`.
 
 
 

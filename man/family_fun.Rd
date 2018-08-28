@@ -33,9 +33,12 @@ Depending on the choice of func, the respective vector of
 }
 \description{
 Function that, given a "gamlss" object, evaluates the
-  distribution under predicted parameters of the provided dataframe
-  "predictdata".
-  CAUTION: Exactly ONE of the arguments x, q, p, n MUST be specfied!
+  distribution-specific functions under predicted parameters of the provided dataframe
+  "predictdata". \cr
+  The distribution-specific functions are density, cumulative distribution function, quantile
+  function and random generation for the given family of the gamlss object. \cr
+  CAUTION: Exactly ONE of the arguments x, q, p, n MUST be specfied! \cr
+  Also make sure that n is a multiple of nrow(predictdata)!
 }
 \examples{
 # Simulating a dataset

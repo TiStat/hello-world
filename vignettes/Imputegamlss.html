@@ -12,9 +12,8 @@
 
 <meta name="author" content="Tim Ruhkopf, Petros Christanas" />
 
-<meta name="date" content="2018-08-23" />
 
-<title>Imputing censored covariates with distributional regression - gamlss</title>
+<title>Imputing censored covariates with distributional regression - GAMLSS</title>
 
 
 
@@ -68,18 +67,78 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Imputing censored covariates with distributional regression - gamlss</h1>
+<h1 class="title toc-ignore">Imputing censored covariates with distributional regression - GAMLSS</h1>
 <h4 class="author"><em>Tim Ruhkopf, Petros Christanas</em></h4>
-<h4 class="date"><em>2018-08-23</em></h4>
 
 
 
+<p>    </p>
 <div id="introduction" class="section level1">
 <h1>1. Introduction</h1>
-<p>The purpose of the package <code>Imputegamlss</code> is to provide a way of imputing values of a covariate which are defected, i.e. missing or censored. <br> The “mice” algorithm (Multiple Imputation by Chained Equations), blabla…..</p>
-<div id="dgg" class="section level2">
-<h2>1.1 dgg</h2>
-<p>dgfdv</p>
+<p>The purpose of the package <code>Imputegamlss</code> is to provide a way for imputing values of a covariate which are defected, i.e. missing or censored. To do so, the so called MICE Algorithm is being used.</p>
+<div id="basic-assumptions" class="section level2">
+<h2>1.1 Basic Assumptions</h2>
+<div id="assumption-1" class="section level4">
+<h4>Assumption 1</h4>
+<p>Data are generated and analyzed according to</p>
+<span class="math display">\[\begin{equation}
+y _ { i } = \alpha + x _ { i } ^ { T } \beta + u _ { i }\qquad i=1,...,N ,
+\end{equation}\]</span>
+<p> where <span class="math inline">\(\beta\)</span> the parameter vector of main interest,  <span class="math inline">\(u_i\)</span> latent iid error with <span class="math inline">\(E(u_i)=0\)</span>. <br> Unknown parameters are estimated by OLS. </p>
+</div>
+<div id="assumption-2" class="section level4">
+<h4>Assumption 2</h4>
+<p>W.l.o.g., missing values are generated in the first predictor <span class="math inline">\(x_{i1}\)</span>, where for <span class="math inline">\({w}_i \: = \: (y,x_{i,-1}^T)^T\)</span> we assume that</p>
+<span class="math display">\[\begin{equation}
+P(x_{i1} \; \text{missing}) \perp P(x_{i1} \: | \:{w}_i).
+\end{equation}\]</span>
+<p><strong>NOTE:</strong> In imputation models, <span class="math inline">\(x_{i1}\)</span> becomes the response variable.</p>
+</div>
+</div>
+<div id="the-mice-algorithm-multiple-imputation-by-chained-equations" class="section level2">
+<h2>1.2 The MICE Algorithm (Multiple Imputation by Chained Equations)</h2>
+<div id="step-1" class="section level4">
+<h4>Step 1</h4>
+<p>Using the observed data <span class="math inline">\(\{ x_{1,obs}, W_{obs} \}\)</span>, w.l.o.g. fit the below model as follows: <br />
+For <span class="math inline">\(x_{1,obs} \sim \mathcal{D}(\mu , \sigma )\)</span> where <span class="math inline">\(\mathcal{D}\)</span> some specified distribution with</p>
+<span class="math display">\[\begin{equation}
+ \mu = g _ { 1 } ^ { - 1 } ( \tilde { \alpha } _ { ( 1 ) } + \sum\limits _ { j = 1 } ^ {k _ { 1 }} { h _ { 1 j } ( {w} _ { j } ) } ) \quad \&amp; \quad \sigma = g _ { 2 } ^ { - 1 } ( \tilde { \alpha } _ { ( 2 ) } + \sum\limits _ { j = 1 } ^ {k _ { 1 }} { h _ { 2 j } ( {w} _ { j } ) } ),
+\end{equation}\]</span>
+<p>(For additional scale and shape parameters <span class="math inline">\(x_{1,obs} \sim \mathcal{D}(\mu , \sigma ,  \nu, \tau)\)</span>) </p>
+<p>where <span class="math inline">\(g_p^-1(\cdot), \; p=1,2\)</span>, are inverse monotonic link functions, <span class="math inline">\(j=1,...k_p\)</span> and <span class="math inline">\(h_{pj}(\cdot)\)</span> the type of effect of the j-th covariate. </p>
+</div>
+<div id="step-2" class="section level4">
+<h4>Step 2</h4>
+Resample <span class="math inline">\(x_{1,obs}\)</span> as follows: 
+<span class="math display">\[\begin{equation}
+x_{1,obs}^\ast \sim \mathcal{D}(\hat{\mu} , \hat{\sigma} ) 
+\end{equation}\]</span>
+<p>Define bootstrap sample <span class="math inline">\(B:= \{ x_{1,obs}^\ast, W_{obs} \}\)</span> </p>
+</div>
+<div id="step-3" class="section level4">
+<h4>Step 3</h4>
+Refit the model using the bootstrap sample B. Draw <span class="math inline">\(n_{mis}\)</span> imputations for <span class="math inline">\(x_{1,mis}\)</span> as follows:
+<span class="math display">\[\begin{equation}
+\tilde{x}_{1,mis} \sim \mathcal{D}(\dot{\mu}, \dot{\sigma})
+\end{equation}\]</span>
+</div>
+<div id="step-4" class="section level4">
+<h4>Step 4</h4>
+<p>Repeat step 2 and 3 m independent times, where m the number of imputations (number of rounds the algorithm is being run).</p>
+</div>
+</div>
+<div id="utilizing-the-additional-information-given-by-censored-values" class="section level2">
+<h2>1.3 Utilizing the additional information given by censored values</h2>
+<p>In step 3, the algorithm doesn’t take into account the information contained in the observed censored values. To deal with this issue and trying to represent the distribution of the true censored values as accurate as possible, we applied a method called inverse sampling. <br> Since we know the cumulative distribution function (cdf) of our covariate <span class="math inline">\({x}_{1,obs}\)</span>, we can simply get the respective value of the cdf <span class="math inline">\(y_i = F({x}_{i,1})\)</span>. Then, in case of e.g. right censoring, we can draw random values from a continuous uniform distribution with min = <span class="math inline">\(y_i\)</span> and max = <span class="math inline">\(1\)</span> (and accordingly the corresponding min and max parameters for left/interval censoring). <br> To obtain a better approximation of the censored values’s distribution, we re-map the quantiles on the applicable region in the cdf by shifting appropriately.</p>
+</div>
+</div>
+<div id="implementation" class="section level1">
+<h1>2. Implementation</h1>
+<p>The package consist of several functions and features, which will be presented in this section.</p>
+<div id="family_fun" class="section level2">
+<h2>2.1 family_fun</h2>
+<p>The function <code>family_fun</code>is a helper function, which we decided to export to the user since it provides useful outcome. Given a gamlss object as input, the user can explicitly decide if he/she wants to obtain a density function, cdf, quantile function or a random generation of values. <br> <code>family_fun(object, func = c(&quot;d&quot;, &quot;p&quot;, &quot;q&quot;, &quot;r&quot;), fitdata, predictdata, p = NULL, q = NULL, x = NULL, n = NULL, ...)</code> <br></p>
+<p>For that, the function first accesses the corresponding family of the input “gamlss” object (note that the user must explicitly specify the <code>fitdata</code>, i.e. the data on which the gamlss object was fitted on). <br> Next, the function pulls the <code>predictdata</code>, meaning the data on which the user wishes to predict on, and return the family’s parameter vectors <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\sigma\)</span>, <span class="math inline">\(\nu\)</span> and <span class="math inline">\(\tau\)</span> (if one or more of these aren’t defined in the family object, they won’t be considered). <br> <strong>Some remarks:</strong> <br> - The character argument <code>func</code> (which is one of ‘d’, ‘p’, ‘q’, ‘r’) needs to match with the corresponding argument p, q, x, or n respectively. <br> - If a random generation is desired, the numeric argument n has to be a multiple of the length of the provided parameter vectors to exclude drawing from a false multivariate distribution (false in the sense of dimensionality), i.e. The integer n must be a multiple of nrow(predictdata). <br> <em>For an example, look at the documentation of</em> <code>family_fun</code>.</p>
 <p>Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The <code>html_vignette</code> output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The <code>html_vignette</code> format:</p>
 <ul>
 <li>Never uses retina figures</li>

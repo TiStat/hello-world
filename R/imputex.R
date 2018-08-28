@@ -107,23 +107,22 @@ imputex <- function(xmu_formula,
   
   # Step 2: Resampling from fitted model.
   # Note that these are m independent draws from vectors of length nrow(Wdat$obs), which are stacked!
-  # Reframe to m vectors:
   draws <- family_fun(object = obsmodel,
                       func = "r",
                       fitdata = Wdat$obs,
                       predictdata = Wdat$obs,
                       n = nrow(Wdat$obs) * m)
   
-  # Be careful when unstacking drawn vectors!
+  # Reframe to m vectors. Be careful when unstacking drawn vectors!
   draws <- data.frame(matrix(draws,
                              nrow = nrow(Wdat$obs),
                              ncol = m))
   
-  # Basis for respective Bootstap samples (draws[,j], W):
+  # Basis for respective Bootstrap samples (draws[,j], W):
   drawsW <- cbind(draws, Wdat$obs)
   
-  # Bootstap samples on simulated observations (row-wise):
-  boot <- drawsW[sample(x= 1:nrow(drawsW),
+  # Bootstrap samples on simulated observations (row-wise):
+  boot <- drawsW[sample(x = 1:nrow(drawsW),
                         size = nrow(Wdat$obs),
                         replace = TRUE), ]
   
@@ -150,10 +149,9 @@ imputex <- function(xmu_formula,
                              data = boot,
                              ...)
     
-    # Simulate data from the corresponding fitted distribution:
     imputecandidate <- names(boot)[i]
     
-    
+    # Simulate data from the corresponding fitted distribution. Resample from valid regions:
     impute <- samplecensored(object = bootmodel[[i]],
                             censtype,
                             fitdata = boot,

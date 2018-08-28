@@ -3,9 +3,12 @@
 #' @title  Evaluate gamlss family functions from gamlss object
 #' 
 #' @description Function that, given a "gamlss" object, evaluates the
-#'   distribution under predicted parameters of the provided dataframe
-#'   "predictdata".
-#'   CAUTION: Exactly ONE of the arguments x, q, p, n MUST be specfied!
+#'   distribution-specific functions under predicted parameters of the provided dataframe
+#'   "predictdata". \cr
+#'   The distribution-specific functions are density, cumulative distribution function, quantile
+#'   function and random generation for the given family of the gamlss object. \cr
+#'   CAUTION: Exactly ONE of the arguments x, q, p, n MUST be specfied! \cr
+#'   Also make sure that n is a multiple of nrow(predictdata)!
 #'   
 #' @param object gamlss fit object
 #' 
@@ -54,8 +57,8 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
   
   if(!is.null(n)){
     if(func == 'r' & n%%nrow(predictdata) != 0){
-      stop('Length of provided mu vector for rfamily is not a multiple of nrow(predictdata). 
-            n > length(mu) implies, that the draws from multivariate 
+      stop('Length of provided parameter vector (e.g. mu) for rfamily is not a multiple
+            of nrow(predictdata). n > length(mu) implies, that the draws from multivariate 
             distributions are stacked. If n is not a multiple, the last vector that
             is to be stacked will be drawn from a shorter multivariate distribution.')
     }
@@ -65,6 +68,7 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
   fam_name <- object$family[1]
   f_fun <- paste(func, fam_name, sep= '')
   
+  # Predict on predictdata to get mu, sigma, nu and tau vectors:
   prd <- predictAll(
     object = object,
     type = "response",
@@ -72,6 +76,7 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
     data = fitdata
   )
   
+  # Save all parameters in a list:
   param <- list(
     mu = prd$mu,
     sigma = prd$sigma,
@@ -83,9 +88,11 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
     n = n,
     ...
   )
+  
   # Kick out NULL parameters:
   param <- param[!sapply(param, is.null)] 
   
+  # Ensure correct argument pairs:
   if (any(!names(param) %in% names(formals(f_fun)))) {
     stop("One of x,q,p,n,... arguments doesn't match with the distributional function 
          (e.g. dNO, pNO, qNO, rNO). See the family's documentation for admissable arguments.")
