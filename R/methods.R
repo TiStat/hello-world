@@ -129,6 +129,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
                             ymax=q95)) +
     
     geom_boxplot(stat="identity") +
+    
     xlab('Observation') +
     ylab('Avg. quantiles of censored\n conditional bootmodel distribution') +
     theme(axis.title=element_text(size=11,face="bold"))
@@ -141,6 +142,9 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     
     imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
+      
+      stat_summary(geom = "crossbar", width = 0.75, color="red", 
+                   fun.data = function(x){c(y=median(x), ymin=median(x), ymax=median(x))}) +
       
       xlab('Observation') +
       ylab('Proposals for observation [i]') +
