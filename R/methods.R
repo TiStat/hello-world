@@ -143,7 +143,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
       
-      stat_summary(geom = "crossbar", width = 0.75, color="red", 
+      stat_summary(geom = "crossbar", width = 0.65, color="red",
                    fun.data = function(x){c(y=median(x), ymin=median(x), ymax=median(x))}) +
       
       xlab('Observation') +
