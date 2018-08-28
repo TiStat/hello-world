@@ -169,7 +169,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     theme(axis.title=element_text(size=11,face="bold"))
   
   # Display plots in one window:
-  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
+  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 2)
 }
 
 
