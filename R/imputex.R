@@ -166,7 +166,7 @@ imputex <- function(xmu_formula,
   }
   
   # Imputed vector:
-  imputedx <- apply(proposals, MARGIN = 1,median)
+  imputedx <- apply(proposals, MARGIN = 1, median)
   
   # (Output augmentation)-------------------------------------------------------------------
   
@@ -192,7 +192,7 @@ imputex <- function(xmu_formula,
                      length(imputeq)))
   
   imputequantiles <- as.data.frame(apply(A, c(1,2), mean))
-  colnames(imputequantiles) <- c('q5','q25','q50', 'q75', 'q95' )
+  colnames(imputequantiles) <- c('q05','q25','q50', 'q75', 'q95' )
   
   mcall <- match.call()
   

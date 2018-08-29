@@ -122,7 +122,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   im <- x$imputequantiles
   
   quantil <- ggplot(im, aes(x = seq(1:nrow(im)),
-                            ymin=q5,
+                            ymin=q05,
                             lower=q25,
                             middle=q50,
                             upper=q75,
@@ -147,7 +147,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
                    fun.data = function(x){c(y=median(x), ymin=median(x), ymax=median(x))}) +
       
       xlab('Observation') +
-      ylab('Proposals for observation [i]') +
+      ylab('Proposals for observation [i] & median') +
       theme(axis.title=element_text(size=11,face="bold"))
     
   } else {
@@ -155,10 +155,10 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
       geom_point(data = d, aes(observation, value)) +
       
       geom_point(data = data.frame(obs = 1:x$nreplacements, imputedx = x$imputedx),
-                 aes(x = obs, y = imputedx), color = 'red' ) +
+                 aes(x = obs, y = imputedx), color = 'red') +
       
       xlab('Observation') +
-      ylab('Proposals for observation [i]') +
+      ylab('Proposals for observation [i] & median') +
       theme(axis.title=element_text(size=11,face="bold"))
   }
   
@@ -290,11 +290,14 @@ andrew_imputed <- function(object, dependent, ordering = NULL) {
   }
   
   p <- ggplot(data.frame(t = c(-pi, pi)), aes(t))
+
   p <- p + apply(d, MARGIN = 1, FUN = function(z) stat_function(fun = curveval,
                                                                 geom = "line",
                                                                 args = list(obs = z[1:(length(z)-1)]), # last is indicator
-                                                                color = z[length(z)] + 1)  # based on indicator! color must be positive and dummy is 0/1
+                                                                # based on indicator! color must be positive and dummy is 0/1
+                                                                color = z[length(z)] + 1)
   )
+    
   
   print(p)
 }
