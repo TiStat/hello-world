@@ -16,7 +16,7 @@ variable in the original regression problem (not the imputation problem).}
 the Andrew's curve. Note that the ordering relates to the frequency in a
 fourier that is associated with a covariate.}
 
-\item{...}{}
+\item{...}{Further arguments to be passed.}
 }
 \value{
 Andrew's curves

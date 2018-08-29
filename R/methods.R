@@ -210,7 +210,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #' @param ordering character vector, specifying the order of the variables in
 #'   the Andrew's curve. Note that the ordering relates to the frequency in a
 #'   fourier that is associated with a covariate. 
-#' @param ... 
+#' @param ... Further arguments to be passed.
 #'
 #' @return Andrew's curves
 #' 
@@ -252,6 +252,8 @@ andrew <- function(object, dependent, ordering = NULL, ...) {
 #' @param ordering character vector, specifying the order of the variables in
 #'   the Andrew's curve. Note that the ordering relates to the frequency in a
 #'   fourier that is associated with a covariate.
+#'   
+#' @param ... Further arguments to be passed.
 #'   
 #' @return Returns Andrew's curves figure.
 #'   
