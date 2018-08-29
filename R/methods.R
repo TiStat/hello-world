@@ -170,12 +170,12 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   densities <-  ggplot() + 
     geom_density(data = data.frame(xobs), 
                  aes(x = xobs, fill = "observed", color = "observed"),
-                 alpha = 0.4, size = 0.75) +
+                 alpha = 0.4, size = 0.5) +
     
-    geom_density(aes(x = value, y = ..density.., 
+    geom_density(aes(x = value, y = ..density..,  
                      group = proposalVec, 
                      color = "proposal vector"), 
-                 data = d, stat = "density", size = 0.75) +
+                 data = d, stat = "density", size = 0.5) +
     
     scale_fill_discrete(guide=FALSE) +
     xlab('Covariate which includes defected data') +
