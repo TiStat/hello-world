@@ -5,7 +5,7 @@
 \title{Simluate missing/censored data}
 \usage{
 simulateData(n, param.formula = list(mu = ~exp(x1) + x2, sigma =
-  ~sin(x2)), name = "x1", subset = NULL, prob = 0.8, damage = 1/3,
+  ~sqrt(x2)), name = "x1", subset = NULL, prob = 0.8, damage = 1/3,
   family = "NO", correlation = NULL)
 }
 \arguments{
@@ -65,4 +65,5 @@ Data generator for missing/censored data with Normal distribution.
 # left:  damage = 4/3
 # intervalfix: damage = list(1/3, 4/3)
 # intervalRandom: damage = list(c(0.01, 1), c(1.01, 2))
+
 }
