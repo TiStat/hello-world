@@ -272,11 +272,11 @@ andrew <- function(object, dependent, ordering = NULL, ...) {
 #'             censtype= 'interval',
 #'             intervalstart = 'lower')
 #'             
-#' andrew_imputed(d, dependent = 'y')
+#' andrew(d, dependent = 'y')
 #' 
 #' @export
 
-andrew.imputed <- function(object, dependent, ordering = NULL) {
+andrew.imputed <- function(object, dependent, ordering = NULL, ...) {
   
   if(class(object) != "imputed")
     stop("Argument 'object' has to be of class 'imputed'!")

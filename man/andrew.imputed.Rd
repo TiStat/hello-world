@@ -4,7 +4,7 @@
 \alias{andrew.imputed}
 \title{Andrew's Curves of defected observations}
 \usage{
-\method{andrew}{imputed}(object, dependent, ordering = NULL)
+\method{andrew}{imputed}(object, dependent, ordering = NULL, ...)
 }
 \arguments{
 \item{object}{Object of class "imputed".}
@@ -54,6 +54,6 @@ d <- imputex(data = finterval$defected,
             censtype= 'interval',
             intervalstart = 'lower')
             
-andrew_imputed(d, dependent = 'y')
+andrew(d, dependent = 'y')
 
 }
