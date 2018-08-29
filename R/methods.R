@@ -205,18 +205,14 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #' method. See documentation of `andrew.imputed` for further description.
 #'
 #' @param object Object of class "imputed".
-#' @param dependent character. Specifies the variable name of the dependent
-#'   variable in the original regression problem (not the imputation problem).
-#' @param ordering character vector, specifying the order of the variables in
-#'   the Andrew's curve. Note that the ordering relates to the frequency in a
-#'   fourier that is associated with a covariate. 
+#' 
 #' @param ... Further arguments to be passed.
 #'
 #' @return Andrew's curves
 #' 
 #' @export
 
-andrew <- function(object, dependent, ordering = NULL, ...) {
+andrew <- function(object, ...) {
   UseMethod("andrew", object)
 }
 

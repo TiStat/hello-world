@@ -4,17 +4,10 @@
 \alias{andrew}
 \title{Andrew's curves}
 \usage{
-andrew(object, dependent, ordering = NULL, ...)
+andrew(object, ...)
 }
 \arguments{
 \item{object}{Object of class "imputed".}
-
-\item{dependent}{character. Specifies the variable name of the dependent
-variable in the original regression problem (not the imputation problem).}
-
-\item{ordering}{character vector, specifying the order of the variables in
-the Andrew's curve. Note that the ordering relates to the frequency in a
-fourier that is associated with a covariate.}
 
 \item{...}{Further arguments to be passed.}
 }
