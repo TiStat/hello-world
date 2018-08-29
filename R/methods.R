@@ -188,7 +188,39 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 }
 
 
-# Andrew's curves (safer to not make use of S3 method) --------------------------------------
+
+
+
+
+
+
+# Andrew's curves ----------------------------------------------------------------------------
+
+
+
+#' @title Andrew's curves
+#' 
+#' @description `andrew` is a generic function used to display Andrew's curves of the
+#' independent variables of an object of class "imputed". The function has just one single
+#' method. See documentation of `andrew.imputed` for further description.
+#'
+#' @param object Object of class "imputed".
+#' @param dependent character. Specifies the variable name of the dependent
+#'   variable in the original regression problem (not the imputation problem).
+#' @param ordering character vector, specifying the order of the variables in
+#'   the Andrew's curve. Note that the ordering relates to the frequency in a
+#'   fourier that is associated with a covariate. 
+#' @param ... 
+#'
+#' @return Andrew's curves
+#' 
+#' @export
+
+andrew <- function(object, dependent, ordering = NULL, ...) {
+  UseMethod("andrew", object)
+}
+
+
 
 # Description: y and defected not included.
 # Not a bug, but a feature! If only one variable is remaining, it's parallel lines!
@@ -242,7 +274,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #' 
 #' @export
 
-andrew_imputed <- function(object, dependent, ordering = NULL) {
+andrew.imputed <- function(object, dependent, ordering = NULL) {
   
   if(class(object) != "imputed")
     stop("Argument 'object' has to be of class 'imputed'!")
