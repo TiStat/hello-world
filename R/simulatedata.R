@@ -9,12 +9,13 @@
 #' @param family character; Specifies the gamlss family, from which the data is
 #'  drawn. e.g. 'NO' for a dependent variable drawn.
 #'  
-#' @param name character; Specifies variable names to be defected.
+#' @param name character; Specifies variable name to be defected.
 #' 
 #' @param subset formula. States a condition (e.g. ~x1 > 0.6) which specifies
-#'   the fraction of observations, that are to be defected. Default: The entire
+#'   the fraction of observations, that are to be defected. \cr
+#'   Default: The entire
 #'   Dataset is potentially subject to defect. Note, that if 'subset' does not
-#'   exclusivly use the 'name[d]' variable, this implies that the independence
+#'   exclusivly use the 'name' variable, this implies that the independence
 #'   assumption of MICE is not met (on purpose). 
 #'   e.g. of unmet condition: (x2 < 0.3 & x3 < 0.2).
 #'   
