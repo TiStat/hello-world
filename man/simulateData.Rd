@@ -20,7 +20,7 @@ the fraction of observations, that are to be defected. \cr
 Default: The entire
 Dataset is potentially subject to defect. Note, that if 'subset' does not
 exclusivly use the 'name' variable, this implies that the independence
-assumption of MICE is not met (on purpose). 
+assumption of MICE is not met (on purpose). \cr
 e.g. of unmet condition: (x2 < 0.3 & x3 < 0.2).}
 
 \item{prob}{numeric value. Specifies the binomial probability for each
