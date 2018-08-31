@@ -260,7 +260,7 @@ generateblankdata <- function(varnames, n, correlation = NULL) {
       stop('correlation is not a matrix')
     } else if(nrow(correlation)!= ncol(correlation)){
       stop('correlation matrix is not square')
-    } else if (all(correlation != t(correlation))){
+    } else if (any(correlation != t(correlation))){
       stop('correlation matrix is not symmetric')
     }
     
