@@ -13,12 +13,13 @@ simulateData(n, param.formula = list(mu = ~exp(x1) + x2, sigma =
 
 \item{param.formula}{list. Formulas of the parameters to be estimated.}
 
-\item{name}{character; Specifies variable names to be defected.}
+\item{name}{character; Specifies variable name to be defected.}
 
 \item{subset}{formula. States a condition (e.g. ~x1 > 0.6) which specifies
-the fraction of observations, that are to be defected. Default: The entire
+the fraction of observations, that are to be defected. \cr
+Default: The entire
 Dataset is potentially subject to defect. Note, that if 'subset' does not
-exclusivly use the 'name[d]' variable, this implies that the independence
+exclusivly use the 'name' variable, this implies that the independence
 assumption of MICE is not met (on purpose). 
 e.g. of unmet condition: (x2 < 0.3 & x3 < 0.2).}
 
@@ -46,7 +47,7 @@ NOTE: if a list is provided, both members must either vectors or single values.}
 drawn. e.g. 'NO' for a dependent variable drawn.}
 
 \item{correlation}{matrix. If a correlation/covariance matrix is provided,
-the drawn variables are uniformly drawn, but correlated according to this matrix.}
+the drawn variables are uniformely drawn, but correlated according to this matrix.}
 }
 \value{
 List of Dataframes. 'truedata' and 'defected' are dataframes
