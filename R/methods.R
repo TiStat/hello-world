@@ -57,7 +57,7 @@ summary.imputed <- function(object, ...) {
   cat("\n", 
       cat("Call:  \n", paste(deparse(mcall), sep = "\n", collapse = "\n")),
       "\n",
-      paste(v/n * 100,"% of the observations are defected", sep = ""),
+      paste(round(v/n * 100, 2),"% of the observations are defected", sep = ""),
       "\n",
       paste("\n Number of observations:", n),
       paste("\n Type of censoring:", cens_type),
