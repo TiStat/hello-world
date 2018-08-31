@@ -218,8 +218,7 @@ andrew <- function(object, ...) {
 
 
 
-# Description: y and defected not included.
-# Not a bug, but a feature! If only one variable is remaining, it's parallel lines!
+
 
 #' @title Andrew's Curves of defected observations
 #' 
