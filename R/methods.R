@@ -48,6 +48,7 @@ summary.imputed <- function(object, ...) {
   sm <- summary(object$imputedx)
   mcall <- object$mcall
   cens_type <- object$censtype
+  rounds <- object$m
   
   # For missing or interval-censored data, distance is undefined:
   r <- ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
@@ -55,8 +56,11 @@ summary.imputed <- function(object, ...) {
   # Forming the shape of display:
   cat("\n", 
       cat("Call:  \n", paste(deparse(mcall), sep = "\n", collapse = "\n")),
+      paste(v/n, "% of the observations are defected"),
+      "\n",
       paste("\n Number of observations:", n),
       paste("\n Type of censoring:", cens_type),
+      paste("\n Number of proposals for each value to be replaced:", rounds),
       paste("\n Number of replacements:", v),
       "\n\n Imputed values:", 
       "\n",

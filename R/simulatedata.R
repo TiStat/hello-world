@@ -39,7 +39,7 @@
 #'   the lower bound and the second affecting the upper bound.
 #'   NOTE: if a list is provided, both members must either vectors or single values.
 #' @param correlation matrix. If a correlation/covariance matrix is provided,
-#'   the drawn variables are uniformly drawn, but correlated according to this matrix. 
+#'   the drawn variables are uniformely drawn, but correlated according to this matrix. 
 #'   
 #' @return List of Dataframes. 'truedata' and 'defected' are dataframes
 #'   containing the dependent (generated according to the param.formula list),
