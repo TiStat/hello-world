@@ -29,3 +29,5 @@ Right kind of behavior!
 (13) gamlss in depends weil gamlss::rfamily eventuell nicht funktionert, imports ggplot?
 
 (14) User should fit models without indiator variable.... multicollinearity
+
+(15) use @impoortFrom to avoid depends and Version >= in dependencies
