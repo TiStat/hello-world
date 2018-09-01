@@ -32,6 +32,8 @@
 #' @return Depending on the choice of func, the respective vector of
 #'   (d)density-, (p)probability- , (q)quantile- or (r)random values is returned.
 #'   
+#' @import gamlss
+#'   
 #' @examples 
 #' # Simulating a dataset
 #' ld <- simulateData(n= 300,
@@ -132,6 +134,8 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
 #'   information contained in the censored value.
 #'
 #' @return Returns draws and quantiles.
+#' 
+#' @import gamlss
 #' 
 #' @examples
 #' # Simulating a dataset
