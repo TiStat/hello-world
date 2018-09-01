@@ -1,13 +1,9 @@
-# Print S3 method -----------------------------------------------------------------------
-
 #' @title Printing an object of class "imputed"
 #' 
 #' @param x Object of class "imputed".
-#' 
 #' @param ... print-specific arguments. See print() documentation.
 #' 
 #' @return Returns a print in the console.
-#' 
 #' @export
 
 print.imputed <- function(x, ...) {
@@ -28,16 +24,13 @@ print.imputed <- function(x, ...) {
 }
 
 
-# Summary S3 method ----------------------------------------------------------------------------
 
 #' @title Summarizing an object of class "imputed"
 #' 
 #' @param object Object of class "imputed".
-#' 
 #' @param ... summary-specific arguments. See summary() documentation.
 #' 
 #' @return Returns a summary in the console.
-#' 
 #' @export
 
 summary.imputed <- function(object, ...) {
@@ -78,8 +71,6 @@ summary.imputed <- function(object, ...) {
 }
 
 
-# Plot S3 method --------------------------------------------------------------------------
-
 #' @title Plot proposed imputations and their conditional censored
 #'   distributions' average quantiles
 #'   
@@ -97,10 +88,8 @@ summary.imputed <- function(object, ...) {
 #'   little variation.
 #'   
 #' @param x Object of class "imputex.
-#' 
 #' @param boxes boolean. Indicating whether (2) should be displayed as a
 #'   boxplot. Note that the median values are the imputation values.
-#'   
 #' @param ... plot-specific arguments. See plot() documentation.
 #' 
 #' @examples 
@@ -203,11 +192,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 
 
 
-
-
 # Andrew's curves ----------------------------------------------------------------------------
-
-
 
 #' @title Andrew's curves
 #' 
@@ -216,19 +201,14 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 #' method. See documentation of `andrew.imputed` for further description.
 #'
 #' @param object Object of class "imputed".
-#' 
 #' @param ... Further arguments to be passed.
 #'
 #' @return Andrew's curves
-#' 
 #' @export
 
 andrew <- function(object, ...) {
   UseMethod("andrew", object)
 }
-
-
-
 
 
 #' @title Andrew's Curves of defected observations
@@ -248,64 +228,115 @@ andrew <- function(object, ...) {
 #'   misleading, as it is caused by the covariates and not vice versa. Further,
 #'   note that after deleting those columns only one covariate remains, so
 #'   the fourier will correctly return parallel lines: each value of that
-#'   covariate is devided by sqrt(2). This is a feature, not a bug.
-#'   
-#' @param object Object of class "imputed".
+#'   covariate is devided by sqrt(2). This is a feature not a bug.
+#'
+#' @param d dataframe. Contains observations rowwise and last column is a group
+#'   indicator. The indicator is responsible for coloring of the curves.
+#'   Notably, the input format exceeds the dummy format; any integer values can
+#'   be used to indicate grouping.
+#' @param t vector (sequence). At which the fourier series is to be evaluated.
 #' 
-#' @param dependent character. Specifies the variable name of the dependent
-#'   variable in the original regression problem (not the imputation problem).
-#'   
-#' @param ordering character vector, specifying the order of the variables in
-#'   the Andrew's curve. Note that the ordering relates to the frequency in a
-#'   fourier that is associated with a covariate.
-#'   
-#' @param ... Further arguments to be passed.
-#'   
-#' @return Returns Andrew's curves figure.
-#' 
-#' @import ggplot2
-#' 
-#' @examples  
-#' finterval = simulateData(n= 100,
-#'                          param.formula = list(mu = ~exp(x1) + x2 + x3, 
-#'                          sigma = ~sin(x2)),
-#'                          name = 'x1', 
-#'                          subset = ~ (x2 < 0.3 & x3 < 0.2),
-#'                          prob = 0.4, 
-#'                          damage =list(c(0.3, 0.9), c(1.2, 1.5)),
-#'                          family = 'NO',
-#'                          correlation = matrix(c(1, 0.3, 0.2, 0.3, 1, 
-#'                                                 0.4, 0.2, 0.4, 1), nrow = 3))
-#' 
-#' d <- imputex(data = finterval$defected,
-#'              xmu_formula= x1~ y + x2 + x3,
-#'              xsigma_formula = ~x2,
-#'              xfamily = NO(mu.link = 'identity'),
-#'              indicator = "indicator",
-#'              censtype= 'interval',
-#'              intervalstart = 'lower')
-#'              
-#' andrew(d, dependent = 'y')
-#' 
-#' @export
+#' @return ggplot of Andrews curve. Colored according to indicator.
+#' @example
+#' d = as.matrix(data.frame(x = c(1,2), y = c(3,4), ind = c(1,0)))
+#' andrew(data = d)
+#' d = as.matrix(data.frame(x = c(1,2,3), y = c(3,4,4), ind = c(1,0,2)))
+#' andrew(data = d)
 
-andrew.imputed <- function(object, dependent, ordering = NULL, ...) {
+andrew <- function(data, t = seq(-pi, pi, length.out = 100)) {
   
-  if(class(object) != "imputed")
-    stop("Argument 'object' has to be of class 'imputed'!")
+  parameters <- data[, -ncol(data)]
   
-  # Access some elements from imputex:
+  # fourier striped of parameters; a 'vector' (actually a list) filled with
+  # unevaluated summands of fourier series, dependent on t without the parameter
+  # factors. generates a 'vector' of unevaluated fourier series without the
+  # parameter factors (observation's covariate values)
+  # @param parameter matrix filled with fourier parameters of an observation rowwise
+  stripedfourier <- function(parameters) {
+    l = list(~1/sqrt(2))
+    if(length(parameters)>1){
+      for(i in 2:length(parameters)){
+        if (i %% 2 == 0){ # even
+          l[[i]] = as.formula(paste('~sin((' ,i, '-1)*t)+cos((', i, '-1)*t)'))
+        }else{ # odd
+          l[[i]] = as.formula(paste('~sin((',i,'-2)*t)+cos((',i, '-2)*t)' ))
+        }
+      }
+    }
+    return(l)
+  }
+  
+  # executed only once: find the fourierseries of appropriate length.
+  l <- stripedfourier(parameters[1,])
+  
+  # @description  Evaluate the Fourier series without the obseravational parameters
+  # @param t vector. axis position(s) at which fourier series is to be evaluated
+  # @param stripedfourier list. resulted fourier series expansion from stripedfourier()
+  # @example
+  # # d = as.matrix(data.frame(x = c(1,2), y = c(3,4), ind = c(1,0)))
+  # # stripedt( t = c(1,2,3) ,  stripedfourier= l )
+  stripedt = function(t, stripedfourier){
+    
+    # evaluate for all t (still list, as constant is evaluated only once and prevents
+    # from coercing to matrix, as list is of unbalanced length)
+    v = sapply(l, FUN= function(e) eval(e[[2]], envir = data.frame(t = t)))
+    
+    #! Workaround:
+    
+    # expand the constant to appropriate size
+    v[[1]] = rep(v[[1]], length(t))
+    
+    # matrix of striped fourier (columnwise)
+    v = sapply(v, function(x) unlist(x))
+    
+    # zip striped fourier with its parameter vector.
+    return(v)
+  }
+  
+  # executed only once to get the striped fouriervalues (dependent on t)
+  v <- stripedt(t, stripedfourier= l)
+  
+  # @title zip fourier with the set of parameters
+  # @description columnwise fully evaluated (all t values) fourier observations (actually only matrix product)
+  # @param v stripedt matrix. The striped fourier series without considering observational
+  # parameters. ('raw fourier')
+  # @param parameters matrix. containing rowwise the covariates of each observation.
+  zipfourier <- function(v, parameters){
+    fourierobs = data.frame(v %*% t(parameters))
+    return(fourierobs)
+  }
+  
+  # convert to longformat
+  observations <- zipfourier(v, parameters)
+  observations$t <- t
+  dat <- reshape2::melt(observations, id.vars = 't', variable.name = 'obs')
+  
+  # expand indicator of defected
+  dat$indicator = rep(data[,ncol(data)], each= length(t))
+  
+  ggplot(data = dat, aes(x = t, y = value, group = obs, color = indicator))+
+    geom_line()
+}
+
+#' @title Andrew curve. Method of imputed
+#' @param object imputed.
+
+andrew.imputed <- function (object, dependent, ordering = NULL){
+  
+  # read from object
+  
   defected <- as.character(object$mcall$xmu_formula[[2]])
   data <- object$fulldata
   indicator <- object$mcall$indicator
   
+  # corner case 'interval' has additional non informative column
   if(object$mcall$censtype == 'interval'){
     d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
   }else{
     d <-  data[setdiff(names(data), c(defected, dependent))]
   }
   
-  # Reorder columns for later ease with positional matching in apply:
+  # reorder columns for andrew call/ and or via user shuffle
   index <- which(names(d)== indicator)
   if(is.null(ordering)){
     d <- d[, c(setdiff(1:ncol(d), index),index)]
@@ -315,37 +346,9 @@ andrew.imputed <- function(object, dependent, ordering = NULL, ...) {
     }
     d <- d[, c(ordering, indicator)]
   }
-  
-  if(length(setdiff(names(data), c(defected, dependent, indicator)))== 0){
-    stop('data frame must contain at least one variable apart from indicator, defected and dependent column')
-  }
-  
-  # Following function evaluates fourier series at "t" for parameter set "obs", where
-  # t is the axis position at which to evaluate and obs is the observation vector:
-  curveval <- function(t, obs){
-    f <- obs[1] / sqrt(2)
-    if(length(obs)>1){ 
-      for (i in 2:length(obs)){
-        if (i %% 2 == 0){ # even
-          f <- f + obs[i]*(sin((i-1)*t)+cos((i-1)*t))
-        }else{ # odd
-          f <- f + obs[i]*(sin((i-2)*t)+cos((i-2)*t))
-        }
-      }
-    }
-    return(f)
-  }
-  
-  p <- ggplot(data.frame(t = c(-pi, pi)), aes(t))
-  
-  p <- p + apply(d, MARGIN = 1, FUN = function(z) stat_function(fun = curveval,
-                                                                geom = "line",
-                                                                args = list(obs = z[1:(length(z)-1)]), # last is indicator
-                                                                # based on indicator! color must be positive and dummy is 0/1
-                                                                color = z[length(z)] + 1)
-  )
-  
-  
-  print(p)
+  andrew(data = d)
 }
+
+
+
 
