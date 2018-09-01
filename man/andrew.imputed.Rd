@@ -40,6 +40,7 @@ Andrew's Curves are a Fourier series upon the observations in
   covariate is devided by sqrt(2). This is a feature, not a bug.
 }
 \examples{
+ 
 finterval = simulateData(n= 100,
                          param.formula = list(mu = ~exp(x1) + x2 + x3, 
                          sigma = ~sin(x2)),
@@ -48,7 +49,8 @@ finterval = simulateData(n= 100,
                          prob = 0.4, 
                          damage =list(c(0.3, 0.9), c(1.2, 1.5)),
                          family = 'NO',
-                         correlation = matrix(c(1, 0.3, 0.2, 0.3, 1, 0.4, 0.2, 0.4, 1), nrow = 3))
+                         correlation = matrix(c(1, 0.3, 0.2, 0.3, 1, 
+                                                0.4, 0.2, 0.4, 1), nrow = 3))
 
 d <- imputex(data = finterval$defected,
              xmu_formula= x1~ y + x2 + x3,
@@ -57,7 +59,7 @@ d <- imputex(data = finterval$defected,
              indicator = "indicator",
              censtype= 'interval',
              intervalstart = 'lower')
-            
+             
 andrew(d, dependent = 'y')
 
 }

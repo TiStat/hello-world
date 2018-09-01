@@ -191,7 +191,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     theme(axis.title=element_text(size=11,face="bold"))
   
   # Display plots in one window:
-  grid.arrange(quantil, imputations, densities, nrow = 1)
+  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
 }
 
 
@@ -261,9 +261,7 @@ andrew <- function(object, ...) {
 #' 
 #' @import ggplot2
 #' 
-#' @import gridExtra
-#'   
-#' @examples 
+#' @examples  
 #' finterval = simulateData(n= 100,
 #'                          param.formula = list(mu = ~exp(x1) + x2 + x3, 
 #'                          sigma = ~sin(x2)),
@@ -272,7 +270,8 @@ andrew <- function(object, ...) {
 #'                          prob = 0.4, 
 #'                          damage =list(c(0.3, 0.9), c(1.2, 1.5)),
 #'                          family = 'NO',
-#'                          correlation = matrix(c(1, 0.3, 0.2, 0.3, 1, 0.4, 0.2, 0.4, 1), nrow = 3))
+#'                          correlation = matrix(c(1, 0.3, 0.2, 0.3, 1, 
+#'                                                 0.4, 0.2, 0.4, 1), nrow = 3))
 #' 
 #' d <- imputex(data = finterval$defected,
 #'              xmu_formula= x1~ y + x2 + x3,
@@ -281,7 +280,7 @@ andrew <- function(object, ...) {
 #'              indicator = "indicator",
 #'              censtype= 'interval',
 #'              intervalstart = 'lower')
-#'             
+#'              
 #' andrew(d, dependent = 'y')
 #' 
 #' @export
@@ -334,14 +333,14 @@ andrew.imputed <- function(object, dependent, ordering = NULL, ...) {
   }
   
   p <- ggplot(data.frame(t = c(-pi, pi)), aes(t))
-
+  
   p <- p + apply(d, MARGIN = 1, FUN = function(z) stat_function(fun = curveval,
                                                                 geom = "line",
                                                                 args = list(obs = z[1:(length(z)-1)]), # last is indicator
                                                                 # based on indicator! color must be positive and dummy is 0/1
                                                                 color = z[length(z)] + 1)
   )
-    
+  
   
   print(p)
 }

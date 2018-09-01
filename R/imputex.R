@@ -46,8 +46,6 @@
 #' 
 #' @return Returns internal results of the algorithm.
 #' 
-#' @import gamlss
-#' 
 #' @examples 
 #' # Simulating a dataset
 #' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1) + x3,
