@@ -49,9 +49,10 @@ summary.imputed <- function(object, ...) {
   mcall <- object$mcall
   cens_type <- object$censtype
   rounds <- object$m
+  sr <- summary(object$distances)
   
-  # For missing or interval-censored data, distance is undefined:
-  r <- ifelse(!is.null(object$distances), round(mean(object$distances), 3), "undefined")
+  # Distance is undefined if interval or missing:
+  r <- switch(is.null(object$distances) + 1, round(sr, 3), "Undefined")
   
   # Forming the shape of display:
   cat("\n", 
@@ -68,8 +69,11 @@ summary.imputed <- function(object, ...) {
       paste(names(sm), collapse = "     "),
       "\n",
       paste(round(sm, 3), collapse = "      "),
-      
-      paste("\n\n Average distance of imputations to censorings: \n", r)
+      "\n\n Distances of imputations to censorings:",
+      "\n",
+      paste(names(r), collapse = "     "),
+      "\n",
+      paste(r, collapse = "      ")
   )
 }
 
