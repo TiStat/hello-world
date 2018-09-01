@@ -92,6 +92,8 @@ summary.imputed <- function(object, ...) {
 #'   boxplot. Note that the median values are the imputation values.
 #' @param ... plot-specific arguments. See plot() documentation.
 #' 
+#' @return Return figures with information on object of class "imputed".
+#' @import ggplot2
 #' @examples 
 #' # Simulating a dataset
 #' rinterval = simulateData(n= 300,
@@ -108,11 +110,6 @@ summary.imputed <- function(object, ...) {
 #'               intervalstart = 'lower')
 #'               
 #' plot(d, boxes = FALSE)
-#' 
-#' @return Return figures with information on object of class "imputed".
-#' 
-#' @import ggplot2
-#' 
 #' @export
 
 plot.imputed <- function(x, boxes = FALSE, ...) {
@@ -127,9 +124,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
                             middle=q50,
                             upper=q75,
                             ymax=q95)) +
-    
     geom_boxplot(stat="identity") +
-    
     xlab('Observation') +
     ylab('Avg. quantiles of censored\n conditional bootmodel distribution') +
     theme(axis.title=element_text(size=11,face="bold"))
@@ -191,7 +186,6 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 
 
 
-
 # Andrew's curves ----------------------------------------------------------------------------
 
 #' @title Andrew's curves
@@ -209,6 +203,38 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
 andrew <- function(object, ...) {
   UseMethod("andrew", object)
 }
+
+
+#' @title Andrew curve. Method of imputed 
+#' @param object imputed.
+
+andrew.imputed <- function (object, dependent, ordering = NULL){
+  
+  # read from object
+  defected <- as.character(object$mcall$xmu_formula[[2]])
+  data <- object$fulldata
+  indicator <- object$mcall$indicator
+  
+  # corner case 'interval' has additional non informative column
+  if(object$mcall$censtype == 'interval'){
+    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
+  }else{
+    d <-  data[setdiff(names(data), c(defected, dependent))]
+  }
+  
+  # reorder columns for andrew call/ and or via user shuffle
+  index <- which(names(d)== indicator)
+  if(is.null(ordering)){
+    d <- d[, c(setdiff(1:ncol(d), index),index)]
+  } else {
+    if(!identical(setdiff(names(d), c(ordering, indicator)) ,character(0))){
+      stop('Names in Ordering were not found in provided data. All variable names must be specified')
+    }
+    d <- d[, c(ordering, indicator)]
+  }
+  andrew(data = d)
+}
+
 
 
 #' @title Andrew's Curves of defected observations
@@ -317,38 +343,5 @@ andrew <- function(data, t = seq(-pi, pi, length.out = 100)) {
   ggplot(data = dat, aes(x = t, y = value, group = obs, color = indicator))+
     geom_line()
 }
-
-#' @title Andrew curve. Method of imputed
-#' @param object imputed.
-
-andrew.imputed <- function (object, dependent, ordering = NULL){
-  
-  # read from object
-  
-  defected <- as.character(object$mcall$xmu_formula[[2]])
-  data <- object$fulldata
-  indicator <- object$mcall$indicator
-  
-  # corner case 'interval' has additional non informative column
-  if(object$mcall$censtype == 'interval'){
-    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
-  }else{
-    d <-  data[setdiff(names(data), c(defected, dependent))]
-  }
-  
-  # reorder columns for andrew call/ and or via user shuffle
-  index <- which(names(d)== indicator)
-  if(is.null(ordering)){
-    d <- d[, c(setdiff(1:ncol(d), index),index)]
-  } else {
-    if(!identical(setdiff(names(d), c(ordering, indicator)) ,character(0))){
-      stop('Names in Ordering were not found in provided data. All variable names must be specified')
-    }
-    d <- d[, c(ordering, indicator)]
-  }
-  andrew(data = d)
-}
-
-
 
 
