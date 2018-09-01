@@ -5,7 +5,7 @@ rd <- simulateData(n= 300,
                    param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
                    name = 'x1', subset = ~ (x2 > 0.6 & x3 > 0.7), prob = 0.75, 
                    damage =c(0.3, 0.9), family = 'NO', 
-                   correlation = matrix(c(1, 0.41, 0.23, 0.27, 1, 0.35, 0.29, 0.4, 1), nrow = 3))$defected
+                   correlation = NULL)$defected
 # Left censored data
 ld <- simulateData(n= 300,
                    param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
@@ -17,7 +17,7 @@ id <- simulateData(n= 300,
                    param.formula = list(mu = ~exp(x1) + x2 + x3, sigma = ~sin(x2)),
                    name = 'x1', subset = ~ (x2 < 0.3 & x3 < 0.2), prob = 0.4, 
                    damage =list(c(0.3, 0.9), c(1.2, 1.5)), family = 'NO',
-                   correlation = matrix(c(1, 0.3, 0.2, 0.3, 1, 0.4, 0.2, 0.4, 1), nrow = 3))$defected
+                   correlation = NULL)$defected
 
 # dot(.) - indicator to prevent multicollinearity!
 rmodel <- gamlss(formula = y ~ . -indicator, data=rd) 
