@@ -137,10 +137,8 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     
     imputations <- ggplot(data = d, aes(observation, value)) +
       geom_boxplot(aes(group = observation)) +
-      
       stat_summary(geom = "crossbar", width = 0.65, color="red",
                    fun.data = function(x){c(y=median(x), ymin=median(x), ymax=median(x))}) +
-      
       xlab('Observation') +
       ylab('Proposals for observation [i] & median') +
       theme(axis.title=element_text(size=11,face="bold"))
@@ -148,16 +146,13 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
   } else {
     imputations <- ggplot() +
       geom_point(data = d, aes(observation, value)) +
-      
       geom_point(data = data.frame(obs = 1:x$nreplacements, imputedx = x$imputedx),
                  aes(x = obs, y = imputedx), color = 'red') +
-      
       xlab('Observation') +
       ylab('Proposals for observation [i] & median') +
       theme(axis.title=element_text(size=11,face="bold"))
   }
   
-  # Densities;
   # Access censored covariate:
   x1 <- as.character(x$mcall$xmu_formula[2])
   xobs <- x$Wobs$x1
@@ -166,12 +161,12 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     geom_density(data = data.frame(xobs), 
                  aes(x = xobs, fill = "observed", color = "observed"),
                  alpha = 0.4, size = 0.5) +
-    
-    geom_density(aes(x = value, y = ..density..,  
+    geom_density(data = d,
+                 aes(x = value, 
+                     y = ..density..,  
                      group = proposalVec, 
                      color = "proposal vector"), 
-                 data = d, stat = "density", size = 0.5) +
-    
+                 stat = "density", size = 0.5) +
     scale_fill_discrete(guide=FALSE) +
     xlab('Covariate which includes defected data') +
     ylab('Density') +
