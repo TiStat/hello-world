@@ -1,5 +1,3 @@
-# family_fun ------------------------------------------------------------------------------
-
 #' @title  Evaluate gamlss family functions from gamlss object
 #' 
 #' @description Function that, given a "gamlss" object, evaluates the
@@ -11,27 +9,19 @@
 #'   Also make sure that n is a multiple of nrow(predictdata)!
 #'   
 #' @param object gamlss fit object
-#' 
 #' @param func character. "d", "p", "q", "r" for either density, distribution function,
 #'   quantile or random data generation.
-#'   
 #' @param fitdata dataframe. Data used as input.
-#' 
 #' @param predictdata dataframe. Containing the observations for which the
 #'   parameters are predicted.
-#'   
 #' @param x,q scalar numeric. Quantile value if density or probability function
 #'   used respectively.
-#'   
 #' @param p scalar numeric. Probability value if quantile function used.
-#' 
 #' @param n scalar numeric. Number of observations if random generator function used.
-#' 
 #' @param ... argumenst to be passed to the called distributional function.
-#'
+#' 
 #' @return Depending on the choice of func, the respective vector of
 #'   (d)density-, (p)probability- , (q)quantile- or (r)random values is returned.
-#'   
 #' @examples 
 #' # Simulating a dataset
 #' ld <- simulateData(n= 300,
@@ -42,13 +32,9 @@
 #' 
 #' # Fitting a gamlss model
 #' lmodel <- gamlss(formula = y ~ . -indicator, data=ld)
-#' 
 #' nl <- length(ld$x1[ld$indicator==1])
-#' 
 #' lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), x3 = runif(n = nl), indicator = 1)
-#' 
 #' family_fun(lmodel, func = 'r',ld, lpredict.df, n = nrow(lpredict.df))
-#'   
 #' @export
 
 family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdata ,p = NULL, q = NULL, x = NULL, n = NULL, ...) {
@@ -102,37 +88,29 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
 }
 
 
-# samplecensored ----------------------------------------------------------------------------
 
 #' @title Inverse sampling - GAMLSS
 #' 
 #' @description Inverse sampling of censored variables to impute only valid
 #'   observations, conditional on the respective fit.
-#'   
+#'
 #' @param object gamlss. Fitted model whose parameters are predicted for
 #'   predictdata.
-#'   
 #' @param censtype character. Specifies the type of censoring (right/left/interval/missing).
-#' 
 #' @param predictdata dataframe. predict-data of the missing/censored
 #'   observations, for which imputations are drawn.
-#'   
 #' @param fitdata data.frame. The orignal dataset upon which gamlss was fitted.
-#' 
 #' @param censor character. Name of the (damaged) column to be predicted on in
 #'   predictdata. This is only required if censtype is NOT "missing".
-#'   
 #' @param intervalstart character. Name of the column of the interval's starting
 #'   values. By convention, the starting duration in this column is assumed to
 #'   be the time passed without failure, before entering the interval, in which
 #'   the exact time of failure is unknown.
-#'   
 #' @param quantiles vector. Containing the quantiles to be evaluated in the
 #'   conditoned distribution, i.e. conditoned on the parameters and the
 #'   information contained in the censored value.
 #'
 #' @return Returns draws and quantiles.
-#' 
 #' @examples
 #' # Simulating a dataset
 #' ld <- simulateData(n= 300,
@@ -143,13 +121,9 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
 #' 
 #' # Fitting a gamlss model
 #' lmodel <- gamlss(formula = y ~ . -indicator, data=ld)
-#' 
 #' nl <- length(ld$x1[ld$indicator==1])
-#' 
 #' lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), x3 = runif(n = nl), indicator = 1)
-#' 
 #' samplecensored(lmodel ,censtype = 'left', lpredict.df, ld, censor = "x1")
-#' 
 #' @export
 
 samplecensored <- function(object,
