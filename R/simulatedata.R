@@ -47,6 +47,8 @@
 #'   difference between the two dataframes is, that 'defected' has artificially generated
 #'   censored/missing values according to the 'defect' specification.
 #'   
+#'   @import MASS
+#'   
 #' @examples
 #' # missing: damage = NA
 #' # right: damage = ~ 1/3*x1
@@ -265,7 +267,7 @@ generateblankdata <- function(varnames, n, correlation = NULL) {
     }
     
     mu <- rep(0,length(varnames))
-    rvars <- MASS::mvrnorm(n = n, mu = mu, Sigma = correlation)
+    rvars <- mvrnorm(n = n, mu = mu, Sigma = correlation)
     pvars <- pnorm(rvars)
     rawdata <- data.frame(qunif(pvars))
     

@@ -55,6 +55,8 @@ List of Dataframes. 'truedata' and 'defected' are dataframes
   the generated covariates, and a censoring/missing 'indicator' The mere
   difference between the two dataframes is, that 'defected' has artificially generated
   censored/missing values according to the 'defect' specification.
+  
+  @import MASS
 }
 \description{
 Data generator for missing/censored data with Normal distribution.

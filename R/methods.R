@@ -118,6 +118,8 @@ summary.imputed <- function(object, ...) {
 #' 
 #' @return Return figures with information on object of class "imputed".
 #' 
+#' @import ggplot2
+#' 
 #' @export
 
 plot.imputed <- function(x, boxes = FALSE, ...) {
@@ -189,7 +191,7 @@ plot.imputed <- function(x, boxes = FALSE, ...) {
     theme(axis.title=element_text(size=11,face="bold"))
   
   # Display plots in one window:
-  gridExtra::grid.arrange(quantil, imputations, densities, nrow = 1)
+  grid.arrange(quantil, imputations, densities, nrow = 1)
 }
 
 
@@ -256,6 +258,10 @@ andrew <- function(object, ...) {
 #' @param ... Further arguments to be passed.
 #'   
 #' @return Returns Andrew's curves figure.
+#' 
+#' @import ggplot2
+#' 
+#' @import gridExtra
 #'   
 #' @examples 
 #' finterval = simulateData(n= 100,
