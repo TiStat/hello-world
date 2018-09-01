@@ -1,5 +1,4 @@
 #' @title Imputing censored covariates - GAMLSS
-#' 
 #' @description The MICE Algorithm (Multiple Imputation by Chained Equations) is
 #'   a method to impute missing data. This function uses this algorithm for
 #'   imputing censored data, using inverse sampling to utilize the additional
@@ -16,36 +15,25 @@
 #'   state change within the interval is unknown. For inverse sampling, the distribution is
 #'   conditioned on the start-duration and cut at the end-duration to ensure the
 #'   constraints.
-#'   
 #' @param indicator character. Name of dummy column in data, which indicates the
 #'   damaged observation.
-#'   
 #' @param intervalstart character. Name of the column of interval starting
 #'   values. By convention, the starting duration in this column is assumed to
 #'   be the time passed without failure, before entering the interval, in which
 #'   the exact time of failure is unknown.
-#'   
 #' @param censtype character. The type of the damaged observation; 'missing',
 #'   'right', 'left' or 'interval'.
-#'   
 #' @param xmu_formula formula. Formula for location parameter of xfamily. Dependent
 #'   variable specifies the variable which is partially censored/missing and is
 #'   to be imputed.
-#'   
 #' @param xsigma_formula formula. Formula for scale parameter of gamlss family object.
-#' 
 #' @param xnu_formula formula. Formula for skewness of gamlss family object.
-#' 
 #' @param xtau_formula formula. Formula for kurtosis of gamlss family object.
-#' 
 #' @param xfamily gamlss family object. Determines the family membership of the gamlss object.
-#' 
 #' @param ... Additional arguments passed in all gamlss fit.
-#' 
 #' @param m Number of imputations (How many rounds should the algorithm execute). Default is m = 5.
 #' 
 #' @return Returns internal results of the algorithm.
-#' 
 #' @examples 
 #' # Simulating a dataset
 #' missing = simulateData(n = 100, param.formula = list(mu = ~exp(x1) + x3,
@@ -97,13 +85,13 @@ imputex <- function(xmu_formula,
   censor <- as.character(xmu_formula[[2]])
   
   # Step 1: Fit gamlss with user specified xfamily and formula on observed data:
-  obsmodel <- gamlss( formula = xmu_formula,
-                      sigma_formula = xsigma_formula,
-                      nu_formula = xnu_formula,
-                      tau_formula = xtau_formula,
-                      family = xfamily,
-                      data = Wdat$obs,
-                      ...)
+  obsmodel <- gamlss(formula = xmu_formula,
+                     sigma_formula = xsigma_formula,
+                     nu_formula = xnu_formula,
+                     tau_formula = xtau_formula,
+                     family = xfamily,
+                     data = Wdat$obs,
+                     ...)
   
   # Step 2: Resampling from fitted model.
   # Note that these are m independent draws from vectors of length nrow(Wdat$obs), which are stacked!
@@ -133,7 +121,6 @@ imputex <- function(xmu_formula,
   quantil <- c(0.05, 0.25, 0.5, 0.75, 0.95)
   
   for (i in 1:m) {
-    
     # Iterate only over the names of booted vectors:
     bootformula <- as.formula(paste(names(boot)[i], '~',
                                     as.character(as.vector(xmu_formula)[3]),
