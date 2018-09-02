@@ -159,7 +159,7 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
     if(!all(all(damage[[1]] < 1), all(damage[[1]] > 0))) {
       stop('Lower bound interval factor is not from interval (0,1); excluding {0,1}.')
     }
-    if(!all(damage[[2]]>1)){
+    if(!all(damage[[2]] > 1)) {
       stop('Upper bound interval factor is not from interval (1,INF); excluding {1}.')
     }
   }
@@ -187,25 +187,25 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
   
   if (all(is.na(damage))) {
     censtype <- 'missing'
-    truedata[name][indicator == 1,] <- NA
+    truedata[name][indicator == 1, ] <- NA
     return (list(defected = truedata, 
                   censtype = censtype,
                   indicator = indicator))
   }
   
   n <- sum(indicator) # sum(boolean)
-  subsetdefect <-  truedata[name][indicator == 1,]
+  subsetdefect <-  truedata[name][indicator == 1, ]
   
   if (is.list(damage)) {
     censtype <- 'interval'
     truedata$lower <- 0
     truedata$lower[indicator == 1] <- f(damage[[1]], n) * subsetdefect
-    truedata[name][indicator == 1,] <- f(damage[[2]], n) * subsetdefect
+    truedata[name][indicator == 1, ] <- f(damage[[2]], n) * subsetdefect
     
   } else {
     multiply <- f(damage, n)
     censtype <- ifelse(all(multiply < 1), 'right', 'left')
-    truedata[name][indicator == 1,] <- multiply * subsetdefect
+    truedata[name][indicator == 1, ] <- multiply * subsetdefect
   }
   
   return (list( defected = truedata, 
@@ -236,18 +236,18 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
 
 generateblankdata <- function(varnames, n, correlation = NULL) {
   
-  if(!is.null(correlation)){
+  if(!is.null(correlation)) {
     
     # Check validity of correlation matrix:
     if(!is.matrix(correlation)){
       stop('correlation is not a matrix')
-    } else if(nrow(correlation)!= ncol(correlation)){
+    } else if(nrow(correlation)!= ncol(correlation)) {
       stop('correlation matrix is not square')
-    } else if (any(correlation != t(correlation))){
+    } else if (any(correlation != t(correlation))) {
       stop('correlation matrix is not symmetric')
     }
     
-    mu <- rep(0,length(varnames))
+    mu <- rep(0, length(varnames))
     rvars <- MASS::mvrnorm(n = n, mu = mu, Sigma = correlation)
     pvars <- pnorm(rvars)
     rawdata <- data.frame(qunif(pvars))

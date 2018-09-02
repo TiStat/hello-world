@@ -20,14 +20,3 @@ Plot of Andrew's curve. Colored according to indicator.
 \description{
 `andrew.imputed` prepares the data frame to be passed to this function.
 }
-\note{
-t is not supplied in higher function, as Fourier repeats itself anyways.
-}
-\examples{
-# d1 <- data.frame(x = c(1,2), y = c(3,4), ind = c(1,0))
-# andrewcore(data = d1)
-# d2 <- as.matrix(data.frame(x = c(1,2,3), y = c(3,4,4), ind = c(1,0,2)))
-# andrewcore(data = d2)
-# d3 <- data.frame(x = c(1,2), ind = c(1,0))
-# andrewcore(data = d3)
-}
