@@ -22,60 +22,14 @@ andrew <- function(object, ...) {
 #'   inspection. In case of 'interval' censoring, the lower bound column is also
 #'   removed for the same reasoning.
 #'   
-#' @param object of imputed class.
-#' @param dependent character. Name of the dependent variable in the original
-#'   (not imputation) regression problem. It is removed, as the information
-#'   contained is dubious: Covariates cause the dependent and not vice versa.
-#' @param ordering vector of characters. Names of the covariates supplied to
-#'   imputex. The argument is optional and allows to shuffle the dataframe.
-#'   Thereby, the covariates are associated with different Fourier frequnecies.
-#'   It is highly recommended to make use of this option.
-#' 
-#' @return Andrews Curves plot.
-
-andrew.imputed <- function (object, dependent, ordering = NULL){
-  
-  # read from object
-  defected <- as.character(object$mcall$xmu_formula[[2]])
-  data <- object$fulldata
-  indicator <- object$mcall$indicator
-  
-  # corner case 'interval' has additional non informative column
-  if(object$mcall$censtype == 'interval'){
-    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
-  }else{
-    d <-  data[setdiff(names(data), c(defected, dependent))]
-  }
-  
-  # Reorder/Shuffle columns
-  # by default, indicator column is set as last.
-  shuffle <- function(d, ordering, indicator) {
-    index <- which(names(d) == indicator)
-    if(is.null(ordering)){
-      d <- d[, c(setdiff(1:ncol(d), index),index)]
-    } else {
-      if(!identical(setdiff(names(d), c(ordering, indicator)) ,character(0))){
-        stop('Names in Ordering were not found in provided data. All variable names must be specified')
-      }
-      d <- d[, c(ordering, indicator)]
-    }
-  }
-  
-  d = shuffle(d, ordering, indicator)
-  
-  andrew(data = d)
-}
-
-
-
-#' @title Andrew's Curves of defected observations
+#' @title Andrew's Curves of defected observations. Method Imputed class.
 #' 
 #' @description Andrew's Curves are a Fourier series upon the observations in
 #'   data. They are a tool for detecting hidden groupings, and in this case of
 #'   defected observations, a tool for determining whether there is a clear
 #'   structure in the remaining covariates, that may explain why a certain
 #'   observation is likely to be defected. As it is an explorative tool, where
-#'   the ordering of the variables determines the frequency that is affected
+#'   the ordering of the variables determines the frequency that is associated
 #'   respectively, it is highly recommended to use various column orders. It may
 #'   even be of use to some extent to employ Principle Components. Note, that
 #'   the defected, dependent and defect-indicator (and lower bound in the
@@ -85,7 +39,74 @@ andrew.imputed <- function (object, dependent, ordering = NULL){
 #'   misleading, as it is caused by the covariates and not vice versa. Further,
 #'   note that after deleting those columns only one covariate remains, so
 #'   the fourier will correctly return parallel lines: each value of that
-#'   covariate is devided by sqrt(2). This is a feature not a bug.
+#'   covariate is devided by sqrt(2). This is a fourier feature not a bug.   
+#'   
+#' @param object of imputed class.
+#' @param dependent character. Name of the dependent variable in the original
+#'   (not imputation) regression problem. It is removed, as the information
+#'   contained is dubious: Covariates cause the dependent and not vice versa.
+#' @param ordering vector of characters. Names of the covariates supplied to
+#'   imputex. The argument is optional and allows to shuffle the dataframe.
+#'   Thereby, the covariates are associated with different Fourier frequnecies.
+#'   It is highly recommended to make use of this option. As syntaxsugar, it is
+#'   possible to specify only the first few variables and leave the remaining
+#'   ordering in the dataframe intact.
+#'   
+#' @examples 
+#' 
+fright = simulateData(n= 150,
+                      param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
+                      name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =1/3,
+                      family = 'NO',
+                      correlation = matrix(c(1,0.3,0.2,
+                                             0.3,1, 0.4,
+                                             0.2,0.4,1), nrow = 3))
+d <- imputex(data = fright$defected,
+              xmu_formula= x1~y +x2 +x3, degree = 5,
+              xsigma_formula = ~x2,
+              xnu_formula = ~1,
+              xtau_formula = ~1,
+              xfamily = NO(mu.link = 'identity'),
+              indicator = "indicator",
+              censtype= 'right' )
+andrew.imputed(object = d, dependent = 'y', ordering = c('x3'))
+
+andrew.imputed <- function (object, dependent, ordering = NULL) {
+  
+  # read from object
+  defected <- as.character(object$mcall$xmu_formula[[2]])
+  data <- object$fulldata
+  indicator <- object$mcall$indicator
+  
+  # corner case 'interval' has additional non informative column
+  if (object$mcall$censtype == 'interval') {
+    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
+  } else{ # general case, removes defected & dependent
+    d <-  data[setdiff(names(data), c(defected, dependent))]
+  }
+  
+  
+  # Reorder/Shuffle columns
+  # by default, indicator column is set as last.
+  shuffle <- function(d, ordering, indicator) {
+    index <- which(names(d) == indicator)
+    if (is.null(ordering)) {
+      d <- d[, c(setdiff(1:ncol(d), index), index)]
+      
+    } else if (!identical(setdiff(names(d), c(ordering, indicator)) , character(0))) {
+      remainder = setdiff(names(d), c(ordering, indicator))
+      d <- d[, c(ordering, remainder, indicator)]
+      
+    } else {
+      d <- d[, c(ordering, indicator)]
+    }
+  }
+  
+  d = shuffle(d, ordering, indicator)
+  
+  andrewcore(data = d)
+}
+
 #'
 #' @param data dataframe. (or matrix) Contains observations rowwise and last column is a group
 #'   indicator. The indicator is responsible for coloring of the curves.
@@ -101,8 +122,9 @@ andrew.imputed <- function (object, dependent, ordering = NULL){
 #' andrew(data = d2)
 #' d3 = data.frame(x = c(1,2), ind = c(1,0))
 #' andrew(data = d3)
+#' @NOTE: t is not supplied in higher function, as Fourier repeats itself anyways.
 
-andrew <- function(data, t = seq(-pi, pi, length.out = 100)) {
+andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   
   # reduce dataframe to parameter part & and prevent R from coercing to vector
   # if only one covariate remains after removal of indicator
