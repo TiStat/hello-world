@@ -4,8 +4,10 @@
 #' 
 #' @param n Number of generated observations.
 #' @param param.formula list. Formulas of the parameters to be estimated.
-#' @param family character; Specifies the gamlss family, from which the data is
-#'  drawn. e.g. 'NO' for a dependent variable drawn.
+#' @param xfamily character; specifies the gamlss family from which the censored
+#'   variable is drawn unconditionally
+#' @param yfamily character; Specifies the gamlss family, from which the
+#'   dependent is dawn conditionally
 #' @param name character; Specifies variable name to be defected.
 #' @param subset formula. States a condition (e.g. ~x1 > 0.6) which specifies
 #'   the fraction of observations, that are to be defected. \cr
@@ -52,7 +54,8 @@
 simulateData <- function(n,
                         param.formula = list(mu = ~ exp(x1) + x2, sigma = ~ sqrt(x2)), 
                         name = 'x1', subset = NULL, prob = 0.8 , damage = 1/3,
-                        family = 'NO',
+                        xfamily = 'NO', 
+                        yfamily = 'NO',
                         correlation = NULL) {
   
   # Default case is no Subset, i.e. all values are potentially subject to defect:
@@ -72,7 +75,7 @@ simulateData <- function(n,
   }
   
   # Function 'generateblankdata' scripted below.
-  blankdata <- generateblankdata(varnames, n, correlation)
+  blankdata <- generateblankdata(varnames, xfamily, n, correlation)
   
   # Evaluate the formulas on data.frame
   param.frame <- lapply(param.formula, FUN = function(x) eval(x[[2]], envir = blankdata))
@@ -84,7 +87,7 @@ simulateData <- function(n,
   } 
   
   # Draw TRUE data from conditional family:
-  rfam <- paste('r', family, sep= '')
+  rfam <- paste('r', yfamily, sep= '')
   if (any(!names(param.frame) %in% names(formals(rfam)))) {
     stop('The specified parameter formulas do not match the required family\'s parameters.')
   }
@@ -217,44 +220,63 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
 #' @title Generating a blank data frame
 #' 
 #' @description This function generates a blank data.frame with uniformly
-#'   distributed variables specified in varnames. The variables are drawn i.i.d.
-#'   uniform distribution if correlation = NULL, and are drawn from a correlated
-#'   uniform distribution if a correlation matrix is supplied. The algorithm for the
-#'   introduction of correlation is follows to: \cr
+#'   distributed covariates specified in varnames. If correlation = NULL, the
+#'   first variable is drawn from the specified 'xfamily', whereas the remaining
+#'   variables are drawn from i.i.d. uniform distribution. If a
+#'   correlationmatrix is supplied, the algorithm  \cr
 #'   https://www.r-bloggers.com/easily-generate-correlated-variables-from-any-distribution-without-copulas/ \cr
+#'   is followed with slight alterations. 
 #'   The idea is: covariates specified in variablenames are inversely generated
 #'   with a surrogate Multivariate normal distribution to establish correlation
-#'   between mvnormal draws. The draws' cumulative normal probabilities are
-#'   evaluated in the Uniform distribution to arrive at correlated uniformly
-#'   distributed covariates.
-#'
+#'   between mvnormal draws. The draws' marginal cumulative normal probabilities
+#'   are evaluated: the first covariate is inversely sampled from the xfamily,
+#'   and all remaining are inversely sampled from the Uniform distribution.
+#'   
 #' @param n integer. Number of observations.
 #' @param varnames character vector. Specifies variables to be created.
 #' @param correlation Symmetric correlation matix
+#' @param xfamily character; specifies the gamlss family from which the censored
+#'   variable is drawn unconditionally 
 #' 
-#' @return data.frame
+#' @examples 
+   generateblankdata(varnames = c('x1', 'x2', 'x3'), xfamily = 'GA', n = 10, 
+                     correlation = matrix(c(1,0.3,0.2,
+                                            0.3,1,0.4,
+                                            0.2,0.4,1), nrow = 3))
+   generateblankdata(varnames = c('x1', 'x2', 'x3'), xfamily = 'GA', n = 10)
+#' @return data.frame 
 
-generateblankdata <- function(varnames, n, correlation = NULL) {
+generateblankdata <- function(varnames, xfamily, n, correlation = NULL) {
+  
+  qfam <- paste('q', xfamily, sep= '')
+  rfam <- paste('r', xfamily, sep= '')
+ 
   
   if(!is.null(correlation)){
     
     # Check validity of correlation matrix:
-    if(!is.matrix(correlation)){
-      stop('correlation is not a matrix')
+    if (!is.matrix(correlation)){
+      stop ('correlation is not a matrix')
     } else if(nrow(correlation)!= ncol(correlation)){
       stop('correlation matrix is not square')
     } else if (any(correlation != t(correlation))){
       stop('correlation matrix is not symmetric')
+    } else if (sum(diag(correlation))!= nrow(correlation)){
+      stop('Variances in correlation differ from one: it is not a correlation matrix.')
     }
     
     mu <- rep(0,length(varnames))
-    rvars <- MASS::mvrnorm(n = n, mu = mu, Sigma = correlation)
-    pvars <- pnorm(rvars)
-    rawdata <- data.frame(qunif(pvars))
+    rvars <- MASS::mvrnorm(n = n, mu = mu, Sigma = correlation) 
+    pvars <- pnorm(rvars, mean = 0, sd = 1)
+    # first column is defected and inverse drawn from xfamily, all remaining covariates are inversely drawn from uniform distribution
+    rawdata <- data.frame(do.call(qfam,list(p = pvars[,1])), qunif(pvars[,2:ncol(pvars)]))
     
   } else {
     # Generate random data with no correlation:
-    rawdata <- data.frame(matrix(runif(n*length(varnames)), ncol = length(varnames)))
+    rawdata <- data.frame(matrix(ncol = length(varnames),
+                                 c(do.call(rfam, list(n= n)),
+                                 runif(n * (length(varnames) - 1)))
+                                 ))
   }
   names(rawdata) <- varnames
   
