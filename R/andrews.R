@@ -51,9 +51,7 @@ andrew <- function(object, ...) {
 #'   It is highly recommended to make use of this option. As syntaxsugar, it is
 #'   possible to specify only the first few variables and leave the remaining
 #'   ordering in the dataframe intact.
-#'   
-#' @examples 
-#' 
+
 fright = simulateData(n= 150,
                       param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
                       name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =1/3,
@@ -172,7 +170,7 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   # expand indicator of defected
   dat$indicator <- rep(data[,ncol(data)], each= length(t))
   
-  ggplot(data = dat, aes(x = t, y = value, group = obs, color = indicator))+
+  ggplot(data = dat, aes(x = t, y = value, group = obs, color = factor(indicator)))+
     geom_line()
 }
 
