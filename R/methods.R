@@ -43,6 +43,7 @@ summary.imputed <- function(object, ...) {
   cens_type <- object$censtype
   rounds <- object$m
   sr <- summary(object$distances)
+  impvar <- summary(object$imputevariance)
   
   # Distance is undefined if interval or missing:
   r <- switch(is.null(object$distances) + 1, round(sr, 3), "Undefined")
@@ -66,7 +67,12 @@ summary.imputed <- function(object, ...) {
       "\n",
       paste(names(r), collapse = "     "),
       "\n",
-      paste(r, collapse = "      ")
+      paste(r, collapse = "      "),
+      "\n\n Imputation variances:",
+      "\n",
+      paste(names(impvar), collapse = "     "),
+      "\n",
+      paste(round(impvar, 3), collapse = "      ")
   )
 }
 
