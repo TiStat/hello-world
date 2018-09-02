@@ -47,11 +47,7 @@ correlation = NULL)$defected
 
 # Fitting a gamlss model
 lmodel <- gamlss(formula = y ~ . -indicator, data=ld)
-
 nl <- length(ld$x1[ld$indicator==1])
-
 lpredict.df <- data.frame(x1 = runif(n = nl), x2 = runif(n = nl), x3 = runif(n = nl), indicator = 1)
-
 samplecensored(lmodel ,censtype = 'left', lpredict.df, ld, censor = "x1")
-
 }

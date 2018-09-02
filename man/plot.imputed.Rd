@@ -48,5 +48,4 @@ d  <- imputex(data = rinterval$defected,
               intervalstart = 'lower')
               
 plot(d, boxes = FALSE)
-
 }
