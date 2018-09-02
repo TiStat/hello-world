@@ -85,7 +85,6 @@ andrew.imputed <- function (object, dependent, ordering = NULL) {
     d <-  data[setdiff(names(data), c(defected, dependent))]
   }
   
-  
   # Reorder/Shuffle columns
   # by default, indicator column is set as last.
   shuffle <- function(d, ordering, indicator) {
@@ -117,11 +116,11 @@ andrew.imputed <- function (object, dependent, ordering = NULL) {
 #' @return ggplot of Andrews curve. Colored according to indicator.
 #' @example
 #' d1 = data.frame(x = c(1,2), y = c(3,4), ind = c(1,0))
-#' andrew(data = d1)
+#' andrewcore(data = d1)
 #' d2 = as.matrix(data.frame(x = c(1,2,3), y = c(3,4,4), ind = c(1,0,2)))
-#' andrew(data = d2)
+#' andrewcore(data = d2)
 #' d3 = data.frame(x = c(1,2), ind = c(1,0))
-#' andrew(data = d3)
+#' andrewcore(data = d3)
 #' @NOTE: t is not supplied in higher function, as Fourier repeats itself anyways.
 
 andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
