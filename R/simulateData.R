@@ -3,14 +3,10 @@
 #' @description Data generator for missing/censored data with Normal distribution.
 #' 
 #' @param n Number of generated observations.
-#' 
 #' @param param.formula list. Formulas of the parameters to be estimated.
-#' 
 #' @param family character; Specifies the gamlss family, from which the data is
 #'  drawn. e.g. 'NO' for a dependent variable drawn.
-#'  
 #' @param name character; Specifies variable name to be defected.
-#' 
 #' @param subset formula. States a condition (e.g. ~x1 > 0.6) which specifies
 #'   the fraction of observations, that are to be defected. \cr
 #'   Default: The entire
@@ -18,10 +14,8 @@
 #'   exclusivly use the 'name' variable, this implies that the independence
 #'   assumption of MICE is not met (on purpose). \cr
 #'   e.g. of unmet condition: (x2 < 0.3 & x3 < 0.2).
-#'   
 #' @param prob numeric value. Specifies the binomial probability for each
 #'   observation in 'subset' to be defected.
-#'   
 #' @param damage By users defintion, it specifies what type and how the data is
 #'   to be defected.
 #'   'damage' = NA generates missing data. 
@@ -46,7 +40,6 @@
 #'   the generated covariates, and a censoring/missing 'indicator' The mere
 #'   difference between the two dataframes is, that 'defected' has artificially generated
 #'   censored/missing values according to the 'defect' specification.
-#'   
 #' @examples
 #' # missing: damage = NA
 #' # right: damage = ~ 1/3*x1
@@ -54,7 +47,6 @@
 #' # left:  damage = 4/3
 #' # intervalfix: damage = list(1/3, 4/3)
 #' # intervalRandom: damage = list(c(0.01, 1), c(1.01, 2))
-#' 
 #'@export 
 
 simulateData <- function(n,
@@ -106,7 +98,6 @@ simulateData <- function(n,
               defected = cbind(y, defectdata$defected, indicator),
               censtype = defectdata$censtype))
 }
-#----------------------------------------------------------------------------------------------
 
 
 #' @title Defect existing data.
@@ -115,17 +106,13 @@ simulateData <- function(n,
 #' Note that simulatedefect is generic and can defect any existing dataset according to rule.
 #' 
 #' @param truedata data.frame containing the un-defected data.
-#'
 #' @param name character. Specifies variable name to be defected.
-#' 
 #' @param subset formula. States a condition (e.g. ~x1 > 0.6) which specifies
 #'   the fraction of observations, that are to be defected. Note, that if
 #'   'subset' does not exclusivly use the 'name[d]' variable, this implies that
 #'   the independence assumption of MICE is not met (on purpose).
-#'   
 #' @param prob numeric value. Specifies the binomial probability for each
 #'   observation in 'subset' to be defected.
-#'   
 #' @param damage By users defintion, it specifies what type and how the data is
 #'   to be defected.
 #'   'damage' = NA generates missing data. 
@@ -180,7 +167,6 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
   # Following function differentiates, if input is a scalar or vector.
   # If x is scalar, return x. If x is a vector of length 2, drawn n
   # dimensional vector from unifom on interval [x[1], x[2]].
-  
   f <- function(x, n){ 
     # differentiate random /fix
     
@@ -226,7 +212,6 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
                 censtype = censtype,
                 indicator = indicator))
 }
-#------------------------------------------------------------------------------------------------
 
 
 #' @title Generating a blank data frame
@@ -244,9 +229,7 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
 #'   distributed covariates.
 #'
 #' @param n integer. Number of observations.
-#' 
 #' @param varnames character vector. Specifies variables to be created.
-#' 
 #' @param correlation Symmetric correlation matix
 #' 
 #' @return data.frame

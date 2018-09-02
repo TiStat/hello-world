@@ -67,6 +67,7 @@ andrew <- function(object, ...) {
 #' andrew(object = d, dependent = 'y', ordering = c('x3'))
 #' @export
 
+
 andrew.imputed <- function (object, dependent, ordering = NULL, ...) {
   
   # Read from object:
@@ -76,12 +77,11 @@ andrew.imputed <- function (object, dependent, ordering = NULL, ...) {
   
   # Corner case 'interval' has additional non informative column:
   if (object$mcall$censtype == 'interval') {
-    d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
+    d <- data[setdiff(names(data), c(defected, dependent, 'lower'))]
   } else{
     # General case, removes defected & dependent
-    d <-  data[setdiff(names(data), c(defected, dependent))]
+    d <- data[setdiff(names(data), c(defected, dependent))]
   }
-  
   
   # Reorder/Shuffle columns
   # by default, indicator column is set as last.
@@ -92,10 +92,10 @@ andrew.imputed <- function (object, dependent, ordering = NULL, ...) {
       
     } else if (!identical(setdiff(names(d), c(ordering, indicator)) , character(0))) {
       remainder <- setdiff(names(d), c(ordering, indicator))
-      d <- d[, c(ordering, remainder, indicator)]
+      d <- d[ , c(ordering, remainder, indicator)]
       
     } else {
-      d <- d[, c(ordering, indicator)]
+      d <- d[ , c(ordering, indicator)]
     }
   }
   
@@ -129,7 +129,7 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   
   # reduce dataframe to parameter part & and prevent R from coercing to vector
   # if only one covariate remains after removal of indicator
-  parameters <- data[, -ncol(data), drop = FALSE]
+  parameters <- data[ , -ncol(data), drop = FALSE]
   
   # fourier striped of parameters; list (as surrogate for a functional vector) filled with
   # unevaluated summands of fourier series, dependent on t without the parameter
@@ -166,7 +166,7 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   # coerces to matrix and allows argument 'parameters' in andrew() to be either
   # matrix or dataframe. Coerce to Dataframe for ggplot.
   fourierobs <- data.frame(v %*% t(parameters))
-
+  
   # convert to longformat to arrive at an automated color scheme
   fourierobs$t <- t
   dat <- reshape2::melt(fourierobs, id.vars = 't', variable.name = 'obs')
@@ -177,8 +177,8 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   ggplot(data = dat, aes(x = t, y = value, group = obs, color = factor(indicator))) +
     geom_line() +
     scale_color_manual(name = "Observation", 
-                         labels = c("Fully observed", "Defected"),
-                         values = c("black", "red"))
+                       labels = c("Fully observed", "Defected"),
+                       values = c("black", "red"))
 }
 
 
