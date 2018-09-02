@@ -225,12 +225,12 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
 #'   with a surrogate Multivariate normal distribution to establish correlation
 #'   between mvnormal draws. The draws' cumulative normal probabilities are
 #'   evaluated in the uniform distribution to arrive at correlated covariates on
-#'   the interval [0,1] however, they are not Uniformly distributed, as the
+#'   the interval [0,1] however, they are not uniformly distributed, as the
 #'   Blogpost propagates.
 #'   
-#' @param n integer. Number of observations.
+#' @param n integer. Number of observations to be generated.
 #' @param varnames character vector. Specifies variables to be created.
-#' @param correlation Symmetric correlation matix
+#' @param correlation Symmetric correlation matix.
 #' 
 #' @return data.frame
 
