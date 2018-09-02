@@ -5,7 +5,7 @@
 #' method. See documentation of `andrew.imputed` for further description.
 #'
 #' @param object Object of class "imputed".
-#' @param ... Further arguments to be passed.
+#' @param ... Further arguments to be passed to methods.
 #'
 #' @return Andrew's curves
 #' @export
@@ -15,73 +15,70 @@ andrew <- function(object, ...) {
 }
 
 
-#' @title Andrew curve. Method of imputed Class.
-#'
-#' @description The defected covariate is removed, as its information is
-#'   ambigous and the grouping which potentially caused the censoring is under
-#'   inspection. In case of 'interval' censoring, the lower bound column is also
-#'   removed for the same reasoning.
-#'   
-#' @title Andrew's Curves of defected observations. Method Imputed class.
+#' @title Andrew's Curves of covariates for "imputed" class objects
 #' 
 #' @description Andrew's Curves are a Fourier series upon the observations in
-#'   data. They are a tool for detecting hidden groupings, and in this case of
-#'   defected observations, a tool for determining whether there is a clear
+#'   data. They are a tool for detecting hidden groupings and in this case of
+#'   defected observations, they're a tool for determining whether there is a clear
 #'   structure in the remaining covariates, that may explain why a certain
 #'   observation is likely to be defected. As it is an explorative tool, where
 #'   the ordering of the variables determines the frequency that is associated
 #'   respectively, it is highly recommended to use various column orders. It may
-#'   even be of use to some extent to employ Principle Components. Note, that
+#'   even be of use to some extent to employ Principle Components. Note that
 #'   the defected, dependent and defect-indicator (and lower bound in the
 #'   interval case) variables are not considered for the Andrew's curve, as the
-#'   information contained is ambigous and misleading. Particulary, the dependent
+#'   information contained is ambiguous and misleading. Particulary, the dependent
 #'   variable of the actual regression problem (not the imputation problem) is
 #'   misleading, as it is caused by the covariates and not vice versa. Further,
 #'   note that after deleting those columns only one covariate remains, so
 #'   the fourier will correctly return parallel lines: each value of that
-#'   covariate is devided by sqrt(2). This is a fourier feature not a bug.   
+#'   covariate is devided by sqrt(2). This is a fourier feature, not a bug.   
 #'   
-#' @param object of imputed class.
+#' @param object Object of class "imputed".
 #' @param dependent character. Name of the dependent variable in the original
 #'   (not imputation) regression problem. It is removed, as the information
 #'   contained is dubious: Covariates cause the dependent and not vice versa.
 #' @param ordering vector of characters. Names of the covariates supplied to
 #'   imputex. The argument is optional and allows to shuffle the dataframe.
-#'   Thereby, the covariates are associated with different Fourier frequnecies.
-#'   It is highly recommended to make use of this option. As syntaxsugar, it is
+#'   Thereby, the covariates are associated with different Fourier frequencies.
+#'   It is highly recommended to make use of this option. As syntax sugar, it is
 #'   possible to specify only the first few variables and leave the remaining
 #'   ordering in the dataframe intact.
+#' @param ... Further arguments to be passed (e.g. of the imputed object)
 #'   
 #' @examples 
-#' 
-fright = simulateData(n= 150,
-                      param.formula = list(mu = ~exp(x1)+ x2+ x3, sigma = ~sin(x2)),
-                      name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage =1/3,
-                      family = 'NO',
-                      correlation = matrix(c(1,0.3,0.2,
-                                             0.3,1, 0.4,
-                                             0.2,0.4,1), nrow = 3))
-d <- imputex(data = fright$defected,
-              xmu_formula= x1~y +x2 +x3, degree = 5,
-              xsigma_formula = ~x2,
-              xnu_formula = ~1,
-              xtau_formula = ~1,
-              xfamily = NO(mu.link = 'identity'),
-              indicator = "indicator",
-              censtype= 'right' )
-andrew.imputed(object = d, dependent = 'y', ordering = c('x3'))
+#' fright <- simulateData(n= 150,
+#'                       param.formula = list(mu = ~ exp(x1) + x2+ x3, sigma = ~sin(x2)),
+#'                       name = 'x1', subset = ~ x1 > 0.6, prob = 0.8 , damage = 1/3,
+#'                       family = 'NO',
+#'                       correlation = matrix(c(1, 0.3, 0.2,
+#'                                              0.3, 1, 0.4,
+#'                                              0.2, 0.4, 1), nrow = 3))
+#'                                             
+#' d <- imputex(data = fright$defected,
+#'              xmu_formula = x1 ~ y + x2 + x3,
+#'              xsigma_formula = ~x2,
+#'              xnu_formula = ~1,
+#'              xtau_formula = ~1,
+#'              xfamily = NO(mu.link = 'identity'),
+#'              indicator = "indicator",
+#'              censtype= 'right' )
+#'              
+#' andrew(object = d, dependent = 'y', ordering = c('x3'))
+#' @export
 
-andrew.imputed <- function (object, dependent, ordering = NULL) {
+andrew.imputed <- function (object, dependent, ordering = NULL, ...) {
   
-  # read from object
+  # Read from object:
   defected <- as.character(object$mcall$xmu_formula[[2]])
   data <- object$fulldata
   indicator <- object$mcall$indicator
   
-  # corner case 'interval' has additional non informative column
+  # Corner case 'interval' has additional non informative column:
   if (object$mcall$censtype == 'interval') {
     d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
-  } else{ # general case, removes defected & dependent
+  } else{
+    # General case, removes defected & dependent
     d <-  data[setdiff(names(data), c(defected, dependent))]
   }
   
@@ -91,10 +88,10 @@ andrew.imputed <- function (object, dependent, ordering = NULL) {
   shuffle <- function(d, ordering, indicator) {
     index <- which(names(d) == indicator)
     if (is.null(ordering)) {
-      d <- d[, c(setdiff(1:ncol(d), index), index)]
+      d <- d[ , c(setdiff(1:ncol(d), index), index)]
       
     } else if (!identical(setdiff(names(d), c(ordering, indicator)) , character(0))) {
-      remainder = setdiff(names(d), c(ordering, indicator))
+      remainder <- setdiff(names(d), c(ordering, indicator))
       d <- d[, c(ordering, remainder, indicator)]
       
     } else {
@@ -102,27 +99,31 @@ andrew.imputed <- function (object, dependent, ordering = NULL) {
     }
   }
   
-  d = shuffle(d, ordering, indicator)
+  d <- shuffle(d, ordering, indicator)
   
+  # Function 'andrewcore' scripted below.
   andrewcore(data = d)
 }
 
+#' @title Core function to be passed to andrew.imputed
 #'
-#' @param data dataframe. (or matrix) Contains observations rowwise and last column is a group
-#'   indicator. The indicator is responsible for coloring of the curves.
+#' @description `andrew.imputed` prepares the data frame to be passed to this function.
+#'
+#' @param data data.frame (or matrix). Contains observations rowwise and last column is a
+#'   group indicator. The indicator is responsible for coloring of the curves.
 #'   Notably, the input format exceeds the dummy format; any integer values can
 #'   be used to indicate grouping.
 #' @param t vector (sequence). At which the fourier series is to be evaluated.
 #' 
-#' @return ggplot of Andrews curve. Colored according to indicator.
-#' @example
-#' d1 = data.frame(x = c(1,2), y = c(3,4), ind = c(1,0))
-#' andrew(data = d1)
-#' d2 = as.matrix(data.frame(x = c(1,2,3), y = c(3,4,4), ind = c(1,0,2)))
-#' andrew(data = d2)
-#' d3 = data.frame(x = c(1,2), ind = c(1,0))
-#' andrew(data = d3)
-#' @NOTE: t is not supplied in higher function, as Fourier repeats itself anyways.
+#' @return Plot of Andrew's curve. Colored according to indicator.
+#' @examples
+#' # d1 <- data.frame(x = c(1,2), y = c(3,4), ind = c(1,0))
+#' # andrewcore(data = d1)
+#' # d2 <- as.matrix(data.frame(x = c(1,2,3), y = c(3,4,4), ind = c(1,0,2)))
+#' # andrewcore(data = d2)
+#' # d3 <- data.frame(x = c(1,2), ind = c(1,0))
+#' # andrewcore(data = d3)
+#' @note t is not supplied in higher function, as Fourier repeats itself anyways.
 
 andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   
@@ -134,17 +135,17 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   # unevaluated summands of fourier series, dependent on t without the parameter
   # factors. 
   # @param nparameter Number of Parameters of dataframe, for which the fourier is expanded.
-  # @NOTE The Workaround t/t is due, as eval of v would otherwise not expand
+  # @note The Workaround t/t is due, as eval of v would otherwise not expand
   #   the constant to appropriate length and return an unbalanced list, which in
   #   turn will not be unlisted in a matrix
   stripedfourier <- function(nparameters) {
-    l = list(~1/sqrt(2) *t/t) # unfortunate workaround *1
-    if(nparameters>1){
-      for(i in 2:nparameters){
+    l = list(~ 1/sqrt(2) * t/t) # unfortunate workaround *1
+    if(nparameters > 1) {
+      for(i in 2:nparameters) {
         if (i %% 2 == 0){ # even
-          l[[i]] = as.formula(paste('~sin((' ,i, '-1)*t)+cos((', i, '-1)*t)'))
+          l[[i]] <- as.formula(paste('~sin((' ,i, '-1)*t) + cos((', i, '-1)*t)'))
         }else{ # odd
-          l[[i]] = as.formula(paste('~sin((',i,'-2)*t)+cos((',i, '-2)*t)' ))
+          l[[i]] <- as.formula(paste('~sin((',i,'-2)*t) + cos((',i, '-2)*t)' ))
         }
       }
     }
@@ -153,7 +154,7 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   
   # Fourier Series' summands striped of observational parameter of appropriate
   # length. unevaluated and dependent on t
-  l <- stripedfourier(nparameters = length(parameters[1,]))
+  l <- stripedfourier(nparameters = length(parameters[1, ]))
   
   # Evaluate the Fourier series' summands without the obseravational parameters for t 
   # result is striped (of parameters) Fourier matrix. (summands evaluated at t rowwise)
@@ -171,10 +172,13 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   dat <- reshape2::melt(fourierobs, id.vars = 't', variable.name = 'obs')
   
   # expand indicator of defected
-  dat$indicator <- rep(data[,ncol(data)], each= length(t))
+  dat$indicator <- rep(data[ , ncol(data)], each= length(t))
   
-  ggplot(data = dat, aes(x = t, y = value, group = obs, color = indicator))+
-    geom_line()
+  ggplot(data = dat, aes(x = t, y = value, group = obs, color = factor(indicator))) +
+    geom_line() +
+    scale_color_manual(name = "Observation", 
+                         labels = c("Fully observed", "Defected"),
+                         values = c("black", "red"))
 }
 
 
