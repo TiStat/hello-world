@@ -15,8 +15,23 @@ andrew <- function(object, ...) {
 }
 
 
-#' @title Andrew curve. Method of imputed 
-#' @param object imputed.
+#' @title Andrew curve. Method of imputed Class.
+#'
+#' @description The defected covariate is removed, as its information is
+#'   ambigous and the grouping which potentially caused the censoring is under
+#'   inspection. In case of 'interval' censoring, the lower bound column is also
+#'   removed for the same reasoning.
+#'   
+#' @param object of imputed class.
+#' @param dependent character. Name of the dependent variable in the original
+#'   (not imputation) regression problem. It is removed, as the information
+#'   contained is dubious: Covariates cause the dependent and not vice versa.
+#' @param ordering vector of characters. Names of the covariates supplied to
+#'   imputex. The argument is optional and allows to shuffle the dataframe.
+#'   Thereby, the covariates are associated with different Fourier frequnecies.
+#'   It is highly recommended to make use of this option.
+#' 
+#' @return Andrews Curves plot.
 
 andrew.imputed <- function (object, dependent, ordering = NULL){
   
@@ -32,16 +47,22 @@ andrew.imputed <- function (object, dependent, ordering = NULL){
     d <-  data[setdiff(names(data), c(defected, dependent))]
   }
   
-  # reorder columns for andrew call/ and or via user shuffle
-  index <- which(names(d)== indicator)
-  if(is.null(ordering)){
-    d <- d[, c(setdiff(1:ncol(d), index),index)]
-  } else {
-    if(!identical(setdiff(names(d), c(ordering, indicator)) ,character(0))){
-      stop('Names in Ordering were not found in provided data. All variable names must be specified')
+  # Reorder/Shuffle columns
+  # by default, indicator column is set as last.
+  shuffle <- function(d, ordering, indicator) {
+    index <- which(names(d) == indicator)
+    if(is.null(ordering)){
+      d <- d[, c(setdiff(1:ncol(d), index),index)]
+    } else {
+      if(!identical(setdiff(names(d), c(ordering, indicator)) ,character(0))){
+        stop('Names in Ordering were not found in provided data. All variable names must be specified')
+      }
+      d <- d[, c(ordering, indicator)]
     }
-    d <- d[, c(ordering, indicator)]
   }
+  
+  d = shuffle(d, ordering, indicator)
+  
   andrew(data = d)
 }
 
@@ -66,7 +87,7 @@ andrew.imputed <- function (object, dependent, ordering = NULL){
 #'   the fourier will correctly return parallel lines: each value of that
 #'   covariate is devided by sqrt(2). This is a feature not a bug.
 #'
-#' @param d dataframe. Contains observations rowwise and last column is a group
+#' @param data dataframe. (or matrix) Contains observations rowwise and last column is a group
 #'   indicator. The indicator is responsible for coloring of the curves.
 #'   Notably, the input format exceeds the dummy format; any integer values can
 #'   be used to indicate grouping.
@@ -74,24 +95,30 @@ andrew.imputed <- function (object, dependent, ordering = NULL){
 #' 
 #' @return ggplot of Andrews curve. Colored according to indicator.
 #' @example
-#' d = as.matrix(data.frame(x = c(1,2), y = c(3,4), ind = c(1,0)))
-#' andrew(data = d)
-#' d = as.matrix(data.frame(x = c(1,2,3), y = c(3,4,4), ind = c(1,0,2)))
-#' andrew(data = d)
+#' d1 = data.frame(x = c(1,2), y = c(3,4), ind = c(1,0))
+#' andrew(data = d1)
+#' d2 = as.matrix(data.frame(x = c(1,2,3), y = c(3,4,4), ind = c(1,0,2)))
+#' andrew(data = d2)
+#' d3 = data.frame(x = c(1,2), ind = c(1,0))
+#' andrew(data = d3)
 
 andrew <- function(data, t = seq(-pi, pi, length.out = 100)) {
   
-  parameters <- data[, -ncol(data)]
+  # reduce dataframe to parameter part & and prevent R from coercing to vector
+  # if only one covariate remains after removal of indicator
+  parameters <- data[, -ncol(data), drop = FALSE]
   
-  # fourier striped of parameters; a 'vector' (actually a list) filled with
+  # fourier striped of parameters; list (as surrogate for a functional vector) filled with
   # unevaluated summands of fourier series, dependent on t without the parameter
-  # factors. generates a 'vector' of unevaluated fourier series without the
-  # parameter factors (observation's covariate values)
-  # @param parameter matrix filled with fourier parameters of an observation rowwise
-  stripedfourier <- function(parameters) {
-    l = list(~1/sqrt(2))
-    if(length(parameters)>1){
-      for(i in 2:length(parameters)){
+  # factors. 
+  # @param nparameter Number of Parameters of dataframe, for which the fourier is expanded.
+  # @NOTE The Workaround t/t is due, as eval of v would otherwise not expand
+  #   the constant to appropriate length and return an unbalanced list, which in
+  #   turn will not be unlisted in a matrix
+  stripedfourier <- function(nparameters) {
+    l = list(~1/sqrt(2) *t/t) # unfortunate workaround *1
+    if(nparameters>1){
+      for(i in 2:nparameters){
         if (i %% 2 == 0){ # even
           l[[i]] = as.formula(paste('~sin((' ,i, '-1)*t)+cos((', i, '-1)*t)'))
         }else{ # odd
@@ -102,53 +129,27 @@ andrew <- function(data, t = seq(-pi, pi, length.out = 100)) {
     return(l)
   }
   
-  # executed only once: find the fourierseries of appropriate length.
-  l <- stripedfourier(parameters[1,])
+  # Fourier Series' summands striped of observational parameter of appropriate
+  # length. unevaluated and dependent on t
+  l <- stripedfourier(nparameters = length(parameters[1,]))
   
-  # @description  Evaluate the Fourier series without the obseravational parameters
-  # @param t vector. axis position(s) at which fourier series is to be evaluated
-  # @param stripedfourier list. resulted fourier series expansion from stripedfourier()
-  # @example
-  # # d = as.matrix(data.frame(x = c(1,2), y = c(3,4), ind = c(1,0)))
-  # # stripedt( t = c(1,2,3) ,  stripedfourier= l )
-  stripedt = function(t, stripedfourier){
-    
-    # evaluate for all t (still list, as constant is evaluated only once and prevents
-    # from coercing to matrix, as list is of unbalanced length)
-    v = sapply(l, FUN= function(e) eval(e[[2]], envir = data.frame(t = t)))
-    
-    #! Workaround:
-    
-    # expand the constant to appropriate size
-    v[[1]] = rep(v[[1]], length(t))
-    
-    # matrix of striped fourier (columnwise)
-    v = sapply(v, function(x) unlist(x))
-    
-    # zip striped fourier with its parameter vector.
-    return(v)
-  }
+  # Evaluate the Fourier series' summands without the obseravational parameters for t 
+  # result is striped (of parameters) Fourier matrix. (summands evaluated at t rowwise)
+  v <- sapply(l, FUN= function(e) eval(e[[2]], envir = data.frame(t = t)))
   
-  # executed only once to get the striped fouriervalues (dependent on t)
-  v <- stripedt(t, stripedfourier= l)
-  
-  # @title zip fourier with the set of parameters
-  # @description columnwise fully evaluated (all t values) fourier observations (actually only matrix product)
-  # @param v stripedt matrix. The striped fourier series without considering observational
-  # parameters. ('raw fourier')
-  # @param parameters matrix. containing rowwise the covariates of each observation.
-  zipfourier <- function(v, parameters){
-    fourierobs = data.frame(v %*% t(parameters))
-    return(fourierobs)
-  }
-  
-  # convert to longformat
-  observations <- zipfourier(v, parameters)
-  observations$t <- t
-  dat <- reshape2::melt(observations, id.vars = 't', variable.name = 'obs')
+  # zip fourier: scale the raw summands evaluated at t with all of their
+  # respective observational parameter vectors. result is columnwise the fourier
+  # expansion for each row of the original data. Note that t() implicitly
+  # coerces to matrix and allows argument 'parameters' in andrew() to be either
+  # matrix or dataframe. Coerce to Dataframe for ggplot.
+  fourierobs <- data.frame(v %*% t(parameters))
+
+  # convert to longformat to arrive at an automated color scheme
+  fourierobs$t <- t
+  dat <- reshape2::melt(fourierobs, id.vars = 't', variable.name = 'obs')
   
   # expand indicator of defected
-  dat$indicator = rep(data[,ncol(data)], each= length(t))
+  dat$indicator <- rep(data[,ncol(data)], each= length(t))
   
   ggplot(data = dat, aes(x = t, y = value, group = obs, color = indicator))+
     geom_line()
