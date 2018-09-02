@@ -76,6 +76,7 @@ andrew.imputed <- function (object, dependent, ordering = NULL) {
   data <- object$fulldata
   indicator <- object$mcall$indicator
   
+  browser()
   # corner case 'interval' has additional non informative column
   if (object$mcall$censtype == 'interval') {
     d <-  data[setdiff(names(data), c(defected, dependent, 'lower'))]
