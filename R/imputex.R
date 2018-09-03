@@ -31,7 +31,7 @@
 #' @param xnu_formula formula. Formula for skewness of gamlss family object.
 #' @param xtau_formula formula. Formula for kurtosis of gamlss family object.
 #' @param xfamily gamlss family object. Determines the family membership of the gamlss object.
-#' @param ... Additional arguments passed in all gamlss fit.
+#' @param ... Additional arguments passed to all gamlss fits.
 #' @param m Number of imputations (How many rounds should the algorithm execute). Default is m = 5.
 #' 
 #' @return Returns internal results of the algorithm.

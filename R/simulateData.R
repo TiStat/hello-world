@@ -4,15 +4,14 @@
 #' 
 #' @param n Number of generated observations.
 #' @param param.formula list. Formulas of the parameters to be estimated.
-#' @param family character; Specifies the gamlss family, from which the data is
-#'  drawn. e.g. 'NO' for a dependent variable drawn.
-#' @param name character; Specifies variable name to be defected.
+#' @param family character. Specifies the gamlss family, from which the dependent variable 
+#' is drawn, e.g. 'NO'.
+#' @param name character. Specifies variable name to be defected.
 #' @param subset formula. States a condition (e.g. ~x1 > 0.6) which specifies
 #'   the fraction of observations, that are to be defected. \cr
-#'   Default: The entire
-#'   Dataset is potentially subject to defect. Note, that if 'subset' does not
-#'   exclusivly use the 'name' variable, this implies that the independence
-#'   assumption of MICE is not met (on purpose). \cr
+#'   Default: The entire dataset is potentially subject to defect. Note, 
+#'   that if 'subset' does not exclusivly use the 'name' variable, 
+#'   this implies that the independence assumption of MICE is not met (on purpose). \cr
 #'   e.g. of unmet condition: (x2 < 0.3 & x3 < 0.2).
 #' @param prob numeric value. Specifies the binomial probability for each
 #'   observation in 'subset' to be defected.
@@ -50,12 +49,12 @@
 #'@export 
 
 simulateData <- function(n,
-                        param.formula = list(mu = ~ exp(x1) + x2, sigma = ~ sqrt(x2)), 
-                        name = 'x1', subset = NULL, prob = 0.8 , damage = 1/3,
-                        family = 'NO',
-                        correlation = NULL) {
+                         param.formula = list(mu = ~ exp(x1) + x2, sigma = ~ sqrt(x2)), 
+                         name = 'x1', subset = NULL, prob = 0.8 , damage = 1/3,
+                         family = 'NO',
+                         correlation = NULL) {
   
-  # Default case is no Subset, i.e. all values are potentially subject to defect:
+  # Default case is no subset, i.e. all values are potentially subject to defect:
   if(is.null(subset)) {
     subset <- as.formula(paste("~rep(1,", n,")"))
   }
@@ -130,9 +129,9 @@ simulateData <- function(n,
 #'   the lower bound and the second affecting the upper bound.
 #'   NOTE: if a list is provided, both members must either vectors or single values.
 #'   
-#' @return list. List elements are the defected dataframe, an indicator vector specifying which
-#'   observation was defected and an atomic description of censoring type, which
-#'   the user implicitly defined by damage.
+#' @return list. List elements are the defected dataframe, an indicator vector
+#'   specifying which observation was defected and an atomic description of
+#'   censoring type, which the user implicitly defined by damage.
 #'   
 #' @export 
 
@@ -160,16 +159,15 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
       stop('Lower bound interval factor is not from interval (0,1); excluding {0,1}.')
     }
     if(!all(damage[[2]] > 1)) {
-      stop('Upper bound interval factor is not from interval (1,INF); excluding {1}.')
+      stop('Upper bound interval factor is not from interval (1,Inf); excluding {1}.')
     }
   }
 
   # Following function differentiates, if input is a scalar or vector.
-  # If x is scalar, return x. If x is a vector of length 2, drawn n
-  # dimensional vector from unifom on interval [x[1], x[2]].
+  # If x is scalar, return x. If x is a vector of length 2, draw an
+  # n-dimensional vector from unifom on interval [x[1], x[2]].
   f <- function(x, n){ 
-    # differentiate random /fix
-    
+    # Differentiate random /fix
     # fix:
     if (length(x) == 1) { 
       return(multiply = x)
@@ -224,8 +222,8 @@ simulatedefect <- function(truedata, name, subset, prob, damage) {
 #'   The idea is: covariates specified in variablenames are inversely generated
 #'   with a surrogate Multivariate normal distribution to establish correlation
 #'   between mvnormal draws. The draws' cumulative normal probabilities are
-#'   evaluated in the uniform distribution to arrive at correlated covariates on
-#'   the interval [0,1] however, they are not uniformly distributed, as the
+#'   evaluated in the quantile function of the uniform distribution to arrive at correlated covariates on
+#'   the interval [0,1]. However, they are not uniformly distributed, as the
 #'   Blogpost propagates.
 #'   
 #' @param n integer. Number of observations to be generated.

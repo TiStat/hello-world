@@ -68,7 +68,7 @@ summary.imputed <- function(object, ...) {
       paste(names(r), collapse = "     "),
       "\n",
       paste(r, collapse = "      "),
-      "\n\n Imputation variances:",
+      "\n\n Imputation variances of proposals:",
       "\n",
       paste(names(impvar), collapse = "     "),
       "\n",
@@ -88,7 +88,7 @@ summary.imputed <- function(object, ...) {
 #'   proposals, which are in fact the final imputed vector. \cr (3) Density plots on
 #'   each proposal vector. Consider that each proposal vector is drawn from a
 #'   bootmodel-distribution, whose observations have their own parameters. So
-#'   each proposalvector is a realization of a mixed distribution. Suppose, that
+#'   each proposal vector is a realization of a mixed distribution. Suppose, that
 #'   the booted models are relatively similar, the density estimates on all
 #'   proposal vectors (which are displayed) should be relatively similar with
 #'   little variation.

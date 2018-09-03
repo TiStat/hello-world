@@ -1,4 +1,4 @@
-#' @title  Evaluate gamlss family functions from gamlss object
+#' @title  Evaluate GAMLSS family functions from gamlss object
 #' 
 #' @description Function that, given a "gamlss" object, evaluates the
 #'   distribution-specific functions under predicted parameters of the provided dataframe
@@ -94,10 +94,10 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
 #' @description Inverse sampling of censored variables to impute only valid
 #'   observations, conditional on the respective fit.
 #'
-#' @param object gamlss. Fitted model whose parameters are predicted for
+#' @param object gamlss object. Fitted model whose parameters are predicted for
 #'   predictdata.
 #' @param censtype character. Specifies the type of censoring (right/left/interval/missing).
-#' @param predictdata dataframe. predict-data of the missing/censored
+#' @param predictdata dataframe. Predict-data of the missing/censored
 #'   observations, for which imputations are drawn.
 #' @param fitdata data.frame. The orignal dataset upon which gamlss was fitted.
 #' @param censor character. Name of the (damaged) column to be predicted on in
@@ -106,7 +106,7 @@ family_fun <- function(object, func = c('d', 'p', 'q', 'r'), fitdata, predictdat
 #'   values. By convention, the starting duration in this column is assumed to
 #'   be the time passed without failure, before entering the interval, in which
 #'   the exact time of failure is unknown.
-#' @param quantiles vector. Containing the quantiles to be evaluated in the
+#' @param quantiles numeric vector. Containing the quantiles to be evaluated in the
 #'   conditoned distribution, i.e. conditoned on the parameters and the
 #'   information contained in the censored value.
 #'
@@ -199,7 +199,7 @@ samplecensored <- function(object,
   # Evaluate the rescaled quantiles on the (known) parametrized distribution:
   quantiles <- apply(qindex,
                      MARGIN = 2,
-                     FUN = function(q) ffamily(func = 'q', p = q) #  bottleneck?
+                     FUN = function(q) ffamily(func = 'q', p = q)
   )
   
   return(list(draw = draw, 
