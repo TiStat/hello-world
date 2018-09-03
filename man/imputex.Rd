@@ -47,7 +47,7 @@ the exact time of failure is unknown.}
 
 \item{m}{Number of imputations (How many rounds should the algorithm execute). Default is m = 5.}
 
-\item{...}{Additional arguments passed in all gamlss fit.}
+\item{...}{Additional arguments passed to all gamlss fits.}
 }
 \value{
 Returns internal results of the algorithm.

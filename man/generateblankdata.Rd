@@ -25,7 +25,7 @@ This function generates a blank data.frame with uniformly
   The idea is: covariates specified in variablenames are inversely generated
   with a surrogate Multivariate normal distribution to establish correlation
   between mvnormal draws. The draws' cumulative normal probabilities are
-  evaluated in the uniform distribution to arrive at correlated covariates on
-  the interval [0,1] however, they are not uniformly distributed, as the
+  evaluated in the quantile function of the uniform distribution to arrive at correlated covariates on
+  the interval [0,1]. However, they are not uniformly distributed, as the
   Blogpost propagates.
 }

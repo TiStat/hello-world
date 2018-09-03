@@ -27,7 +27,7 @@ Given an imputex object, this funciton plots: \cr (1) The
   proposals, which are in fact the final imputed vector. \cr (3) Density plots on
   each proposal vector. Consider that each proposal vector is drawn from a
   bootmodel-distribution, whose observations have their own parameters. So
-  each proposalvector is a realization of a mixed distribution. Suppose, that
+  each proposal vector is a realization of a mixed distribution. Suppose, that
   the booted models are relatively similar, the density estimates on all
   proposal vectors (which are displayed) should be relatively similar with
   little variation.

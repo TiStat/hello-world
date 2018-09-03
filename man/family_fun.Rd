@@ -2,7 +2,7 @@
 % Please edit documentation in R/samplecensored.R
 \name{family_fun}
 \alias{family_fun}
-\title{Evaluate gamlss family functions from gamlss object}
+\title{Evaluate GAMLSS family functions from gamlss object}
 \usage{
 family_fun(object, func = c("d", "p", "q", "r"), fitdata, predictdata,
   p = NULL, q = NULL, x = NULL, n = NULL, ...)

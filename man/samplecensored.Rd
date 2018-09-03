@@ -8,12 +8,12 @@ samplecensored(object, censtype, predictdata, fitdata, censor,
   quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95), intervalstart = NULL)
 }
 \arguments{
-\item{object}{gamlss. Fitted model whose parameters are predicted for
+\item{object}{gamlss object. Fitted model whose parameters are predicted for
 predictdata.}
 
 \item{censtype}{character. Specifies the type of censoring (right/left/interval/missing).}
 
-\item{predictdata}{dataframe. predict-data of the missing/censored
+\item{predictdata}{dataframe. Predict-data of the missing/censored
 observations, for which imputations are drawn.}
 
 \item{fitdata}{data.frame. The orignal dataset upon which gamlss was fitted.}
@@ -21,7 +21,7 @@ observations, for which imputations are drawn.}
 \item{censor}{character. Name of the (damaged) column to be predicted on in
 predictdata. This is only required if censtype is NOT "missing".}
 
-\item{quantiles}{vector. Containing the quantiles to be evaluated in the
+\item{quantiles}{numeric vector. Containing the quantiles to be evaluated in the
 conditoned distribution, i.e. conditoned on the parameters and the
 information contained in the censored value.}
 

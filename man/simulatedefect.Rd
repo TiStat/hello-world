@@ -37,9 +37,9 @@ the lower bound and the second affecting the upper bound.
 NOTE: if a list is provided, both members must either vectors or single values.}
 }
 \value{
-list. List elements are the defected dataframe, an indicator vector specifying which
-  observation was defected and an atomic description of censoring type, which
-  the user implicitly defined by damage.
+list. List elements are the defected dataframe, an indicator vector
+  specifying which observation was defected and an atomic description of
+  censoring type, which the user implicitly defined by damage.
 }
 \description{
 Interprets the defect rule and defects the true dataset.
