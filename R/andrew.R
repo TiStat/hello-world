@@ -18,19 +18,19 @@ andrew <- function(object, ...) {
 #' @title Andrew's Curves of covariates for "imputed" class objects
 #' 
 #' @description Andrew's Curves are a Fourier series upon the observations in
-#'   data. They are a tool for detecting hidden groupings and in this case of
-#'   defected observations, they're a tool for determining whether there is a clear
+#'   data. They are a tool for detecting hidden groupings, and in this case of
+#'   defected observations, they are a tool for determining whether there is a clear
 #'   structure in the remaining covariates, that may explain why a certain
 #'   observation is likely to be defected. As it is an explorative tool, where
 #'   the ordering of the variables determines the frequency that is associated
 #'   respectively, it is highly recommended to use various column orders. It may
-#'   even be of use to some extent to employ Principle Components. Note that
-#'   the defected, dependent and defect-indicator (and lower bound in the
+#'   even be of use, to some extent, to employ Principle Components. Note that
+#'   the defected, dependent and defect-indicator (as well as the lower bound in the
 #'   interval case) variables are not considered for the Andrew's curve, as the
 #'   information contained is ambiguous and misleading. Particulary, the dependent
 #'   variable of the actual regression problem (not the imputation problem) is
-#'   misleading, as it is caused by the covariates and not vice versa. Further,
-#'   note that after deleting those columns only one covariate remains, so
+#'   misleading, as it is caused by the covariates and not vice versa. \cr
+#'   Further note, if after deleting those columns only one covariate remains, 
 #'   the fourier will correctly return parallel lines: each value of that
 #'   covariate is devided by sqrt(2). This is a fourier feature, not a bug.   
 #'   
@@ -123,14 +123,14 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   # if only one covariate remains after removal of indicator
   parameters <- data[ , -ncol(data), drop = FALSE]
   
-  # fourier striped of parameters; list (as surrogate for a functional vector) filled with
+  # fourier stripped of parameters; list (as surrogate for a functional vector) filled with
   # unevaluated summands of fourier series, dependent on t without the parameter
   # factors. 
   # @param nparameter Number of Parameters of dataframe, for which the fourier is expanded.
   # @note The Workaround t/t is due, as eval of v would otherwise not expand
   #   the constant to appropriate length and return an unbalanced list, which in
   #   turn will not be unlisted in a matrix
-  stripedfourier <- function(nparameters) {
+  strippedfourier <- function(nparameters) {
     l = list(~ 1/sqrt(2) * t/t) # unfortunate workaround *1
     if(nparameters > 1) {
       for(i in 2:nparameters) {
@@ -144,12 +144,12 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
     return(l)
   }
   
-  # Fourier Series' summands striped of observational parameter of appropriate
-  # length. unevaluated and dependent on t
-  l <- stripedfourier(nparameters = length(parameters[1, ]))
+  # Fourier Series' summands stripped of observational parameter of appropriate
+  # length. Unevaluated and dependent on t.
+  l <- strippedfourier(nparameters = length(parameters[1, ]))
   
-  # Evaluate the Fourier series' summands without the obseravational parameters for t 
-  # result is striped (of parameters) Fourier matrix. (summands evaluated at t rowwise)
+  # Evaluate the Fourier series' summands without the obseravational parameters for t.
+  # Result is stripped (of parameters) Fourier matrix (summands evaluated at t rowwise).
   v <- sapply(l, FUN= function(e) eval(e[[2]], envir = data.frame(t = t)))
   
   # zip fourier: scale the raw summands evaluated at t with all of their
@@ -159,11 +159,11 @@ andrewcore <- function(data, t = seq(-pi, pi, length.out = 100)) {
   # matrix or dataframe. Coerce to Dataframe for ggplot.
   fourierobs <- data.frame(v %*% t(parameters))
   
-  # convert to longformat to arrive at an automated color scheme
+  # Convert to longformat to arrive at an automated color scheme.
   fourierobs$t <- t
   dat <- reshape2::melt(fourierobs, id.vars = 't', variable.name = 'obs')
   
-  # expand indicator of defected
+  # Expand indicator of defected.
   dat$indicator <- rep(data[ , ncol(data)], each= length(t))
   
   ggplot(data = dat, aes(x = t, y = value, group = obs, color = factor(indicator))) +

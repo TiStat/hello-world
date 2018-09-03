@@ -24,19 +24,19 @@ ordering in the dataframe intact.}
 }
 \description{
 Andrew's Curves are a Fourier series upon the observations in
-  data. They are a tool for detecting hidden groupings and in this case of
-  defected observations, they're a tool for determining whether there is a clear
+  data. They are a tool for detecting hidden groupings, and in this case of
+  defected observations, they are a tool for determining whether there is a clear
   structure in the remaining covariates, that may explain why a certain
   observation is likely to be defected. As it is an explorative tool, where
   the ordering of the variables determines the frequency that is associated
   respectively, it is highly recommended to use various column orders. It may
-  even be of use to some extent to employ Principle Components. Note that
-  the defected, dependent and defect-indicator (and lower bound in the
+  even be of use, to some extent, to employ Principle Components. Note that
+  the defected, dependent and defect-indicator (as well as the lower bound in the
   interval case) variables are not considered for the Andrew's curve, as the
   information contained is ambiguous and misleading. Particulary, the dependent
   variable of the actual regression problem (not the imputation problem) is
-  misleading, as it is caused by the covariates and not vice versa. Further,
-  note that after deleting those columns only one covariate remains, so
+  misleading, as it is caused by the covariates and not vice versa. \cr
+  Further note, if after deleting those columns only one covariate remains, 
   the fourier will correctly return parallel lines: each value of that
   covariate is devided by sqrt(2). This is a fourier feature, not a bug.
 }

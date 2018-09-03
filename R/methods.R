@@ -56,7 +56,7 @@ summary.imputed <- function(object, ...) {
       "\n",
       paste("\n Number of observations:", n),
       paste("\n Type of censoring:", cens_type),
-      paste("\n Number of proposals for each value to be replaced:", rounds),
+      paste("\n Number of proposals for each defected observation:", rounds),
       paste("\n Number of replacements:", v),
       "\n\n Imputed values:", 
       "\n",
